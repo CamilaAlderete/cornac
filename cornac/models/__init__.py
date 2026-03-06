@@ -69,6 +69,7 @@ from .ncf import NeuMF
 from .ngcf import NGCF
 from .nmf import NMF
 from .online_ibpr import OnlineIBPR
+from .online_ibpr_mejorado import OnlineIBPRMejorado
 from .pcrl import PCRL
 from .pmf import PMF
 from .recvae import RecVAE
