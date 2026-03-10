@@ -15,6 +15,7 @@
 
 import numpy as np
 import torch
+import torch.nn.functional as F
 
 # Helpers para lograr el entrenamiento parcial
 def _build_user_positive_sets(history_csr):
@@ -81,6 +82,7 @@ def online_ibpr_mejorado(
     history_csr=None,
     max_steps=None,
     random_seed=42,
+    loss_mode="angular",
 ):
     """Online training loop for Indexable BPR.
 
@@ -249,6 +251,9 @@ def online_ibpr_mejorado(
 
     rng = np.random.default_rng(random_seed)
 
+    if loss_mode not in {"angular", "cosine_bpr"}:
+        raise ValueError("loss_mode debe ser 'angular' o 'cosine_bpr'.")
+
     user_pos_sets = None
     if use_recent_mode:
         if neg_sampling != "uniform":
@@ -317,22 +322,23 @@ def online_ibpr_mejorado(
                 regI_norm = V_norm_fixed[bi, :]
                 regJ_norm = V_norm_fixed[bj, :]
 
-            # Angular distances
+            # Pairwise similarity scores
             dot_ui = torch.sum(regU_norm * regI_norm, dim=1).clamp(-1 + 1e-7, 1 - 1e-7)
             dot_uj = torch.sum(regU_norm * regJ_norm, dim=1).clamp(-1 + 1e-7, 1 - 1e-7)
-            Scorei = torch.acos(dot_ui)
-            Scorej = torch.acos(dot_uj)
 
-            # IBPR loss: regularize active factors and maximize Scorej - Scorei via logistic
+            if loss_mode == "angular":
+                score_diff = torch.acos(dot_uj) - torch.acos(dot_ui)
+                rank_loss = F.softplus(-score_diff).sum()
+            else:  # loss_mode == "cosine_bpr"
+                score_diff = dot_ui - dot_uj
+                rank_loss = F.softplus(-score_diff).sum()
+
             if update_V:
                 reg_term = regU.norm().pow(2) + regI.norm().pow(2) + regJ.norm().pow(2)
             else:
                 reg_term = regU.norm().pow(2)
 
-            loss = (
-                    lamda * reg_term
-                    - torch.log(torch.sigmoid(Scorej - Scorei)).sum()
-            )
+            loss = lamda * reg_term + rank_loss
 
             optimizer.zero_grad(set_to_none=True)
             loss.backward()

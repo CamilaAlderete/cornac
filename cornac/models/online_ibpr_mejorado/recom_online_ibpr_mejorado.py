@@ -72,6 +72,19 @@ class OnlineIBPRMejorado(Recommender, ANNMixin):
         If True, L2-normalize user and item factors after training to keep
         scoring consistent with the angular objective.
 
+    loss_mode: str, optional, default: 'angular'
+        Ranking loss mode used by the core training function.
+        Options:
+        - 'angular': uses angular distances with acos and softplus.
+        - 'cosine_bpr': uses cosine similarity directly with BPR-style softplus.
+        For fast online partial updates, 'cosine_bpr' is usually the preferred mode.
+
+    Notes
+    -----
+    This wrapper supports two training flows:
+    - fit(...): classic training using a Cornac train_set
+    - partial_fit_recent(...): partial online updates using recent_pairs + history_csr
+
     References
     ----------
     * Le, D. D., & Lauw, H. W. (2017, November). Indexable Bayesian personalized ranking for efficient top-k recommendation.\
@@ -92,6 +105,7 @@ class OnlineIBPRMejorado(Recommender, ANNMixin):
         update_V=False,
         neg_sampling="uniform",
         normalize=False,
+        loss_mode="angular",
     ):
         Recommender.__init__(self, name=name, trainable=trainable, verbose=verbose)
         self.k = k
@@ -108,6 +122,7 @@ class OnlineIBPRMejorado(Recommender, ANNMixin):
         self.update_V = update_V
         self.neg_sampling = neg_sampling
         self.normalize = normalize
+        self.loss_mode = loss_mode
 
     def fit(self, train_set, val_set=None):
         """Fit the model to observations.
@@ -142,6 +157,7 @@ class OnlineIBPRMejorado(Recommender, ANNMixin):
                 neg_sampling=self.neg_sampling,
                 normalize=self.normalize,
                 verbose=self.verbose,
+                loss_mode=self.loss_mode,
             )
             self.U = np.asarray(res["U"])
             self.V = np.asarray(res["V"])
@@ -169,6 +185,14 @@ class OnlineIBPRMejorado(Recommender, ANNMixin):
         -------
         self
         """
+
+        # Keep recommender metadata consistent for score()/rank() after partial updates
+
+        if history_csr is None:
+            raise ValueError("history_csr es requerido en partial_fit_recent(...)")
+
+        self.num_users, self.num_items = history_csr.shape
+
         if self.trainable:
             from .online_ibpr_mejorado import online_ibpr_mejorado
 
@@ -187,6 +211,7 @@ class OnlineIBPRMejorado(Recommender, ANNMixin):
                 recent_pairs=recent_pairs,
                 history_csr=history_csr,
                 max_steps=max_steps,
+                loss_mode=self.loss_mode,
             )
 
             self.U = np.asarray(res["U"])

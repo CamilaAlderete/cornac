@@ -3,3 +3,4 @@ scipy
 Cython
 tqdm
 powerlaw
+torch>=0.4.1
