@@ -1,0 +1,259 @@
+Logging results to: results\online_ibpr_mejorado_sequential_partial_20260310_110119.txt
+CSV summary will be saved to: results\online_ibpr_mejorado_sequential_partial_20260310_110119.csv
+
+Data from http://files.grouplens.org/datasets/movielens/ml-10m.zip
+will be cached into C:\Users\cmalderete\.cornac\ml-10M100K/ratings.dat
+Unzipping ...
+File cached!
+================================================================================
+SEQUENTIAL PARTIAL RETRAINING SEGMENT SUMMARY
+================================================================================
+Variant         : 10M
+Base segment    : 4,945,274
+Adapt chunk  1 : 126,805
+Adapt chunk  2 : 45,363
+Adapt chunk  3 : 26,912
+Adapt chunk  4 : 28,776
+Test segment    : 53,211
+Users in base   : 49,413
+Items in base   : 6,989
+
+================================================================================
+STEP 1 - TRAIN BASE IBPR
+================================================================================
+--------------------------------------------------------------------------------
+Baseline IBPR trained on base segment
+--------------------------------------------------------------------------------
+Train time: 1533.3262 s
+Test time : 2.8736 s
+AUC         : 0.8024
+MAP         : 0.0403
+NDCG@20     : 0.0551
+Precision@20: 0.0504
+Recall@20   : 0.0281
+
+================================================================================
+STEP 2 - SEQUENTIAL PARTIAL RETRAINING
+================================================================================
+Running sequential config: OnlineIBPRMejorado sequential partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado sequential partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | after adapt chunk 1/4 | chunk_size=126,805
+--------------------------------------------------------------------------------
+Train time: 1.0377 s
+Test time : 2.8376 s
+AUC         : 0.8050
+MAP         : 0.0421
+NDCG@20     : 0.0591
+Precision@20: 0.0543
+Recall@20   : 0.0308
+
+Delta vs baseline IBPR:
+  Δbaseline AUC       : +0.0027
+  Δbaseline MAP       : +0.0018
+  Δbaseline NDCG@20   : +0.0040
+  Δbaseline Precision@20: +0.0039
+  Δbaseline Recall@20 : +0.0027
+Delta vs previous stage:
+  Δprev     AUC       : +0.0027
+  Δprev     MAP       : +0.0018
+  Δprev     NDCG@20   : +0.0040
+  Δprev     Precision@20: +0.0039
+  Δprev     Recall@20 : +0.0027
+Cumulative partial train time so far: 1.0377 s
+
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado sequential partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | after adapt chunk 2/4 | chunk_size=45,363
+--------------------------------------------------------------------------------
+Train time: 0.7175 s
+Test time : 2.5882 s
+AUC         : 0.8063
+MAP         : 0.0431
+NDCG@20     : 0.0607
+Precision@20: 0.0549
+Recall@20   : 0.0324
+
+Delta vs baseline IBPR:
+  Δbaseline AUC       : +0.0039
+  Δbaseline MAP       : +0.0028
+  Δbaseline NDCG@20   : +0.0057
+  Δbaseline Precision@20: +0.0045
+  Δbaseline Recall@20 : +0.0042
+Delta vs previous stage:
+  Δprev     AUC       : +0.0013
+  Δprev     MAP       : +0.0010
+  Δprev     NDCG@20   : +0.0016
+  Δprev     Precision@20: +0.0007
+  Δprev     Recall@20 : +0.0015
+Cumulative partial train time so far: 1.7552 s
+
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado sequential partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | after adapt chunk 3/4 | chunk_size=26,912
+--------------------------------------------------------------------------------
+Train time: 0.7092 s
+Test time : 2.5943 s
+AUC         : 0.8075
+MAP         : 0.0440
+NDCG@20     : 0.0619
+Precision@20: 0.0555
+Recall@20   : 0.0321
+
+Delta vs baseline IBPR:
+  Δbaseline AUC       : +0.0051
+  Δbaseline MAP       : +0.0037
+  Δbaseline NDCG@20   : +0.0069
+  Δbaseline Precision@20: +0.0051
+  Δbaseline Recall@20 : +0.0040
+Delta vs previous stage:
+  Δprev     AUC       : +0.0012
+  Δprev     MAP       : +0.0009
+  Δprev     NDCG@20   : +0.0012
+  Δprev     Precision@20: +0.0006
+  Δprev     Recall@20 : -0.0002
+Cumulative partial train time so far: 2.4645 s
+
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado sequential partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | after adapt chunk 4/4 | chunk_size=28,776
+--------------------------------------------------------------------------------
+Train time: 0.7403 s
+Test time : 2.5980 s
+AUC         : 0.8086
+MAP         : 0.0450
+NDCG@20     : 0.0623
+Precision@20: 0.0564
+Recall@20   : 0.0336
+
+Delta vs baseline IBPR:
+  Δbaseline AUC       : +0.0063
+  Δbaseline MAP       : +0.0046
+  Δbaseline NDCG@20   : +0.0073
+  Δbaseline Precision@20: +0.0060
+  Δbaseline Recall@20 : +0.0055
+Delta vs previous stage:
+  Δprev     AUC       : +0.0012
+  Δprev     MAP       : +0.0009
+  Δprev     NDCG@20   : +0.0004
+  Δprev     Precision@20: +0.0009
+  Δprev     Recall@20 : +0.0015
+Cumulative partial train time so far: 3.2048 s
+
+Running sequential config: OnlineIBPRMejorado sequential partial | angular | epochs=2 | max_steps=None | update_V=False
+Epoch 1/2 - avg loss per sample: 0.416982
+Epoch 2/2 - avg loss per sample: 0.409755
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado sequential partial | angular | epochs=2 | max_steps=None | update_V=False | after adapt chunk 1/4 | chunk_size=126,805
+--------------------------------------------------------------------------------
+Train time: 3.2083 s
+Test time : 2.5931 s
+AUC         : 0.8051
+MAP         : 0.0397
+NDCG@20     : 0.0551
+Precision@20: 0.0493
+Recall@20   : 0.0303
+
+Delta vs baseline IBPR:
+  Δbaseline AUC       : +0.0028
+  Δbaseline MAP       : -0.0006
+  Δbaseline NDCG@20   : +0.0000
+  Δbaseline Precision@20: -0.0011
+  Δbaseline Recall@20 : +0.0022
+Delta vs previous stage:
+  Δprev     AUC       : +0.0028
+  Δprev     MAP       : -0.0006
+  Δprev     NDCG@20   : +0.0000
+  Δprev     Precision@20: -0.0011
+  Δprev     Recall@20 : +0.0022
+Cumulative partial train time so far: 3.2083 s
+
+Epoch 1/2 - avg loss per sample: 0.413643
+Epoch 2/2 - avg loss per sample: 0.401452
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado sequential partial | angular | epochs=2 | max_steps=None | update_V=False | after adapt chunk 2/4 | chunk_size=45,363
+--------------------------------------------------------------------------------
+Train time: 1.5563 s
+Test time : 2.6237 s
+AUC         : 0.8071
+MAP         : 0.0402
+NDCG@20     : 0.0557
+Precision@20: 0.0498
+Recall@20   : 0.0295
+
+Delta vs baseline IBPR:
+  Δbaseline AUC       : +0.0047
+  Δbaseline MAP       : -0.0001
+  Δbaseline NDCG@20   : +0.0006
+  Δbaseline Precision@20: -0.0006
+  Δbaseline Recall@20 : +0.0013
+Delta vs previous stage:
+  Δprev     AUC       : +0.0019
+  Δprev     MAP       : +0.0005
+  Δprev     NDCG@20   : +0.0006
+  Δprev     Precision@20: +0.0005
+  Δprev     Recall@20 : -0.0008
+Cumulative partial train time so far: 4.7646 s
+
+Epoch 1/2 - avg loss per sample: 0.406012
+Epoch 2/2 - avg loss per sample: 0.393851
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado sequential partial | angular | epochs=2 | max_steps=None | update_V=False | after adapt chunk 3/4 | chunk_size=26,912
+--------------------------------------------------------------------------------
+Train time: 1.2040 s
+Test time : 2.6048 s
+AUC         : 0.8094
+MAP         : 0.0407
+NDCG@20     : 0.0555
+Precision@20: 0.0503
+Recall@20   : 0.0305
+
+Delta vs baseline IBPR:
+  Δbaseline AUC       : +0.0071
+  Δbaseline MAP       : +0.0004
+  Δbaseline NDCG@20   : +0.0004
+  Δbaseline Precision@20: -0.0001
+  Δbaseline Recall@20 : +0.0024
+Delta vs previous stage:
+  Δprev     AUC       : +0.0023
+  Δprev     MAP       : +0.0005
+  Δprev     NDCG@20   : -0.0002
+  Δprev     Precision@20: +0.0006
+  Δprev     Recall@20 : +0.0010
+Cumulative partial train time so far: 5.9686 s
+
+Epoch 1/2 - avg loss per sample: 0.422176
+Epoch 2/2 - avg loss per sample: 0.405419
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado sequential partial | angular | epochs=2 | max_steps=None | update_V=False | after adapt chunk 4/4 | chunk_size=28,776
+--------------------------------------------------------------------------------
+Train time: 1.2425 s
+Test time : 2.6120 s
+AUC         : 0.8142
+MAP         : 0.0429
+NDCG@20     : 0.0598
+Precision@20: 0.0540
+Recall@20   : 0.0306
+
+Delta vs baseline IBPR:
+  Δbaseline AUC       : +0.0118
+  Δbaseline MAP       : +0.0025
+  Δbaseline NDCG@20   : +0.0047
+  Δbaseline Precision@20: +0.0036
+  Δbaseline Recall@20 : +0.0024
+Delta vs previous stage:
+  Δprev     AUC       : +0.0047
+  Δprev     MAP       : +0.0021
+  Δprev     NDCG@20   : +0.0043
+  Δprev     Precision@20: +0.0037
+  Δprev     Recall@20 : +0.0001
+Cumulative partial train time so far: 7.2111 s
+
+================================================================================
+CSV SUMMARY SAVED
+================================================================================
+results\online_ibpr_mejorado_sequential_partial_20260310_110119.csv

@@ -7,7 +7,11 @@ from cornac.data import Dataset
 from cornac.datasets import movielens
 from cornac.eval_methods.base_method import ranking_eval
 from cornac.models import IBPR, OnlineIBPRMejorado
-
+import os
+import sys
+from datetime import datetime
+from contextlib import redirect_stdout
+from cornac.utils.Tee import Tee
 
 SEED = 42
 RATING_THRESHOLD = 3.0
@@ -144,78 +148,86 @@ def print_result_block(title, train_time, test_time, metrics_dict):
 
 
 def main():
-    data = load_positive_chrono_movielens_1m()
-    base_raw, adapt_raw_all, test_raw_all = split_base_adapt_test(data)
-    adapt_raw, test_raw = filter_to_base_known(base_raw, adapt_raw_all, test_raw_all)
+    os.makedirs("results", exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    log_path = f"results/ibpr_warmstart_online_partial_{timestamp}.txt"
 
-    if len(adapt_raw) == 0 or len(test_raw) == 0:
-        raise ValueError("Los segmentos adapt/test quedaron vacíos luego del filtrado a entidades conocidas.")
+    with open(log_path, "w", encoding="utf-8") as log_file:
+        tee = Tee(sys.stdout, log_file)
 
-    print_segment_summary(base_raw, adapt_raw, test_raw)
+        with redirect_stdout(tee):
+            data = load_positive_chrono_movielens_1m()
+            base_raw, adapt_raw_all, test_raw_all = split_base_adapt_test(data)
+            adapt_raw, test_raw = filter_to_base_known(base_raw, adapt_raw_all, test_raw_all)
 
-    base_train_set, adapt_train_set, combined_train_set, test_set = build_datasets(
-        base_raw, adapt_raw, test_raw
-    )
-    metrics = build_metrics()
+            if len(adapt_raw) == 0 or len(test_raw) == 0:
+                raise ValueError("Los segmentos adapt/test quedaron vacíos luego del filtrado a entidades conocidas.")
 
-    # 1) Train base IBPR on the base segment only
-    ibpr = IBPR(
-        k=50,
-        max_iter=20,
-        learning_rate=0.01,
-        lamda=0.001,
-        batch_size=512,
-        verbose=True,
-        name="IBPR (base only)",
-    )
+            print_segment_summary(base_raw, adapt_raw, test_raw)
 
-    t0 = time.perf_counter()
-    ibpr.fit(base_train_set)
-    ibpr_train_time = time.perf_counter() - t0
-    ibpr_metrics, ibpr_test_time = evaluate_ranking(ibpr, combined_train_set, test_set, metrics)
+            base_train_set, adapt_train_set, combined_train_set, test_set = build_datasets(
+                base_raw, adapt_raw, test_raw
+            )
+            metrics = build_metrics()
 
-    # 2) Warm-start OnlineIBPRMejorado with U/V from IBPR, then do partial retraining on the adapt segment
-    online_partial = OnlineIBPRMejorado(
-        k=50,
-        max_iter=10,
-        learning_rate=0.01,
-        lamda=0.001,
-        batch_size=512,
-        init_params={"U": ibpr.U.copy(), "V": ibpr.V.copy()},
-        update_V=False,
-        neg_sampling="uniform",
-        normalize=True,
-        loss_mode="cosine_bpr",
-        verbose=True,
-        name="OnlineIBPRMejorado (warm-start + partial fit)",
-    )
+            # 1) Train base IBPR on the base segment only
+            ibpr = IBPR(
+                k=50,
+                max_iter=20,
+                learning_rate=0.01,
+                lamda=0.001,
+                batch_size=512,
+                verbose=True,
+                name="IBPR (base only)",
+            )
 
-    recent_pairs = np.column_stack(
-        (adapt_train_set.uir_tuple[0], adapt_train_set.uir_tuple[1])
-    ).astype(np.int64)
+            t0 = time.perf_counter()
+            ibpr.fit(base_train_set)
+            ibpr_train_time = time.perf_counter() - t0
+            ibpr_metrics, ibpr_test_time = evaluate_ranking(ibpr, combined_train_set, test_set, metrics)
 
-    t0 = time.perf_counter()
-    online_partial.partial_fit_recent(
-        recent_pairs=recent_pairs,
-        history_csr=combined_train_set.csr_matrix,
-        max_steps=None,
-        n_epochs=1,
-    )
-    online_train_time = time.perf_counter() - t0
-    online_metrics, online_test_time = evaluate_ranking(
-        online_partial, combined_train_set, test_set, metrics
-    )
+            # 2) Warm-start OnlineIBPRMejorado with U/V from IBPR, then do partial retraining on the adapt segment
+            online_partial = OnlineIBPRMejorado(
+                k=50,
+                max_iter=10,
+                learning_rate=0.01,
+                lamda=0.001,
+                batch_size=512,
+                init_params={"U": ibpr.U.copy(), "V": ibpr.V.copy()},
+                update_V=False,
+                neg_sampling="uniform",
+                normalize=True,
+                loss_mode="cosine_bpr",
+                verbose=True,
+                name="OnlineIBPRMejorado (warm-start + partial fit)",
+            )
 
-    print("=" * 80)
-    print("RESULTS - WARM-START + PARTIAL RETRAINING ON ADAPT SEGMENT")
-    print("=" * 80)
-    print_result_block("IBPR trained on base segment", ibpr_train_time, ibpr_test_time, ibpr_metrics)
-    print_result_block(
-        "OnlineIBPRMejorado warm-started from IBPR and partially retrained on adapt segment",
-        online_train_time,
-        online_test_time,
-        online_metrics,
-    )
+            recent_pairs = np.column_stack(
+                (adapt_train_set.uir_tuple[0], adapt_train_set.uir_tuple[1])
+            ).astype(np.int64)
+
+            t0 = time.perf_counter()
+            online_partial.partial_fit_recent(
+                recent_pairs=recent_pairs,
+                history_csr=combined_train_set.csr_matrix,
+                max_steps=None,
+                n_epochs=1,
+            )
+            online_train_time = time.perf_counter() - t0
+            online_metrics, online_test_time = evaluate_ranking(
+                online_partial, combined_train_set, test_set, metrics
+            )
+
+            print("=" * 80)
+            print("RESULTS - WARM-START + PARTIAL RETRAINING ON ADAPT SEGMENT")
+            print("=" * 80)
+            print_result_block("IBPR trained on base segment", ibpr_train_time, ibpr_test_time, ibpr_metrics)
+            print_result_block(
+                "OnlineIBPRMejorado warm-started from IBPR and partially retrained on adapt segment",
+                online_train_time,
+                online_test_time,
+                online_metrics,
+            )
 
 
 if __name__ == "__main__":

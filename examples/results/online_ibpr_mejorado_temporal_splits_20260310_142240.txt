@@ -1,0 +1,201 @@
+Logging results to: results\online_ibpr_mejorado_temporal_splits_20260310_142240.txt
+CSV summary will be saved to: results\online_ibpr_mejorado_temporal_splits_20260310_142240.csv
+
+================================================================================
+TEMPORAL SPLIT EXPERIMENT | split_50_20_30
+================================================================================
+--------------------------------------------------------------------------------
+IBPR baseline | split_50_20_30
+--------------------------------------------------------------------------------
+Train time: 83.8505 s
+Test time : 0.7924 s
+AUC         : 0.8129
+MAP         : 0.0937
+NDCG@20     : 0.1316
+Precision@20: 0.1257
+Recall@20   : 0.0463
+
+Epoch 1/1 - avg loss per sample: 0.426274
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | split_50_20_30 | stage=1/4
+--------------------------------------------------------------------------------
+Train time: 0.0692 s
+Test time : 0.8021 s
+AUC         : 0.8140
+MAP         : 0.0950
+NDCG@20     : 0.1329
+Precision@20: 0.1280
+Recall@20   : 0.0471
+
+Epoch 1/1 - avg loss per sample: 0.448797
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | split_50_20_30 | stage=2/4
+--------------------------------------------------------------------------------
+Train time: 0.0574 s
+Test time : 0.7980 s
+AUC         : 0.8142
+MAP         : 0.0951
+NDCG@20     : 0.1338
+Precision@20: 0.1293
+Recall@20   : 0.0475
+
+Epoch 1/1 - avg loss per sample: 0.407432
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | split_50_20_30 | stage=3/4
+--------------------------------------------------------------------------------
+Train time: 0.0596 s
+Test time : 0.8061 s
+AUC         : 0.8142
+MAP         : 0.0952
+NDCG@20     : 0.1342
+Precision@20: 0.1294
+Recall@20   : 0.0476
+
+Epoch 1/1 - avg loss per sample: 0.421943
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | split_50_20_30 | stage=4/4
+--------------------------------------------------------------------------------
+Train time: 0.0572 s
+Test time : 0.7942 s
+AUC         : 0.8144
+MAP         : 0.0954
+NDCG@20     : 0.1343
+Precision@20: 0.1294
+Recall@20   : 0.0476
+
+================================================================================
+TEMPORAL SPLIT EXPERIMENT | split_60_20_20
+================================================================================
+--------------------------------------------------------------------------------
+IBPR baseline | split_60_20_20
+--------------------------------------------------------------------------------
+Train time: 94.3828 s
+Test time : 1.0379 s
+AUC         : 0.8219
+MAP         : 0.0953
+NDCG@20     : 0.1343
+Precision@20: 0.1251
+Recall@20   : 0.0479
+
+Epoch 1/1 - avg loss per sample: 0.402344
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | split_60_20_20 | stage=1/4
+--------------------------------------------------------------------------------
+Train time: 0.0789 s
+Test time : 1.0121 s
+AUC         : 0.8221
+MAP         : 0.0955
+NDCG@20     : 0.1351
+Precision@20: 0.1255
+Recall@20   : 0.0481
+
+Epoch 1/1 - avg loss per sample: 0.408294
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | split_60_20_20 | stage=2/4
+--------------------------------------------------------------------------------
+Train time: 0.0747 s
+Test time : 1.0115 s
+AUC         : 0.8225
+MAP         : 0.0956
+NDCG@20     : 0.1345
+Precision@20: 0.1248
+Recall@20   : 0.0477
+
+Epoch 1/1 - avg loss per sample: 0.409422
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | split_60_20_20 | stage=3/4
+--------------------------------------------------------------------------------
+Train time: 0.0778 s
+Test time : 1.0264 s
+AUC         : 0.8227
+MAP         : 0.0958
+NDCG@20     : 0.1347
+Precision@20: 0.1245
+Recall@20   : 0.0472
+
+Epoch 1/1 - avg loss per sample: 0.437985
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | split_60_20_20 | stage=4/4
+--------------------------------------------------------------------------------
+Train time: 0.0729 s
+Test time : 1.0140 s
+AUC         : 0.8233
+MAP         : 0.0962
+NDCG@20     : 0.1362
+Precision@20: 0.1269
+Recall@20   : 0.0472
+
+================================================================================
+TEMPORAL SPLIT EXPERIMENT | split_70_15_15
+================================================================================
+--------------------------------------------------------------------------------
+IBPR baseline | split_70_15_15
+--------------------------------------------------------------------------------
+Train time: 112.2059 s
+Test time : 1.3774 s
+AUC         : 0.8304
+MAP         : 0.0973
+NDCG@20     : 0.1330
+Precision@20: 0.1273
+Recall@20   : 0.0434
+
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | split_70_15_15 | stage=1/4
+--------------------------------------------------------------------------------
+Train time: 0.0990 s
+Test time : 1.4581 s
+AUC         : 0.8312
+MAP         : 0.0980
+NDCG@20     : 0.1337
+Precision@20: 0.1286
+Recall@20   : 0.0433
+
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | split_70_15_15 | stage=2/4
+--------------------------------------------------------------------------------
+Train time: 0.0988 s
+Test time : 1.3907 s
+AUC         : 0.8320
+MAP         : 0.0991
+NDCG@20     : 0.1358
+Precision@20: 0.1303
+Recall@20   : 0.0431
+
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | split_70_15_15 | stage=3/4
+--------------------------------------------------------------------------------
+Train time: 0.0914 s
+Test time : 1.4110 s
+AUC         : 0.8331
+MAP         : 0.0998
+NDCG@20     : 0.1372
+Precision@20: 0.1318
+Recall@20   : 0.0437
+
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | split_70_15_15 | stage=4/4
+--------------------------------------------------------------------------------
+Train time: 0.0996 s
+Test time : 1.3844 s
+AUC         : 0.8338
+MAP         : 0.1011
+NDCG@20     : 0.1404
+Precision@20: 0.1349
+Recall@20   : 0.0441
+
+================================================================================
+TEMPORAL SPLIT EXPERIMENT SAVED
+================================================================================
+results\online_ibpr_mejorado_temporal_splits_20260310_142240.csv

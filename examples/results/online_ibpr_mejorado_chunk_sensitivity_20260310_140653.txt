@@ -1,0 +1,230 @@
+Logging results to: results\online_ibpr_mejorado_chunk_sensitivity_20260310_140653.txt
+CSV summary will be saved to: results\online_ibpr_mejorado_chunk_sensitivity_20260310_140653.csv
+
+================================================================================
+CHUNK SENSITIVITY EXPERIMENT | n_chunks=2
+================================================================================
+--------------------------------------------------------------------------------
+IBPR baseline | n_chunks=2
+--------------------------------------------------------------------------------
+Train time: 103.5102 s
+Test time : 1.0370 s
+AUC         : 0.8222
+MAP         : 0.0951
+NDCG@20     : 0.1343
+Precision@20: 0.1266
+Recall@20   : 0.0480
+
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | n_chunks=2 | stage=1/2 | chunk_size=4,391
+--------------------------------------------------------------------------------
+Train time: 0.0982 s
+Test time : 1.0459 s
+AUC         : 0.8227
+MAP         : 0.0954
+NDCG@20     : 0.1342
+Precision@20: 0.1267
+Recall@20   : 0.0477
+
+Epoch 1/1 - avg loss per sample: 0.424830
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | n_chunks=2 | stage=2/2 | chunk_size=4,077
+--------------------------------------------------------------------------------
+Train time: 0.0797 s
+Test time : 1.0101 s
+AUC         : 0.8237
+MAP         : 0.0962
+NDCG@20     : 0.1367
+Precision@20: 0.1294
+Recall@20   : 0.0480
+
+================================================================================
+CHUNK SENSITIVITY EXPERIMENT | n_chunks=4
+================================================================================
+--------------------------------------------------------------------------------
+IBPR baseline | n_chunks=4
+--------------------------------------------------------------------------------
+Train time: 97.1653 s
+Test time : 1.0103 s
+AUC         : 0.8222
+MAP         : 0.0955
+NDCG@20     : 0.1354
+Precision@20: 0.1262
+Recall@20   : 0.0510
+
+Epoch 1/1 - avg loss per sample: 0.402427
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | n_chunks=4 | stage=1/4 | chunk_size=2,100
+--------------------------------------------------------------------------------
+Train time: 0.0785 s
+Test time : 1.0456 s
+AUC         : 0.8224
+MAP         : 0.0956
+NDCG@20     : 0.1359
+Precision@20: 0.1266
+Recall@20   : 0.0513
+
+Epoch 1/1 - avg loss per sample: 0.407785
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | n_chunks=4 | stage=2/4 | chunk_size=2,291
+--------------------------------------------------------------------------------
+Train time: 0.0761 s
+Test time : 1.0154 s
+AUC         : 0.8228
+MAP         : 0.0958
+NDCG@20     : 0.1358
+Precision@20: 0.1260
+Recall@20   : 0.0508
+
+Epoch 1/1 - avg loss per sample: 0.410001
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | n_chunks=4 | stage=3/4 | chunk_size=1,493
+--------------------------------------------------------------------------------
+Train time: 0.0813 s
+Test time : 1.0462 s
+AUC         : 0.8230
+MAP         : 0.0961
+NDCG@20     : 0.1359
+Precision@20: 0.1254
+Recall@20   : 0.0503
+
+Epoch 1/1 - avg loss per sample: 0.438014
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | n_chunks=4 | stage=4/4 | chunk_size=2,584
+--------------------------------------------------------------------------------
+Train time: 0.0758 s
+Test time : 1.0240 s
+AUC         : 0.8236
+MAP         : 0.0964
+NDCG@20     : 0.1369
+Precision@20: 0.1278
+Recall@20   : 0.0489
+
+================================================================================
+CHUNK SENSITIVITY EXPERIMENT | n_chunks=8
+================================================================================
+--------------------------------------------------------------------------------
+IBPR baseline | n_chunks=8
+--------------------------------------------------------------------------------
+Train time: 95.9213 s
+Test time : 1.0066 s
+AUC         : 0.8217
+MAP         : 0.0950
+NDCG@20     : 0.1333
+Precision@20: 0.1250
+Recall@20   : 0.0479
+
+Epoch 1/1 - avg loss per sample: 0.417647
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | n_chunks=8 | stage=1/8 | chunk_size=1,533
+--------------------------------------------------------------------------------
+Train time: 0.0709 s
+Test time : 1.0003 s
+AUC         : 0.8218
+MAP         : 0.0951
+NDCG@20     : 0.1338
+Precision@20: 0.1256
+Recall@20   : 0.0483
+
+Epoch 1/1 - avg loss per sample: 0.379287
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | n_chunks=8 | stage=2/8 | chunk_size=567
+--------------------------------------------------------------------------------
+Train time: 0.0652 s
+Test time : 1.0483 s
+AUC         : 0.8219
+MAP         : 0.0952
+NDCG@20     : 0.1341
+Precision@20: 0.1258
+Recall@20   : 0.0484
+
+Epoch 1/1 - avg loss per sample: 0.425320
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | n_chunks=8 | stage=3/8 | chunk_size=1,544
+--------------------------------------------------------------------------------
+Train time: 0.0638 s
+Test time : 0.9896 s
+AUC         : 0.8222
+MAP         : 0.0954
+NDCG@20     : 0.1344
+Precision@20: 0.1260
+Recall@20   : 0.0483
+
+Epoch 1/1 - avg loss per sample: 0.399208
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | n_chunks=8 | stage=4/8 | chunk_size=747
+--------------------------------------------------------------------------------
+Train time: 0.0629 s
+Test time : 0.9767 s
+AUC         : 0.8223
+MAP         : 0.0954
+NDCG@20     : 0.1343
+Precision@20: 0.1260
+Recall@20   : 0.0481
+
+Epoch 1/1 - avg loss per sample: 0.395590
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | n_chunks=8 | stage=5/8 | chunk_size=743
+--------------------------------------------------------------------------------
+Train time: 0.0605 s
+Test time : 1.0383 s
+AUC         : 0.8224
+MAP         : 0.0953
+NDCG@20     : 0.1339
+Precision@20: 0.1260
+Recall@20   : 0.0480
+
+Epoch 1/1 - avg loss per sample: 0.413639
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | n_chunks=8 | stage=6/8 | chunk_size=750
+--------------------------------------------------------------------------------
+Train time: 0.0629 s
+Test time : 0.9951 s
+AUC         : 0.8225
+MAP         : 0.0956
+NDCG@20     : 0.1350
+Precision@20: 0.1263
+Recall@20   : 0.0480
+
+Epoch 1/1 - avg loss per sample: 0.439040
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | n_chunks=8 | stage=7/8 | chunk_size=1,386
+--------------------------------------------------------------------------------
+Train time: 0.0650 s
+Test time : 0.9929 s
+AUC         : 0.8229
+MAP         : 0.0955
+NDCG@20     : 0.1343
+Precision@20: 0.1264
+Recall@20   : 0.0476
+
+Epoch 1/1 - avg loss per sample: 0.442972
+Partial learning completed
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado partial | cosine_bpr | epochs=1 | max_steps=5 | update_V=False | n_chunks=8 | stage=8/8 | chunk_size=1,198
+--------------------------------------------------------------------------------
+Train time: 0.0670 s
+Test time : 0.9940 s
+AUC         : 0.8233
+MAP         : 0.0960
+NDCG@20     : 0.1351
+Precision@20: 0.1271
+Recall@20   : 0.0476
+
+================================================================================
+CHUNK SENSITIVITY EXPERIMENT SAVED
+================================================================================
+results\online_ibpr_mejorado_chunk_sensitivity_20260310_140653.csv

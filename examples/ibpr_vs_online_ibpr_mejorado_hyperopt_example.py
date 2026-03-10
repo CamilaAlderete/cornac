@@ -24,11 +24,16 @@ import cornac
 from cornac.datasets import movielens
 from cornac.eval_methods import RatioSplit
 from cornac.hyperopt import Discrete, GridSearch
+import os
+import sys
+from datetime import datetime
+from contextlib import redirect_stdout
+from cornac.utils.Tee import Tee
+
 
 # Custom/local models already integrated in the Cornac package tree
 from cornac.models.ibpr import IBPR
 from cornac.models.online_ibpr_mejorado import OnlineIBPRMejorado
-
 
 SEED = 42
 RATING_THRESHOLD = 3.0
@@ -152,28 +157,36 @@ def print_best_search_results(search_models):
 
 
 def main():
-    eval_method = build_eval_method()
-    metrics = build_metrics()
+    os.makedirs("results", exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    log_path = f"results/ibpr_vs_online_ibpr_{timestamp}.txt"
 
-    ibpr_default, online_default = build_default_models()
-    ibpr_search, online_search = build_tuned_models(eval_method)
+    with open(log_path, "w", encoding="utf-8") as log_file:
+        tee = Tee(sys.stdout, log_file)
 
-    models = [
-        ibpr_default,
-        online_default,
-        #ibpr_search,
-        #online_search,
-    ]
+        with redirect_stdout(tee):
+            eval_method = build_eval_method()
+            metrics = build_metrics()
 
-    experiment = cornac.Experiment(
-        eval_method=eval_method,
-        models=models,
-        metrics=metrics,
-        user_based=True,
-    )
-    experiment.run()
+            ibpr_default, online_default = build_default_models()
+            ibpr_search, online_search = build_tuned_models(eval_method)
 
-    print_best_search_results([ibpr_default, online_default])#, ibpr_search, online_search])
+            models = [
+                ibpr_default,
+                online_default,
+                # ibpr_search,
+                # online_search,
+            ]
+
+            experiment = cornac.Experiment(
+                eval_method=eval_method,
+                models=models,
+                metrics=metrics,
+                user_based=True,
+            )
+            experiment.run()
+
+            print_best_search_results([ibpr_default, online_default])  # , ibpr_search, online_search])
 
 
 if __name__ == "__main__":

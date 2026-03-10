@@ -1,0 +1,45 @@
+================================================================================
+SEGMENT SUMMARY
+================================================================================
+Base segment   : 585,534
+Adapt segment  : 20,797
+Test segment   : 69,153
+Users in base  : 4,847
+Items in base  : 3,544
+
+Epoch 1/10 - avg loss per sample: 0.428785
+Epoch 2/10 - avg loss per sample: 0.419024
+Epoch 3/10 - avg loss per sample: 0.418995
+Epoch 4/10 - avg loss per sample: 0.413730
+Epoch 5/10 - avg loss per sample: 0.417133
+Epoch 6/10 - avg loss per sample: 0.414622
+Epoch 7/10 - avg loss per sample: 0.414129
+Epoch 8/10 - avg loss per sample: 0.413910
+Epoch 9/10 - avg loss per sample: 0.417544
+Epoch 10/10 - avg loss per sample: 0.413176
+Learning completed
+================================================================================
+RESULTS - WARM-START + CLASSIC FIT ON ADAPT SEGMENT
+================================================================================
+--------------------------------------------------------------------------------
+IBPR trained on base segment
+--------------------------------------------------------------------------------
+Train time: 171.0146 s
+Test time : 1.4983 s
+AUC         : 0.8323
+MAP         : 0.1078
+NDCG@20     : 0.1510
+Precision@20: 0.1455
+Recall@20   : 0.0476
+
+--------------------------------------------------------------------------------
+OnlineIBPRMejorado warm-started from IBPR and fitted on adapt segment
+--------------------------------------------------------------------------------
+Train time: 2.5501 s
+Test time : 1.5004 s
+AUC         : 0.8316
+MAP         : 0.1064
+NDCG@20     : 0.1480
+Precision@20: 0.1418
+Recall@20   : 0.0475
+
