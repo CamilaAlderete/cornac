@@ -1,0 +1,61 @@
+Logging results to: results\rerank_refines_not_replaces_20260505_151911.txt
+CSV summary will be saved to: results\rerank_refines_not_replaces_20260505_151911.csv
+
+================================================================================
+RERANK PREMISE BENCHMARK
+================================================================================
+Variant       : 1M
+Base rows     : 585,534
+Adapt rows    : 20,797
+Test rows     : 69,153
+TOP_K         : 20
+Multipliers   : [1, 2, 5, 10, 20]
+Scope         : warm_start_known_entities
+Cold-start    : False
+Note          : adapt/test contain only users and items already seen in base
+
+Training base IBPR...
+IBPR train time: 169.5292 s
+
+Warm-starting and partially adapting OnlineIBPRMejorado...
+Epoch 1/1 - avg loss per sample: 0.410984
+Partial learning completed
+Online partial update time: 0.1702 s
+
+Retriever backend: sklearn_knn
+
+Users benchmarked: 300
+
+Quality oracle: Online exhaustive ranking over full catalog
+  mean_ms=0.0465, p95_ms=0.0656, recall@k=0.0469
+
+Serving baseline: IBPR indexed top-k
+  mean_ms=0.7258, p95_ms=0.8794, recall@k=0.0496, agreement=0.8288
+
+Hybrid with rerank over 20 recovered candidates
+  mean_ms=0.7294, p95_ms=0.9158, recall@k=0.0469, coverage=1.0000, agreement=1.0000, subset_ok=1.0000
+
+Hybrid with rerank over 40 recovered candidates
+  mean_ms=0.7385, p95_ms=0.9511, recall@k=0.0469, coverage=1.0000, agreement=1.0000, subset_ok=1.0000
+
+Hybrid with rerank over 100 recovered candidates
+  mean_ms=0.7655, p95_ms=1.0055, recall@k=0.0469, coverage=1.0000, agreement=1.0000, subset_ok=1.0000
+
+Hybrid with rerank over 200 recovered candidates
+  mean_ms=0.7850, p95_ms=0.9688, recall@k=0.0469, coverage=1.0000, agreement=1.0000, subset_ok=1.0000
+
+Hybrid with rerank over 400 recovered candidates
+  mean_ms=0.8756, p95_ms=1.1341, recall@k=0.0469, coverage=1.0000, agreement=1.0000, subset_ok=1.0000
+
+================================================================================
+INTERPRETATION
+================================================================================
+- candidate_coverage_of_online_exhaustive@k shows whether retrieval already recovered the items
+  that the adapted online model would ideally want in its final top-k.
+- agreement_with_online_exhaustive@k shows how close the reranked result gets to the exhaustive
+  online ranking when it only sees the recovered candidate pool.
+- subset_of_candidate_pool_rate should be 1.0; if so, rerank is refining the recovered set,
+  not replacing retrieval.
+- This benchmark is warm-start only: adapt/test were filtered to entities already known in base.
+- Therefore, conclusions here do not cover user cold-start or item cold-start.
+

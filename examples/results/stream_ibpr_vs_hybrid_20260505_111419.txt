@@ -1,0 +1,185 @@
+Logging results to: results\stream_ibpr_vs_hybrid_20260505_111419.txt
+Quality CSV      : results\stream_ibpr_vs_hybrid_quality_20260505_111419.csv
+Latency CSV      : results\stream_ibpr_vs_hybrid_latency_20260505_111419.csv
+
+================================================================================
+STREAM / CHUNK EXPERIMENT SUMMARY
+================================================================================
+Variant                : 1M
+Base rows              : 501,886
+Stream rows (filtered) : 8,468
+Holdout rows (filtered): 44,000
+Stream chunks          : 4
+  Chunk  1: 2,100 interactions
+  Chunk  2: 2,291 interactions
+  Chunk  3: 1,493 interactions
+  Chunk  4: 2,584 interactions
+
+================================================================================
+STEP 1 - TRAIN BASE IBPR
+================================================================================
+Base IBPR train time: 146.6759 s
+
+================================================================================
+STEP 2 - INITIALIZE HYBRID ONLINE MODEL
+================================================================================
+Hybrid model initialized from IBPR warm-start.
+
+Retriever backend: sklearn_knn
+
+================================================================================
+STAGE 1 - EVALUATE CURRENT MODELS ON NEXT CHUNK
+================================================================================
+Current train size: 501,886
+Chunk test size   : 2,100
+IBPR base metrics
+  AUC         : 0.8413
+  MAP         : 0.0734
+  NDCG@20     : 0.0939
+  Precision@20: 0.0929
+  Recall@20   : 0.0386
+  eval_time_s  : 0.0723
+
+Hybrid current metrics
+  AUC         : 0.8413
+  MAP         : 0.0734
+  NDCG@20     : 0.0939
+  Precision@20: 0.0929
+  Recall@20   : 0.0386
+  eval_time_s  : 0.0578
+
+Latency benchmark
+  IBPR_indexed_topk: mean_ms=0.8020, p95_ms=1.1432, qps=1246.87, recall@k=0.0386
+  IBPR_indexed_plus_online_rerank: mean_ms=0.7558, p95_ms=0.9180, qps=1323.14, recall@k=0.0386
+
+Updating hybrid with chunk 1...
+Epoch 1/1 - avg loss per sample: 0.402226
+Partial learning completed
+Hybrid update time for chunk 1: 0.0791 s
+Hybrid cumulative update time           : 0.0791 s
+
+================================================================================
+STAGE 2 - EVALUATE CURRENT MODELS ON NEXT CHUNK
+================================================================================
+Current train size: 503,986
+Chunk test size   : 2,291
+IBPR base metrics
+  AUC         : 0.8070
+  MAP         : 0.0580
+  NDCG@20     : 0.0771
+  Precision@20: 0.0769
+  Recall@20   : 0.0185
+  eval_time_s  : 0.0865
+
+Hybrid current metrics
+  AUC         : 0.8081
+  MAP         : 0.0600
+  NDCG@20     : 0.0829
+  Precision@20: 0.0823
+  Recall@20   : 0.0229
+  eval_time_s  : 0.0696
+
+Latency benchmark
+  IBPR_indexed_topk: mean_ms=0.7843, p95_ms=1.0579, qps=1275.08, recall@k=0.0185
+  IBPR_indexed_plus_online_rerank: mean_ms=0.7960, p95_ms=0.9661, qps=1256.25, recall@k=0.0229
+
+Updating hybrid with chunk 2...
+Epoch 1/1 - avg loss per sample: 0.411015
+Partial learning completed
+Hybrid update time for chunk 2: 0.0778 s
+Hybrid cumulative update time           : 0.1570 s
+
+================================================================================
+STAGE 3 - EVALUATE CURRENT MODELS ON NEXT CHUNK
+================================================================================
+Current train size: 506,277
+Chunk test size   : 1,493
+IBPR base metrics
+  AUC         : 0.8256
+  MAP         : 0.0457
+  NDCG@20     : 0.0557
+  Precision@20: 0.0493
+  Recall@20   : 0.0394
+  eval_time_s  : 0.0811
+
+Hybrid current metrics
+  AUC         : 0.8263
+  MAP         : 0.0465
+  NDCG@20     : 0.0578
+  Precision@20: 0.0513
+  Recall@20   : 0.0354
+  eval_time_s  : 0.0652
+
+Latency benchmark
+  IBPR_indexed_topk: mean_ms=0.7984, p95_ms=1.0817, qps=1252.43, recall@k=0.0394
+  IBPR_indexed_plus_online_rerank: mean_ms=0.7702, p95_ms=0.8502, qps=1298.43, recall@k=0.0354
+
+Updating hybrid with chunk 3...
+Epoch 1/1 - avg loss per sample: 0.405215
+Partial learning completed
+Hybrid update time for chunk 3: 0.0649 s
+Hybrid cumulative update time           : 0.2219 s
+
+================================================================================
+STAGE 4 - EVALUATE CURRENT MODELS ON NEXT CHUNK
+================================================================================
+Current train size: 507,770
+Chunk test size   : 2,584
+IBPR base metrics
+  AUC         : 0.8027
+  MAP         : 0.0426
+  NDCG@20     : 0.0540
+  Precision@20: 0.0399
+  Recall@20   : 0.0418
+  eval_time_s  : 0.1363
+
+Hybrid current metrics
+  AUC         : 0.8020
+  MAP         : 0.0447
+  NDCG@20     : 0.0555
+  Precision@20: 0.0399
+  Recall@20   : 0.0400
+  eval_time_s  : 0.1219
+
+Latency benchmark
+  IBPR_indexed_topk: mean_ms=0.7862, p95_ms=1.0953, qps=1271.86, recall@k=0.0418
+  IBPR_indexed_plus_online_rerank: mean_ms=0.8642, p95_ms=1.3149, qps=1157.13, recall@k=0.0400
+
+Updating hybrid with chunk 4...
+Epoch 1/1 - avg loss per sample: 0.441839
+Partial learning completed
+Hybrid update time for chunk 4: 0.0720 s
+Hybrid cumulative update time           : 0.2939 s
+
+================================================================================
+FINAL HOLDOUT EVALUATION
+================================================================================
+Final holdout - IBPR base
+  AUC         : 0.8216
+  MAP         : 0.0974
+  NDCG@20     : 0.1341
+  Precision@20: 0.1286
+  Recall@20   : 0.0508
+  eval_time_s  : 1.0054
+
+Final holdout - Hybrid
+  AUC         : 0.8220
+  MAP         : 0.0979
+  NDCG@20     : 0.1367
+  Precision@20: 0.1298
+  Recall@20   : 0.0528
+  eval_time_s  : 0.9765
+
+Final holdout latency
+  IBPR_indexed_topk: mean_ms=0.7319, p95_ms=0.9641, qps=1366.38, recall@k=0.0492
+  IBPR_indexed_plus_online_rerank: mean_ms=0.7516, p95_ms=0.9129, qps=1330.55, recall@k=0.0524
+
+================================================================================
+SUMMARY
+================================================================================
+Base train time                 : 146.6759 s
+Hybrid cumulative update time   : 0.2939 s
+Hybrid avg chunk update time    : 0.0735 s
+Final holdout ΔRecall@20 (Hybrid - Base): 0.0020
+Final holdout latency overhead mean_ms (Hybrid - Base): 0.0197
+
