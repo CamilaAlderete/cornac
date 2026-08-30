@@ -18,22 +18,24 @@ import torch
 import torch.nn.functional as F
 
 # Helpers para lograr el entrenamiento parcial
-def _build_user_positive_sets(history_csr):
-    """Construye, para cada usuario, el conjunto de ítems positivos históricos."""
-    user_pos_sets = []
-    for u in range(history_csr.shape[0]):
+def _build_user_positive_sets(history_csr, user_ids):
+    """Construye los positivos históricos solo para los usuarios requeridos."""
+    user_pos_sets = {}
+
+    for u in user_ids:
+        u = int(u)
         start = history_csr.indptr[u]
         end = history_csr.indptr[u + 1]
-        user_pos_sets.append(set(history_csr.indices[start:end]))
-    return user_pos_sets
+        user_pos_sets[u] = set(history_csr.indices[start:end])
 
+    return user_pos_sets
 
 def _sample_negatives_uniform(batch_u, user_pos_sets, n_items, rng):
     """Muestrea un ítem negativo j para cada usuario del batch."""
     batch_j = np.empty(len(batch_u), dtype=np.int64)
 
     for idx, u in enumerate(batch_u):
-        positives = user_pos_sets[u]
+        positives = user_pos_sets[int(u)]
 
         # Caso extremo: si el usuario ya interactuó con todo, no hay negativo válido
         if len(positives) >= n_items:
@@ -53,6 +55,9 @@ def _sample_negatives_uniform(batch_u, user_pos_sets, n_items, rng):
 def _iter_recent_batches(recent_pairs, batch_size, shuffle, rng):
     """Itera batches de pares recientes (u, i)."""
     recent_pairs = np.asarray(recent_pairs, dtype=np.int64)
+
+    if recent_pairs.size == 0:
+        recent_pairs = np.empty((0, 2), dtype=np.int64)
 
     if recent_pairs.ndim != 2 or recent_pairs.shape[1] != 2:
         raise ValueError("recent_pairs debe tener shape (n, 2) con columnas [u, i].")
@@ -127,7 +132,9 @@ def online_ibpr_mejorado(
         in this first version.
 
     normalize: bool, default=False
-        If True, L2-normalizes U and V at the end.
+    If True, L2-normalizes user factors after training.
+    Item factors are normalized only when update_V=True.
+    When update_V=False, V remains unchanged.
 
     verbose: bool, default=False
         If True, prints training progress.
@@ -169,6 +176,9 @@ def online_ibpr_mejorado(
         X = history_csr
         recent_pairs = np.asarray(recent_pairs, dtype=np.int64)
 
+        if recent_pairs.size == 0:
+            recent_pairs = np.empty((0, 2), dtype=np.int64)
+
         if recent_pairs.ndim != 2 or recent_pairs.shape[1] != 2:
             raise ValueError("recent_pairs debe tener shape (n, 2) con columnas [u, i].")
 
@@ -189,11 +199,19 @@ def online_ibpr_mejorado(
                 )
 
         if len(recent_pairs) == 0:
-            # No hay nada nuevo que aprender; devolvemos los parámetros actuales
-            if init_params is None or init_params.get("U") is None or init_params.get("V") is None:
+            if (
+                    init_params is None
+                    or init_params.get("U") is None
+                    or init_params.get("V") is None
+            ):
                 raise ValueError(
                     "recent_pairs está vacío y no hay init_params válidos para devolver."
                 )
+
+            return {
+                "U": np.asarray(init_params["U"]).copy(),
+                "V": np.asarray(init_params["V"]).copy(),
+            }
 
     else:
         if train_set is None:
@@ -206,36 +224,60 @@ def online_ibpr_mejorado(
     if init_params is None:
         init_params = {"U": None, "V": None}
 
+    if use_recent_mode and (
+            init_params.get("U") is None or init_params.get("V") is None
+    ):
+        raise ValueError(
+            "El modo partial requiere U y V previamente entrenados mediante warm-start."
+        )
+
+    if not update_V and init_params.get("V") is None:
+        raise ValueError(
+            "update_V=False requiere factores de items V previamente entrenados. "
+            "Proporciona init_params con V obtenida de un modelo IBPR previamente entrenado "
+            "o utiliza update_V=True para entrenar los factores de items."
+        )
+
+    torch.manual_seed(random_seed)
+
     if init_params.get("U") is None:
         U = torch.randn(X.shape[0], k, requires_grad=True)
     else:
-        U_np = init_params["U"]
-        if U_np.shape[1] != k:
+        U_np = np.asarray(init_params["U"])
+
+        if U_np.ndim != 2 or U_np.shape[1] != k:
             raise ValueError(
-                f"init_params['U'] has k={U_np.shape[1]} but k={k} was requested."
+                f"init_params['U'] debe tener shape (n_users, {k}). "
+                f"Shape recibido: {U_np.shape}."
             )
         U = torch.from_numpy(U_np).clone().detach().requires_grad_(True)
-        # Expand for new users if needed (online-friendly). Keeping extra rows (if any).
-        if U.shape[0] < X.shape[0]:
-            pad = torch.randn(X.shape[0] - U.shape[0], k)
-            U = torch.cat([U, pad], dim=0).requires_grad_(True)
+
+    if U.shape[0] != X.shape[0]:
+        raise ValueError(
+            f"Cantidad de usuarios incompatible: U={U.shape[0]}, history={X.shape[0]}. "
+            "Esta versión solo soporta usuarios conocidos."
+        )
 
     if init_params.get("V") is None:
         # If items are kept fixed (update_V=False), avoid tracking gradients for V
         V = torch.randn(X.shape[1], k, requires_grad=update_V)
     else:
-        V_np = init_params["V"]
-        if V_np.shape[1] != k:
+        V_np = np.asarray(init_params["V"])
+
+        if V_np.ndim != 2 or V_np.shape[1] != k:
             raise ValueError(
-                f"init_params['V'] has k={V_np.shape[1]} but k={k} was requested."
+                f"init_params['V'] debe tener shape (n_items, {k}). "
+                f"Shape recibido: {V_np.shape}."
             )
         V = (
             torch.from_numpy(V_np).clone().detach().requires_grad_(update_V)
         )
-        # Expand for new items if needed (online-friendly). Keeping extra rows (if any).
-        if V.shape[0] < X.shape[1]:
-            pad = torch.randn(X.shape[1] - V.shape[0], k)
-            V = torch.cat([V, pad], dim=0).requires_grad_(update_V)
+
+    if V.shape[0] != X.shape[1]:
+        raise ValueError(
+            f"Cantidad de items incompatible: V={V.shape[0]}, history={X.shape[1]}. "
+            "Esta versión solo soporta items conocidos."
+        )
 
     # Optimizer: by default update only U for fast online behavior.
     params = [U] + ([V] if update_V else [])
@@ -251,6 +293,9 @@ def online_ibpr_mejorado(
 
     rng = np.random.default_rng(random_seed)
 
+    if max_steps is not None and max_steps < 1:
+        raise ValueError("max_steps debe ser None o un entero mayor o igual a 1.")
+
     if loss_mode not in {"angular", "cosine_bpr"}:
         raise ValueError("loss_mode debe ser 'angular' o 'cosine_bpr'.")
 
@@ -260,7 +305,15 @@ def online_ibpr_mejorado(
             raise NotImplementedError(
                 "En esta primera versión del modo recent_pairs, usa neg_sampling='uniform'."
             )
-        user_pos_sets = _build_user_positive_sets(X)
+
+        affected_users = np.unique(recent_pairs[:, 0])
+        user_pos_sets = _build_user_positive_sets(
+            X,
+            affected_users,
+        )
+
+        for u, i in recent_pairs:
+            user_pos_sets[int(u)].add(int(i))
 
     stop_early = False
     total_steps = 0
@@ -310,7 +363,13 @@ def online_ibpr_mejorado(
                 regI = None
                 regJ = None
 
-            # Batch factors are used directly for regularization to avoid NumPy unique/union overhead.
+            regU_unq = U[torch.unique(bu), :]
+
+            if update_V:
+                unique_items = torch.unique(torch.cat((bi, bj)))
+                regV_unq = V[unique_items, :]
+
+            # Use unique user/item factors for regularization.
 
             # Normalize to compute angular distances (as in IBPR)
             regU_norm = regU / (regU.norm(dim=1, keepdim=True) + eps)
@@ -334,9 +393,9 @@ def online_ibpr_mejorado(
                 rank_loss = F.softplus(-score_diff).sum()
 
             if update_V:
-                reg_term = regU.norm().pow(2) + regI.norm().pow(2) + regJ.norm().pow(2)
+                reg_term = regU_unq.norm().pow(2) + regV_unq.norm().pow(2)
             else:
-                reg_term = regU.norm().pow(2)
+                reg_term = regU_unq.norm().pow(2)
 
             loss = lamda * reg_term + rank_loss
 
@@ -362,10 +421,11 @@ def online_ibpr_mejorado(
 
     # Optional normalization for deployment consistency.
     if normalize:
-        # Normalize both U and V for scoring consistency regardless of update_V
         with torch.no_grad():
             U = torch.nn.functional.normalize(U, p=2, dim=1)
-            V = torch.nn.functional.normalize(V, p=2, dim=1)
+
+            if update_V:
+                V = torch.nn.functional.normalize(V, p=2, dim=1)
 
     U = U.data.cpu().numpy()
     V = V.data.cpu().numpy()

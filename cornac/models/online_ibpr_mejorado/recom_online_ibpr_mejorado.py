@@ -69,8 +69,9 @@ class OnlineIBPRMejorado(Recommender, ANNMixin):
         {'uniform', 'popularity'}.
 
     normalize: bool, optional, default: False
-        If True, L2-normalize user and item factors after training to keep
-        scoring consistent with the angular objective.
+        If True, L2-normalizes user factors after training.
+        Item factors are normalized only when update_V=True.
+        When update_V=False, V remains unchanged.
 
     loss_mode: str, optional, default: 'angular'
         Ranking loss mode used by the core training function.
@@ -106,6 +107,7 @@ class OnlineIBPRMejorado(Recommender, ANNMixin):
         neg_sampling="uniform",
         normalize=False,
         loss_mode="angular",
+        seed=42,
     ):
         Recommender.__init__(self, name=name, trainable=trainable, verbose=verbose)
         self.k = k
@@ -123,6 +125,8 @@ class OnlineIBPRMejorado(Recommender, ANNMixin):
         self.neg_sampling = neg_sampling
         self.normalize = normalize
         self.loss_mode = loss_mode
+        self.seed = seed
+        self._partial_update_count = 0
 
     def fit(self, train_set, val_set=None):
         """Fit the model to observations.
@@ -158,9 +162,11 @@ class OnlineIBPRMejorado(Recommender, ANNMixin):
                 normalize=self.normalize,
                 verbose=self.verbose,
                 loss_mode=self.loss_mode,
+                random_seed=self.seed,
             )
             self.U = np.asarray(res["U"])
             self.V = np.asarray(res["V"])
+            self._partial_update_count = 0
 
             if self.verbose:
                 print("Learning completed")
@@ -212,10 +218,14 @@ class OnlineIBPRMejorado(Recommender, ANNMixin):
                 history_csr=history_csr,
                 max_steps=max_steps,
                 loss_mode=self.loss_mode,
+                random_seed=self.seed + self._partial_update_count,
             )
 
             self.U = np.asarray(res["U"])
             self.V = np.asarray(res["V"])
+
+            if len(recent_pairs) > 0:
+                self._partial_update_count += 1
 
             if self.verbose:
                 print("Partial learning completed")
