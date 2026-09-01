@@ -1,0 +1,221 @@
+Logging results to: results\master_stale_online_retrain_seed_42_20260830_232628.txt
+Quality CSV      : results\master_stale_online_retrain_quality_seed_42_20260830_232628.csv
+
+================================================================================
+STREAM / CHUNK EXPERIMENT SUMMARY
+================================================================================
+Variant                : 1M
+Base rows              : 501,886
+Stream rows (filtered) : 8,468
+Holdout rows (filtered): 44,000
+Stream chunks          : 4
+  Chunk  1: 2,100 interactions
+  Chunk  2: 2,291 interactions
+  Chunk  3: 1,493 interactions
+  Chunk  4: 2,584 interactions
+
+================================================================================
+STEP 1 - TRAIN BASE IBPR
+================================================================================
+Base IBPR train time: 278.8214 s
+
+================================================================================
+STEP 2 - INITIALIZE ONLINE MODEL
+================================================================================
+Online model initialized from IBPR warm-start.
+
+================================================================================
+STAGE 1 - EVALUATE CURRENT MODELS ON NEXT CHUNK
+================================================================================
+Current train size: 501,886
+Chunk test size   : 2,100
+IBPR base metrics
+  AUC         : 0.8408
+  MAP         : 0.0734
+  NDCG@20     : 0.0923
+  Precision@20: 0.0898
+  Recall@20   : 0.0353
+  eval_time_s  : 0.1576
+
+Online current metrics
+  AUC         : 0.8408
+  MAP         : 0.0734
+  NDCG@20     : 0.0923
+  Precision@20: 0.0898
+  Recall@20   : 0.0353
+  eval_time_s  : 0.1292
+
+Full Retrain current metrics
+  AUC         : 0.8408
+  MAP         : 0.0734
+  NDCG@20     : 0.0923
+  Precision@20: 0.0898
+  Recall@20   : 0.0353
+  eval_time_s  : 0.1202
+
+Updating OnlineIBPR with chunk 1...
+Epoch 1/1 - avg loss per sample: 0.401502
+Partial learning completed
+Online update time for chunk 1: 0.1251 s
+Online cumulative update time           : 0.1251 s
+
+Full retraining IBPR after chunk 1...
+Full retrain time for chunk 1: 287.5390 s
+Full retrain cumulative time           : 287.5390 s
+
+================================================================================
+STAGE 2 - EVALUATE CURRENT MODELS ON NEXT CHUNK
+================================================================================
+Current train size: 503,986
+Chunk test size   : 2,291
+IBPR base metrics
+  AUC         : 0.8071
+  MAP         : 0.0578
+  NDCG@20     : 0.0754
+  Precision@20: 0.0746
+  Recall@20   : 0.0213
+  eval_time_s  : 0.1882
+
+Online current metrics
+  AUC         : 0.8082
+  MAP         : 0.0591
+  NDCG@20     : 0.0806
+  Precision@20: 0.0800
+  Recall@20   : 0.0245
+  eval_time_s  : 0.1548
+
+Full Retrain current metrics
+  AUC         : 0.8077
+  MAP         : 0.0603
+  NDCG@20     : 0.0808
+  Precision@20: 0.0769
+  Recall@20   : 0.0259
+  eval_time_s  : 0.1692
+
+Updating OnlineIBPR with chunk 2...
+Epoch 1/1 - avg loss per sample: 0.425277
+Partial learning completed
+Online update time for chunk 2: 0.0928 s
+Online cumulative update time           : 0.2178 s
+
+Full retraining IBPR after chunk 2...
+Full retrain time for chunk 2: 287.9464 s
+Full retrain cumulative time           : 575.4854 s
+
+================================================================================
+STAGE 3 - EVALUATE CURRENT MODELS ON NEXT CHUNK
+================================================================================
+Current train size: 506,277
+Chunk test size   : 1,493
+IBPR base metrics
+  AUC         : 0.8266
+  MAP         : 0.0460
+  NDCG@20     : 0.0568
+  Precision@20: 0.0513
+  Recall@20   : 0.0414
+  eval_time_s  : 0.1767
+
+Online current metrics
+  AUC         : 0.8272
+  MAP         : 0.0466
+  NDCG@20     : 0.0588
+  Precision@20: 0.0520
+  Recall@20   : 0.0388
+  eval_time_s  : 0.1333
+
+Full Retrain current metrics
+  AUC         : 0.8270
+  MAP         : 0.0445
+  NDCG@20     : 0.0480
+  Precision@20: 0.0414
+  Recall@20   : 0.0400
+  eval_time_s  : 0.1366
+
+Updating OnlineIBPR with chunk 3...
+Epoch 1/1 - avg loss per sample: 0.393130
+Partial learning completed
+Online update time for chunk 3: 0.0541 s
+Online cumulative update time           : 0.2719 s
+
+Full retraining IBPR after chunk 3...
+Full retrain time for chunk 3: 289.0360 s
+Full retrain cumulative time           : 864.5214 s
+
+================================================================================
+STAGE 4 - EVALUATE CURRENT MODELS ON NEXT CHUNK
+================================================================================
+Current train size: 507,770
+Chunk test size   : 2,584
+IBPR base metrics
+  AUC         : 0.8036
+  MAP         : 0.0410
+  NDCG@20     : 0.0560
+  Precision@20: 0.0413
+  Recall@20   : 0.0485
+  eval_time_s  : 0.2764
+
+Online current metrics
+  AUC         : 0.8031
+  MAP         : 0.0417
+  NDCG@20     : 0.0554
+  Precision@20: 0.0406
+  Recall@20   : 0.0460
+  eval_time_s  : 0.2504
+
+Full Retrain current metrics
+  AUC         : 0.8058
+  MAP         : 0.0403
+  NDCG@20     : 0.0539
+  Precision@20: 0.0413
+  Recall@20   : 0.0492
+  eval_time_s  : 0.2501
+
+Updating OnlineIBPR with chunk 4...
+Epoch 1/1 - avg loss per sample: 0.435883
+Partial learning completed
+Online update time for chunk 4: 0.0613 s
+Online cumulative update time           : 0.3333 s
+
+Full retraining IBPR after chunk 4...
+Full retrain time for chunk 4: 290.8583 s
+Full retrain cumulative time           : 1155.3797 s
+
+================================================================================
+FINAL HOLDOUT EVALUATION
+================================================================================
+Final holdout - IBPR base
+  AUC         : 0.8222
+  MAP         : 0.0975
+  NDCG@20     : 0.1359
+  Precision@20: 0.1296
+  Recall@20   : 0.0514
+  eval_time_s  : 1.9299
+
+Final holdout - OnlineIBPR
+  AUC         : 0.8230
+  MAP         : 0.0985
+  NDCG@20     : 0.1388
+  Precision@20: 0.1305
+  Recall@20   : 0.0542
+  eval_time_s  : 1.8782
+
+Final holdout - IBPR Full Retrain
+  AUC         : 0.8258
+  MAP         : 0.0978
+  NDCG@20     : 0.1383
+  Precision@20: 0.1294
+  Recall@20   : 0.0515
+  eval_time_s  : 1.8841
+
+================================================================================
+SUMMARY
+================================================================================
+Base train time                 : 278.8214 s
+Online cumulative update time   : 0.3333 s
+Online avg chunk update time    : 0.0833 s
+Full retrain cumulative time    : 1155.3797 s
+Full retrain avg time           : 288.8449 s
+Final holdout ΔRecall@20 (Online - Stale): 0.0028
+
+Final holdout ΔRecall@20 (Full Retrain - Stale): 0.0002
+Final holdout ΔRecall@20 (Online - Full Retrain): 0.0026
