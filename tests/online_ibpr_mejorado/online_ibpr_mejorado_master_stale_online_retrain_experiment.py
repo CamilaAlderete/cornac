@@ -30,7 +30,8 @@ STREAM_FRAC = 0.20
 HOLDOUT_FRAC = 0.20
 N_STREAM_CHUNKS = 4
 TOP_K = 20
-RESULTS_DIR = "results"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+RESULTS_DIR = os.path.join(SCRIPT_DIR, "results")
 
 IBPR_CONFIG = {
     "k": 50,

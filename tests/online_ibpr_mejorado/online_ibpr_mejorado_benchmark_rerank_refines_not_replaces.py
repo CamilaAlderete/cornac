@@ -26,7 +26,9 @@ TEST_FRAC = 0.20
 TOP_K = 20
 CANDIDATE_MULTIPLIERS = [1, 2, 5, 10, 20]
 MAX_QUERY_USERS = 300
-RESULTS_DIR = "results"
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+RESULTS_DIR = os.path.join(SCRIPT_DIR, "results")
 
 EXPERIMENT_SCOPE = "warm_start_known_entities"
 COLD_START_INCLUDED = False

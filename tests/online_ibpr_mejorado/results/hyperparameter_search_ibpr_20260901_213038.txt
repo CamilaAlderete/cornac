@@ -1,0 +1,338 @@
+
+####################################################################################################
+HPO TIMESTAMP: 20260901_213038
+####################################################################################################
+Trials CSV : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\hyperparameter_search_ibpr_trials_20260901_213038.csv
+Summary CSV: C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\hyperparameter_search_ibpr_summary_20260901_213038.csv
+Best CSV   : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\hyperparameter_search_ibpr_best_20260901_213038.csv
+
+====================================================================================================
+IBPR BASE HYPERPARAMETER SEARCH - PER-USER TEMPORAL IMPLICIT-FEEDBACK PROTOCOL
+====================================================================================================
+Dataset variant                 : MovieLens 1M
+Positive threshold              : rating >= 3.0
+Feedback used by IBPR           : implicit positive (value = 1.0)
+Primary selection metric        : NDCG@20
+Global HPO horizon              : first 60%
+Later global data used here     : NO (60-100% remains outside HPO)
+Total implicit-positive rows    : 836,478
+Rows inside HPO horizon         : 501,886
+Users inside HPO horizon        : 4,037
+Users eligible for validation   : 4,000 (>= 7 positives)
+
+Per-user temporal folds:
+  fold_1: user-train first 50% | user-validation until 65% | train=249,941 (4,037 users, 3,364 items) | val_candidate=74,337 | val_known=74,260 (99.90%) | eval_users=4,000 | eval_items=2,995
+  fold_2: user-train first 65% | user-validation until 80% | train=324,289 (4,037 users, 3,419 items) | val_candidate=75,578 | val_known=75,525 (99.93%) | eval_users=4,000 | eval_items=3,052
+  fold_3: user-train first 80% | user-validation until 100% | train=399,898 (4,037 users, 3,461 items) | val_candidate=101,945 | val_known=101,879 (99.94%) | eval_users=4,000 | eval_items=3,202
+
+Scope interpretation             : user warm-start is guaranteed by construction; candidate validation items not present in fold training are excluded.
+Temporal interpretation          : chronology is enforced within each user's history; this is not the global prequential protocol used later for H1-H4.
+
+====================================================================================================
+STAGE-A CORE CONFIGURATIONS
+====================================================================================================
+C001 | source=paper_region_plus_cornac_defaults  | k=20  lr=0.05   lamda=0.001   batch=100
+C002 | source=pilot                              | k=50  lr=0.01   lamda=0.001   batch=512
+C003 | source=random_search                      | k=100 lr=0.02   lamda=0.0001  batch=512
+C004 | source=random_search                      | k=50  lr=0.005  lamda=0.0001  batch=100
+C005 | source=random_search                      | k=50  lr=0.05   lamda=0.01    batch=512
+C006 | source=random_search                      | k=20  lr=0.02   lamda=0.0001  batch=100
+C007 | source=random_search                      | k=20  lr=0.05   lamda=0.01    batch=256
+C008 | source=random_search                      | k=50  lr=0.05   lamda=0.0001  batch=256
+C009 | source=random_search                      | k=100 lr=0.005  lamda=0.0001  batch=256
+C010 | source=random_search                      | k=100 lr=0.005  lamda=0.001   batch=512
+C011 | source=random_search                      | k=20  lr=0.05   lamda=0.01    batch=512
+C012 | source=random_search                      | k=100 lr=0.02   lamda=0.001   batch=256
+C013 | source=random_search                      | k=20  lr=0.005  lamda=0.01    batch=256
+C014 | source=random_search                      | k=50  lr=0.02   lamda=0.01    batch=100
+C015 | source=random_search                      | k=100 lr=0.01   lamda=0.0001  batch=100
+C016 | source=random_search                      | k=100 lr=0.01   lamda=0.001   batch=100
+C017 | source=random_search                      | k=100 lr=0.005  lamda=0.001   batch=256
+C018 | source=random_search                      | k=20  lr=0.005  lamda=0.0001  batch=512
+C019 | source=random_search                      | k=50  lr=0.005  lamda=0.01    batch=512
+C020 | source=random_search                      | k=20  lr=0.01   lamda=0.01    batch=256
+
+Protected through Stage C: C001, C002
+
+Budget schedule:
+  Stage A: 20 configs × folds 1-2 × seed 42 × 20 iter
+  Stage B: top 5 + protected anchors × fold 3 × seed 42 × 20 iter
+  Stage C: top 3 + protected anchors × folds 1-3 × max_iter=[20, 50, 100]
+  Stage D: top 2 full configs × folds 1-3 × seeds=[42, 123, 2024]
+
+RUN    C001 | k=20 lr=0.05 lamda=0.001 batch=100 | fold_1 | seed=42 | iter=20
+       NDCG@20=0.056831 | train=265.41s | known_val=99.90%
+RUN    C001 | k=20 lr=0.05 lamda=0.001 batch=100 | fold_2 | seed=42 | iter=20
+       NDCG@20=0.053288 | train=343.11s | known_val=99.93%
+RUN    C002 | k=50 lr=0.01 lamda=0.001 batch=512 | fold_1 | seed=42 | iter=20
+       NDCG@20=0.072425 | train=159.23s | known_val=99.90%
+RUN    C002 | k=50 lr=0.01 lamda=0.001 batch=512 | fold_2 | seed=42 | iter=20
+       NDCG@20=0.067034 | train=210.79s | known_val=99.93%
+RUN    C003 | k=100 lr=0.02 lamda=0.0001 batch=512 | fold_1 | seed=42 | iter=20
+       NDCG@20=0.073449 | train=174.59s | known_val=99.90%
+RUN    C003 | k=100 lr=0.02 lamda=0.0001 batch=512 | fold_2 | seed=42 | iter=20
+       NDCG@20=0.067217 | train=226.42s | known_val=99.93%
+RUN    C004 | k=50 lr=0.005 lamda=0.0001 batch=100 | fold_1 | seed=42 | iter=20
+       NDCG@20=0.075788 | train=174.99s | known_val=99.90%
+RUN    C004 | k=50 lr=0.005 lamda=0.0001 batch=100 | fold_2 | seed=42 | iter=20
+       NDCG@20=0.070364 | train=230.66s | known_val=99.93%
+RUN    C005 | k=50 lr=0.05 lamda=0.01 batch=512 | fold_1 | seed=42 | iter=20
+       NDCG@20=0.056116 | train=100.73s | known_val=99.90%
+RUN    C005 | k=50 lr=0.05 lamda=0.01 batch=512 | fold_2 | seed=42 | iter=20
+       NDCG@20=0.051534 | train=131.51s | known_val=99.93%
+RUN    C006 | k=20 lr=0.02 lamda=0.0001 batch=100 | fold_1 | seed=42 | iter=20
+       NDCG@20=0.068910 | train=160.10s | known_val=99.90%
+RUN    C006 | k=20 lr=0.02 lamda=0.0001 batch=100 | fold_2 | seed=42 | iter=20
+       NDCG@20=0.063403 | train=210.56s | known_val=99.93%
+RUN    C007 | k=20 lr=0.05 lamda=0.01 batch=256 | fold_1 | seed=42 | iter=20
+       NDCG@20=0.048082 | train=113.73s | known_val=99.90%
+RUN    C007 | k=20 lr=0.05 lamda=0.01 batch=256 | fold_2 | seed=42 | iter=20
+       NDCG@20=0.044925 | train=148.97s | known_val=99.93%
+RUN    C008 | k=50 lr=0.05 lamda=0.0001 batch=256 | fold_1 | seed=42 | iter=20
+       NDCG@20=0.068352 | train=159.24s | known_val=99.90%
+RUN    C008 | k=50 lr=0.05 lamda=0.0001 batch=256 | fold_2 | seed=42 | iter=20
+       NDCG@20=0.062358 | train=146.45s | known_val=99.93%
+RUN    C009 | k=100 lr=0.005 lamda=0.0001 batch=256 | fold_1 | seed=42 | iter=20
+       NDCG@20=0.078567 | train=144.26s | known_val=99.90%
+RUN    C009 | k=100 lr=0.005 lamda=0.0001 batch=256 | fold_2 | seed=42 | iter=20
+       NDCG@20=0.072517 | train=183.62s | known_val=99.93%
+RUN    C010 | k=100 lr=0.005 lamda=0.001 batch=512 | fold_1 | seed=42 | iter=20
+       NDCG@20=0.075000 | train=100.78s | known_val=99.90%
+RUN    C010 | k=100 lr=0.005 lamda=0.001 batch=512 | fold_2 | seed=42 | iter=20
+       NDCG@20=0.068298 | train=125.11s | known_val=99.93%
+RUN    C011 | k=20 lr=0.05 lamda=0.01 batch=512 | fold_1 | seed=42 | iter=20
+       NDCG@20=0.055605 | train=82.30s | known_val=99.90%
+RUN    C011 | k=20 lr=0.05 lamda=0.01 batch=512 | fold_2 | seed=42 | iter=20
+       NDCG@20=0.050930 | train=103.78s | known_val=99.93%
+RUN    C012 | k=100 lr=0.02 lamda=0.001 batch=256 | fold_1 | seed=42 | iter=20
+       NDCG@20=0.068901 | train=114.76s | known_val=99.90%
+RUN    C012 | k=100 lr=0.02 lamda=0.001 batch=256 | fold_2 | seed=42 | iter=20
+       NDCG@20=0.063956 | train=141.00s | known_val=99.93%
+RUN    C013 | k=20 lr=0.005 lamda=0.01 batch=256 | fold_1 | seed=42 | iter=20
+       NDCG@20=0.068733 | train=176.67s | known_val=99.90%
+RUN    C013 | k=20 lr=0.005 lamda=0.01 batch=256 | fold_2 | seed=42 | iter=20
+       NDCG@20=0.062876 | train=210.36s | known_val=99.93%
+RUN    C014 | k=50 lr=0.02 lamda=0.01 batch=100 | fold_1 | seed=42 | iter=20
+       NDCG@20=0.055198 | train=222.69s | known_val=99.90%
+RUN    C014 | k=50 lr=0.02 lamda=0.01 batch=100 | fold_2 | seed=42 | iter=20
+       NDCG@20=0.051847 | train=308.61s | known_val=99.93%
+RUN    C015 | k=100 lr=0.01 lamda=0.0001 batch=100 | fold_1 | seed=42 | iter=20
+       NDCG@20=0.068587 | train=264.73s | known_val=99.90%
+RUN    C015 | k=100 lr=0.01 lamda=0.0001 batch=100 | fold_2 | seed=42 | iter=20
+       NDCG@20=0.064682 | train=341.60s | known_val=99.93%
+RUN    C016 | k=100 lr=0.01 lamda=0.001 batch=100 | fold_1 | seed=42 | iter=20
+       NDCG@20=0.068022 | train=261.86s | known_val=99.90%
+RUN    C016 | k=100 lr=0.01 lamda=0.001 batch=100 | fold_2 | seed=42 | iter=20
+       NDCG@20=0.065961 | train=343.45s | known_val=99.93%
+RUN    C017 | k=100 lr=0.005 lamda=0.001 batch=256 | fold_1 | seed=42 | iter=20
+       NDCG@20=0.071308 | train=185.65s | known_val=99.90%
+RUN    C017 | k=100 lr=0.005 lamda=0.001 batch=256 | fold_2 | seed=42 | iter=20
+       NDCG@20=0.065567 | train=238.98s | known_val=99.93%
+RUN    C018 | k=20 lr=0.005 lamda=0.0001 batch=512 | fold_1 | seed=42 | iter=20
+       NDCG@20=0.081954 | train=140.47s | known_val=99.90%
+RUN    C018 | k=20 lr=0.005 lamda=0.0001 batch=512 | fold_2 | seed=42 | iter=20
+       NDCG@20=0.077027 | train=189.71s | known_val=99.93%
+RUN    C019 | k=50 lr=0.005 lamda=0.01 batch=512 | fold_1 | seed=42 | iter=20
+       NDCG@20=0.069474 | train=149.87s | known_val=99.90%
+RUN    C019 | k=50 lr=0.005 lamda=0.01 batch=512 | fold_2 | seed=42 | iter=20
+       NDCG@20=0.065671 | train=200.40s | known_val=99.93%
+RUN    C020 | k=20 lr=0.01 lamda=0.01 batch=256 | fold_1 | seed=42 | iter=20
+       NDCG@20=0.065148 | train=164.67s | known_val=99.90%
+RUN    C020 | k=20 lr=0.01 lamda=0.01 batch=256 | fold_2 | seed=42 | iter=20
+       NDCG@20=0.061055 | train=217.25s | known_val=99.93%
+
+====================================================================================================
+STAGE A - SCREENING RANKING
+====================================================================================================
+#01 C018 k=20 lr=0.005 lamda=0.0001 batch=512 iter=20 | NDCG@20=0.079490 ± 0.003484 | train=165.09s
+#02 C009 k=100 lr=0.005 lamda=0.0001 batch=256 iter=20 | NDCG@20=0.075542 ± 0.004278 | train=163.94s
+#03 C004 k=50 lr=0.005 lamda=0.0001 batch=100 iter=20 | NDCG@20=0.073076 ± 0.003836 | train=202.83s
+#04 C010 k=100 lr=0.005 lamda=0.001 batch=512 iter=20 | NDCG@20=0.071649 ± 0.004739 | train=112.94s
+#05 C003 k=100 lr=0.02 lamda=0.0001 batch=512 iter=20 | NDCG@20=0.070333 ± 0.004407 | train=200.50s
+#06 C002 k=50 lr=0.01 lamda=0.001 batch=512 iter=20 | NDCG@20=0.069730 ± 0.003812 | train=185.01s
+#07 C017 k=100 lr=0.005 lamda=0.001 batch=256 iter=20 | NDCG@20=0.068438 ± 0.004060 | train=212.31s
+#08 C019 k=50 lr=0.005 lamda=0.01 batch=512 iter=20 | NDCG@20=0.067573 ± 0.002689 | train=175.13s
+#09 C016 k=100 lr=0.01 lamda=0.001 batch=100 iter=20 | NDCG@20=0.066992 ± 0.001457 | train=302.66s
+#10 C015 k=100 lr=0.01 lamda=0.0001 batch=100 iter=20 | NDCG@20=0.066635 ± 0.002761 | train=303.17s
+#11 C012 k=100 lr=0.02 lamda=0.001 batch=256 iter=20 | NDCG@20=0.066429 ± 0.003497 | train=127.88s
+#12 C006 k=20 lr=0.02 lamda=0.0001 batch=100 iter=20 | NDCG@20=0.066156 ± 0.003894 | train=185.33s
+#13 C013 k=20 lr=0.005 lamda=0.01 batch=256 iter=20 | NDCG@20=0.065805 ± 0.004141 | train=193.52s
+#14 C008 k=50 lr=0.05 lamda=0.0001 batch=256 iter=20 | NDCG@20=0.065355 ± 0.004239 | train=152.84s
+#15 C020 k=20 lr=0.01 lamda=0.01 batch=256 iter=20 | NDCG@20=0.063101 ± 0.002894 | train=190.96s
+#16 C001 k=20 lr=0.05 lamda=0.001 batch=100 iter=20 | NDCG@20=0.055059 ± 0.002505 | train=304.26s
+#17 C005 k=50 lr=0.05 lamda=0.01 batch=512 iter=20 | NDCG@20=0.053825 ± 0.003240 | train=116.12s
+#18 C014 k=50 lr=0.02 lamda=0.01 batch=100 iter=20 | NDCG@20=0.053522 ± 0.002369 | train=265.65s
+#19 C011 k=20 lr=0.05 lamda=0.01 batch=512 iter=20 | NDCG@20=0.053267 ± 0.003306 | train=93.04s
+#20 C007 k=20 lr=0.05 lamda=0.01 batch=256 iter=20 | NDCG@20=0.046503 ± 0.002233 | train=131.35s
+RUN    C018 | k=20 lr=0.005 lamda=0.0001 batch=512 | fold_3 | seed=42 | iter=20
+       NDCG@20=0.082683 | train=236.08s | known_val=99.94%
+RUN    C009 | k=100 lr=0.005 lamda=0.0001 batch=256 | fold_3 | seed=42 | iter=20
+       NDCG@20=0.078843 | train=305.21s | known_val=99.94%
+RUN    C004 | k=50 lr=0.005 lamda=0.0001 batch=100 | fold_3 | seed=42 | iter=20
+       NDCG@20=0.076151 | train=390.69s | known_val=99.94%
+RUN    C010 | k=100 lr=0.005 lamda=0.001 batch=512 | fold_3 | seed=42 | iter=20
+       NDCG@20=0.077148 | train=248.68s | known_val=99.94%
+RUN    C003 | k=100 lr=0.02 lamda=0.0001 batch=512 | fold_3 | seed=42 | iter=20
+       NDCG@20=0.076225 | train=248.04s | known_val=99.94%
+RUN    C001 | k=20 lr=0.05 lamda=0.001 batch=100 | fold_3 | seed=42 | iter=20
+       NDCG@20=0.058401 | train=358.81s | known_val=99.94%
+RUN    C002 | k=50 lr=0.01 lamda=0.001 batch=512 | fold_3 | seed=42 | iter=20
+       NDCG@20=0.074973 | train=243.31s | known_val=99.94%
+
+====================================================================================================
+STAGE B - THREE-FOLD TEMPORAL RANKING
+====================================================================================================
+#01 C018 k=20 lr=0.005 lamda=0.0001 batch=512 iter=20 | NDCG@20=0.080555 ± 0.003077 | train=188.75s
+#02 C009 k=100 lr=0.005 lamda=0.0001 batch=256 iter=20 | NDCG@20=0.076643 ± 0.003575 | train=211.03s
+#03 C004 k=50 lr=0.005 lamda=0.0001 batch=100 iter=20 | NDCG@20=0.074101 ± 0.003242 | train=265.45s
+#04 C010 k=100 lr=0.005 lamda=0.001 batch=512 iter=20 | NDCG@20=0.073482 ± 0.004616 | train=158.19s
+#05 C003 k=100 lr=0.02 lamda=0.0001 batch=512 iter=20 | NDCG@20=0.072297 ± 0.004613 | train=216.35s
+#06 C002 k=50 lr=0.01 lamda=0.001 batch=512 iter=20 | NDCG@20=0.071477 ± 0.004053 | train=204.44s
+#07 C001 k=20 lr=0.05 lamda=0.001 batch=100 iter=20 | NDCG@20=0.056173 ± 0.002620 | train=322.45s
+REUSE  C018 | fold_1 | seed=42 | iter=20
+REUSE  C018 | fold_2 | seed=42 | iter=20
+REUSE  C018 | fold_3 | seed=42 | iter=20
+RUN    C018 | k=20 lr=0.005 lamda=0.0001 batch=512 | fold_1 | seed=42 | iter=50
+       NDCG@20=0.081961 | train=363.82s | known_val=99.90%
+RUN    C018 | k=20 lr=0.005 lamda=0.0001 batch=512 | fold_2 | seed=42 | iter=50
+       NDCG@20=0.074801 | train=481.19s | known_val=99.93%
+RUN    C018 | k=20 lr=0.005 lamda=0.0001 batch=512 | fold_3 | seed=42 | iter=50
+       NDCG@20=0.080959 | train=584.45s | known_val=99.94%
+RUN    C018 | k=20 lr=0.005 lamda=0.0001 batch=512 | fold_1 | seed=42 | iter=100
+       NDCG@20=0.079837 | train=691.20s | known_val=99.90%
+RUN    C018 | k=20 lr=0.005 lamda=0.0001 batch=512 | fold_2 | seed=42 | iter=100
+       NDCG@20=0.073125 | train=903.19s | known_val=99.93%
+RUN    C018 | k=20 lr=0.005 lamda=0.0001 batch=512 | fold_3 | seed=42 | iter=100
+       NDCG@20=0.079530 | train=1157.07s | known_val=99.94%
+REUSE  C009 | fold_1 | seed=42 | iter=20
+REUSE  C009 | fold_2 | seed=42 | iter=20
+REUSE  C009 | fold_3 | seed=42 | iter=20
+RUN    C009 | k=100 lr=0.005 lamda=0.0001 batch=256 | fold_1 | seed=42 | iter=50
+       NDCG@20=0.078121 | train=458.94s | known_val=99.90%
+RUN    C009 | k=100 lr=0.005 lamda=0.0001 batch=256 | fold_2 | seed=42 | iter=50
+       NDCG@20=0.071419 | train=605.33s | known_val=99.93%
+RUN    C009 | k=100 lr=0.005 lamda=0.0001 batch=256 | fold_3 | seed=42 | iter=50
+       NDCG@20=0.077872 | train=746.70s | known_val=99.94%
+RUN    C009 | k=100 lr=0.005 lamda=0.0001 batch=256 | fold_1 | seed=42 | iter=100
+       NDCG@20=0.078310 | train=895.39s | known_val=99.90%
+RUN    C009 | k=100 lr=0.005 lamda=0.0001 batch=256 | fold_2 | seed=42 | iter=100
+       NDCG@20=0.071866 | train=1180.65s | known_val=99.93%
+RUN    C009 | k=100 lr=0.005 lamda=0.0001 batch=256 | fold_3 | seed=42 | iter=100
+       NDCG@20=0.077398 | train=1439.46s | known_val=99.94%
+REUSE  C004 | fold_1 | seed=42 | iter=20
+REUSE  C004 | fold_2 | seed=42 | iter=20
+REUSE  C004 | fold_3 | seed=42 | iter=20
+RUN    C004 | k=50 lr=0.005 lamda=0.0001 batch=100 | fold_1 | seed=42 | iter=50
+       NDCG@20=0.075530 | train=575.50s | known_val=99.90%
+RUN    C004 | k=50 lr=0.005 lamda=0.0001 batch=100 | fold_2 | seed=42 | iter=50
+       NDCG@20=0.069235 | train=726.90s | known_val=99.93%
+RUN    C004 | k=50 lr=0.005 lamda=0.0001 batch=100 | fold_3 | seed=42 | iter=50
+       NDCG@20=0.075404 | train=937.00s | known_val=99.94%
+RUN    C004 | k=50 lr=0.005 lamda=0.0001 batch=100 | fold_1 | seed=42 | iter=100
+       NDCG@20=0.074153 | train=1194.99s | known_val=99.90%
+RUN    C004 | k=50 lr=0.005 lamda=0.0001 batch=100 | fold_2 | seed=42 | iter=100
+       NDCG@20=0.070210 | train=1557.41s | known_val=99.93%
+RUN    C004 | k=50 lr=0.005 lamda=0.0001 batch=100 | fold_3 | seed=42 | iter=100
+       NDCG@20=0.074536 | train=1930.47s | known_val=99.94%
+REUSE  C001 | fold_1 | seed=42 | iter=20
+REUSE  C001 | fold_2 | seed=42 | iter=20
+REUSE  C001 | fold_3 | seed=42 | iter=20
+RUN    C001 | k=20 lr=0.05 lamda=0.001 batch=100 | fold_1 | seed=42 | iter=50
+       NDCG@20=0.057815 | train=573.21s | known_val=99.90%
+RUN    C001 | k=20 lr=0.05 lamda=0.001 batch=100 | fold_2 | seed=42 | iter=50
+       NDCG@20=0.051447 | train=736.35s | known_val=99.93%
+RUN    C001 | k=20 lr=0.05 lamda=0.001 batch=100 | fold_3 | seed=42 | iter=50
+       NDCG@20=0.058409 | train=916.85s | known_val=99.94%
+RUN    C001 | k=20 lr=0.05 lamda=0.001 batch=100 | fold_1 | seed=42 | iter=100
+       NDCG@20=0.053878 | train=1123.53s | known_val=99.90%
+RUN    C001 | k=20 lr=0.05 lamda=0.001 batch=100 | fold_2 | seed=42 | iter=100
+       NDCG@20=0.050740 | train=1479.83s | known_val=99.93%
+RUN    C001 | k=20 lr=0.05 lamda=0.001 batch=100 | fold_3 | seed=42 | iter=100
+       NDCG@20=0.057345 | train=1808.25s | known_val=99.94%
+REUSE  C002 | fold_1 | seed=42 | iter=20
+REUSE  C002 | fold_2 | seed=42 | iter=20
+REUSE  C002 | fold_3 | seed=42 | iter=20
+RUN    C002 | k=50 lr=0.01 lamda=0.001 batch=512 | fold_1 | seed=42 | iter=50
+       NDCG@20=0.075444 | train=374.03s | known_val=99.90%
+RUN    C002 | k=50 lr=0.01 lamda=0.001 batch=512 | fold_2 | seed=42 | iter=50
+       NDCG@20=0.070349 | train=487.90s | known_val=99.93%
+RUN    C002 | k=50 lr=0.01 lamda=0.001 batch=512 | fold_3 | seed=42 | iter=50
+       NDCG@20=0.077069 | train=604.16s | known_val=99.94%
+RUN    C002 | k=50 lr=0.01 lamda=0.001 batch=512 | fold_1 | seed=42 | iter=100
+       NDCG@20=0.076833 | train=732.96s | known_val=99.90%
+RUN    C002 | k=50 lr=0.01 lamda=0.001 batch=512 | fold_2 | seed=42 | iter=100
+       NDCG@20=0.071007 | train=722.67s | known_val=99.93%
+RUN    C002 | k=50 lr=0.01 lamda=0.001 batch=512 | fold_3 | seed=42 | iter=100
+       NDCG@20=0.077127 | train=794.89s | known_val=99.94%
+
+====================================================================================================
+STAGE C - ITERATION-BUDGET RANKING
+====================================================================================================
+#01 C018 k=20 lr=0.005 lamda=0.0001 batch=512 iter=20 | NDCG@20=0.080555 ± 0.003077 | train=188.75s
+#02 C018 k=20 lr=0.005 lamda=0.0001 batch=512 iter=50 | NDCG@20=0.079241 ± 0.003877 | train=476.49s
+#03 C018 k=20 lr=0.005 lamda=0.0001 batch=512 iter=100 | NDCG@20=0.077498 ± 0.003790 | train=917.15s
+#04 C009 k=100 lr=0.005 lamda=0.0001 batch=256 iter=20 | NDCG@20=0.076643 ± 0.003575 | train=211.03s
+#05 C009 k=100 lr=0.005 lamda=0.0001 batch=256 iter=100 | NDCG@20=0.075858 ± 0.003487 | train=1171.83s
+#06 C009 k=100 lr=0.005 lamda=0.0001 batch=256 iter=50 | NDCG@20=0.075804 ± 0.003800 | train=603.66s
+#07 C002 k=50 lr=0.01 lamda=0.001 batch=512 iter=100 | NDCG@20=0.074989 ± 0.003452 | train=750.17s
+#08 C002 k=50 lr=0.01 lamda=0.001 batch=512 iter=50 | NDCG@20=0.074288 ± 0.003506 | train=488.70s
+#09 C004 k=50 lr=0.005 lamda=0.0001 batch=100 iter=20 | NDCG@20=0.074101 ± 0.003242 | train=265.45s
+#10 C004 k=50 lr=0.005 lamda=0.0001 batch=100 iter=50 | NDCG@20=0.073390 ± 0.003599 | train=746.47s
+#11 C004 k=50 lr=0.005 lamda=0.0001 batch=100 iter=100 | NDCG@20=0.072966 ± 0.002395 | train=1560.96s
+#12 C002 k=50 lr=0.01 lamda=0.001 batch=512 iter=20 | NDCG@20=0.071477 ± 0.004053 | train=204.44s
+#13 C001 k=20 lr=0.05 lamda=0.001 batch=100 iter=20 | NDCG@20=0.056173 ± 0.002620 | train=322.45s
+#14 C001 k=20 lr=0.05 lamda=0.001 batch=100 iter=50 | NDCG@20=0.055890 ± 0.003859 | train=742.14s
+#15 C001 k=20 lr=0.05 lamda=0.001 batch=100 iter=100 | NDCG@20=0.053988 ± 0.003304 | train=1470.53s
+REUSE  C018 | fold_1 | seed=42 | iter=20
+REUSE  C018 | fold_2 | seed=42 | iter=20
+REUSE  C018 | fold_3 | seed=42 | iter=20
+RUN    C018 | k=20 lr=0.005 lamda=0.0001 batch=512 | fold_1 | seed=123 | iter=20
+       NDCG@20=0.080991 | train=86.69s | known_val=99.90%
+RUN    C018 | k=20 lr=0.005 lamda=0.0001 batch=512 | fold_2 | seed=123 | iter=20
+       NDCG@20=0.073768 | train=109.93s | known_val=99.93%
+RUN    C018 | k=20 lr=0.005 lamda=0.0001 batch=512 | fold_3 | seed=123 | iter=20
+       NDCG@20=0.080884 | train=136.92s | known_val=99.94%
+RUN    C018 | k=20 lr=0.005 lamda=0.0001 batch=512 | fold_1 | seed=2024 | iter=20
+       NDCG@20=0.082894 | train=84.11s | known_val=99.90%
+RUN    C018 | k=20 lr=0.005 lamda=0.0001 batch=512 | fold_2 | seed=2024 | iter=20
+       NDCG@20=0.072543 | train=110.16s | known_val=99.93%
+RUN    C018 | k=20 lr=0.005 lamda=0.0001 batch=512 | fold_3 | seed=2024 | iter=20
+       NDCG@20=0.081322 | train=137.25s | known_val=99.94%
+REUSE  C018 | fold_1 | seed=42 | iter=50
+REUSE  C018 | fold_2 | seed=42 | iter=50
+REUSE  C018 | fold_3 | seed=42 | iter=50
+RUN    C018 | k=20 lr=0.005 lamda=0.0001 batch=512 | fold_1 | seed=123 | iter=50
+       NDCG@20=0.083418 | train=208.21s | known_val=99.90%
+RUN    C018 | k=20 lr=0.005 lamda=0.0001 batch=512 | fold_2 | seed=123 | iter=50
+       NDCG@20=0.073201 | train=274.52s | known_val=99.93%
+RUN    C018 | k=20 lr=0.005 lamda=0.0001 batch=512 | fold_3 | seed=123 | iter=50
+       NDCG@20=0.080714 | train=340.17s | known_val=99.94%
+RUN    C018 | k=20 lr=0.005 lamda=0.0001 batch=512 | fold_1 | seed=2024 | iter=50
+       NDCG@20=0.080661 | train=208.03s | known_val=99.90%
+RUN    C018 | k=20 lr=0.005 lamda=0.0001 batch=512 | fold_2 | seed=2024 | iter=50
+       NDCG@20=0.072985 | train=272.39s | known_val=99.93%
+RUN    C018 | k=20 lr=0.005 lamda=0.0001 batch=512 | fold_3 | seed=2024 | iter=50
+       NDCG@20=0.080312 | train=339.25s | known_val=99.94%
+
+====================================================================================================
+STAGE D - MULTI-SEED FINAL CONFIRMATION
+====================================================================================================
+#01 C018 k=20 lr=0.005 lamda=0.0001 batch=512 iter=20 | NDCG@20=0.079341 ± 0.003909 | train=136.81s
+#02 C018 k=20 lr=0.005 lamda=0.0001 batch=512 iter=50 | NDCG@20=0.078779 ± 0.003977 | train=341.34s
+
+====================================================================================================
+SELECTED IBPR CONFIGURATION
+====================================================================================================
+IBPR_CONFIG = {
+    "k": 20,
+    "max_iter": 20,
+    "learning_rate": 0.005,
+    "lamda": 0.0001,
+    "batch_size": 512,
+    "verbose": True,
+}
+
+Final confirmation NDCG@20: 0.079341 ± 0.003909
+
+Important: this script selected the IBPR base only. Do not tune OnlineIBPRMejorado parameters here.
+Validation scope: per-user temporal warm-start validation inside the globally earliest 60% development horizon.

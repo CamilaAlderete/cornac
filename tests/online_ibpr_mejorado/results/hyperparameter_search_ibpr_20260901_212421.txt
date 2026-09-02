@@ -1,0 +1,56 @@
+
+####################################################################################################
+HPO TIMESTAMP: 20260901_212421
+####################################################################################################
+Trials CSV : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\hyperparameter_search_ibpr_trials_20260901_212421.csv
+Summary CSV: C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\hyperparameter_search_ibpr_summary_20260901_212421.csv
+Best CSV   : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\hyperparameter_search_ibpr_best_20260901_212421.csv
+
+====================================================================================================
+IBPR BASE HYPERPARAMETER SEARCH - TEMPORAL IMPLICIT-FEEDBACK PROTOCOL
+====================================================================================================
+Dataset variant                 : MovieLens 1M
+Positive threshold              : rating >= 3.0
+Feedback used by IBPR           : implicit positive (value = 1.0)
+Primary selection metric        : NDCG@20
+HPO chronological horizon       : first 60%
+Later data used by this script  : NO (60-100% remains outside HPO)
+
+Temporal folds:
+  fold_1: train 0-30% | validation 30-40% | n_train=250,943 | n_val=83,648 | n_val_known=8,770 (10.48%)
+  fold_2: train 0-40% | validation 40-50% | n_train=334,591 | n_val=83,648 | n_val_known=14,287 (17.08%)
+  fold_3: train 0-50% | validation 50-60% | n_train=418,239 | n_val=83,647 | n_val_known=3,588 (4.29%)
+
+====================================================================================================
+STAGE-A CORE CONFIGURATIONS
+====================================================================================================
+C001 | source=paper_region_plus_cornac_defaults  | k=20  lr=0.05   lamda=0.001   batch=100
+C002 | source=pilot                              | k=50  lr=0.01   lamda=0.001   batch=512
+C003 | source=random_search                      | k=100 lr=0.02   lamda=0.0001  batch=512
+C004 | source=random_search                      | k=50  lr=0.005  lamda=0.0001  batch=100
+C005 | source=random_search                      | k=50  lr=0.05   lamda=0.01    batch=512
+C006 | source=random_search                      | k=20  lr=0.02   lamda=0.0001  batch=100
+C007 | source=random_search                      | k=20  lr=0.05   lamda=0.01    batch=256
+C008 | source=random_search                      | k=50  lr=0.05   lamda=0.0001  batch=256
+C009 | source=random_search                      | k=100 lr=0.005  lamda=0.0001  batch=256
+C010 | source=random_search                      | k=100 lr=0.005  lamda=0.001   batch=512
+C011 | source=random_search                      | k=20  lr=0.05   lamda=0.01    batch=512
+C012 | source=random_search                      | k=100 lr=0.02   lamda=0.001   batch=256
+C013 | source=random_search                      | k=20  lr=0.005  lamda=0.01    batch=256
+C014 | source=random_search                      | k=50  lr=0.02   lamda=0.01    batch=100
+C015 | source=random_search                      | k=100 lr=0.01   lamda=0.0001  batch=100
+C016 | source=random_search                      | k=100 lr=0.01   lamda=0.001   batch=100
+C017 | source=random_search                      | k=100 lr=0.005  lamda=0.001   batch=256
+C018 | source=random_search                      | k=20  lr=0.005  lamda=0.0001  batch=512
+C019 | source=random_search                      | k=50  lr=0.005  lamda=0.01    batch=512
+C020 | source=random_search                      | k=20  lr=0.01   lamda=0.01    batch=256
+
+Protected through Stage C: C001, C002
+
+Budget schedule:
+  Stage A: 20 configs × folds 1-2 × seed 42 × 20 iter
+  Stage B: top 5 + protected anchors × fold 3 × seed 42 × 20 iter
+  Stage C: top 3 + protected anchors × folds 1-3 × max_iter=[20, 50, 100]
+  Stage D: top 2 full configs × folds 1-3 × seeds=[42, 123, 2024]
+
+PLAN ONLY: no se entrenó ningún modelo.

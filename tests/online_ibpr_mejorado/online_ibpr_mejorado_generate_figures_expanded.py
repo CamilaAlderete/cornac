@@ -652,11 +652,7 @@ def main():
     if args.output_dir:
         output_dir = Path(args.output_dir)
     else:
-        output_dir = (
-            results_dir
-            / "figures"
-            / args.timestamp
-        )
+        output_dir = results_dir / "figures"
 
     output_dir.mkdir(
         parents=True,

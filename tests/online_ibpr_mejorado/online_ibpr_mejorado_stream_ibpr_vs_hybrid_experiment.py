@@ -34,7 +34,8 @@ N_STREAM_CHUNKS = 4
 TOP_K = 20
 CANDIDATE_MULTIPLIER = 10
 MAX_QUERY_USERS_PER_STAGE = 300
-RESULTS_DIR = "results"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+RESULTS_DIR = os.path.join(SCRIPT_DIR, "results")
 
 IBPR_CONFIG = {
     "k": 50,

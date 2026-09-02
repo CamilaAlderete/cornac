@@ -13,7 +13,8 @@ from scipy import stats
 # ============================================================
 SEEDS = [42, 123, 2024, 777, 999]
 DEFAULT_TIMESTAMP = "20260830_232628"
-RESULTS_DIR = "results"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+RESULTS_DIR = os.path.join(SCRIPT_DIR, "results")
 TOP_K = 20
 
 QUALITY_METRICS = [
