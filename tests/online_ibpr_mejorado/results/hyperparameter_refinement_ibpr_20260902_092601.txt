@@ -1,0 +1,68 @@
+
+##############################################################################################################
+IBPR REFINEMENT TIMESTAMP: 20260902_092601
+##############################################################################################################
+Trials CSV : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado\results\hyperparameter_refinement_ibpr_trials_20260902_092601.csv
+Summary CSV: C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado\results\hyperparameter_refinement_ibpr_summary_20260902_092601.csv
+Best CSV   : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado\results\hyperparameter_refinement_ibpr_best_20260902_092601.csv
+
+====================================================================================================
+IBPR BASE HYPERPARAMETER SEARCH - PER-USER TEMPORAL IMPLICIT-FEEDBACK PROTOCOL
+====================================================================================================
+Dataset variant                 : MovieLens 1M
+Positive threshold              : rating >= 3.0
+Feedback used by IBPR           : implicit positive (value = 1.0)
+Primary selection metric        : NDCG@20
+Global HPO horizon              : first 60%
+Later global data used here     : NO (60-100% remains outside HPO)
+Total implicit-positive rows    : 836,478
+Rows inside HPO horizon         : 501,886
+Users inside HPO horizon        : 4,037
+Users eligible for validation   : 4,000 (>= 7 positives)
+
+Per-user temporal folds:
+  fold_1: user-train first 50% | user-validation until 65% | train=249,941 (4,037 users, 3,364 items) | val_candidate=74,337 | val_known=74,260 (99.90%) | eval_users=4,000 | eval_items=2,995
+  fold_2: user-train first 65% | user-validation until 80% | train=324,289 (4,037 users, 3,419 items) | val_candidate=75,578 | val_known=75,525 (99.93%) | eval_users=4,000 | eval_items=3,052
+  fold_3: user-train first 80% | user-validation until 100% | train=399,898 (4,037 users, 3,461 items) | val_candidate=101,945 | val_known=101,879 (99.94%) | eval_users=4,000 | eval_items=3,202
+
+Scope interpretation             : user warm-start is guaranteed by construction; candidate validation items not present in fold training are excluded.
+Temporal interpretation          : chronology is enforced within each user's history; this is not the global prequential protocol used later for H1-H4.
+
+==============================================================================================================
+IBPR LOCAL HYPERPARAMETER REFINEMENT
+==============================================================================================================
+Base protocol : same MovieLens 1M implicit-feedback, first 60% global HPO horizon, per-user temporal warm-start folds.
+Primary metric: NDCG@20
+
+Initial HPO winner:
+{'config_id': 'R000', 'config_source': 'initial_hpo_winner_20260901_213038', 'refinement_group': 'baseline', 'k': 20, 'learning_rate': 0.005, 'lamda': 0.0001, 'batch_size': 512, 'max_iter': 20}
+
+Stage R1 candidates:
+  R000 | group=baseline         | k=20 lr=0.005   lamda=0.0001   batch=512  iter=20
+  R001 | group=k_probe          | k=5  lr=0.005   lamda=0.0001   batch=512  iter=20
+  R002 | group=k_probe          | k=10 lr=0.005   lamda=0.0001   batch=512  iter=20
+  R003 | group=k_probe          | k=30 lr=0.005   lamda=0.0001   batch=512  iter=20
+  R004 | group=lamda_probe      | k=20 lr=0.005   lamda=1e-05    batch=512  iter=20
+  R005 | group=lamda_probe      | k=20 lr=0.005   lamda=5e-05    batch=512  iter=20
+  R006 | group=lamda_probe      | k=20 lr=0.005   lamda=0.0005   batch=512  iter=20
+  R007 | group=batch_probe      | k=20 lr=0.005   lamda=0.0001   batch=256  iter=20
+  R008 | group=batch_probe      | k=20 lr=0.005   lamda=0.0001   batch=1024 iter=20
+  R009 | group=batch_probe      | k=20 lr=0.005   lamda=0.0001   batch=2048 iter=20
+  R010 | group=lr_x_iter_probe  | k=20 lr=0.001   lamda=0.0001   batch=512  iter=10
+  R011 | group=lr_x_iter_probe  | k=20 lr=0.001   lamda=0.0001   batch=512  iter=20
+  R012 | group=lr_x_iter_probe  | k=20 lr=0.001   lamda=0.0001   batch=512  iter=50
+  R013 | group=lr_x_iter_probe  | k=20 lr=0.0025  lamda=0.0001   batch=512  iter=10
+  R014 | group=lr_x_iter_probe  | k=20 lr=0.0025  lamda=0.0001   batch=512  iter=20
+  R015 | group=lr_x_iter_probe  | k=20 lr=0.0025  lamda=0.0001   batch=512  iter=50
+  R016 | group=lr_x_iter_probe  | k=20 lr=0.005   lamda=0.0001   batch=512  iter=10
+  R017 | group=lr_x_iter_probe  | k=20 lr=0.005   lamda=0.0001   batch=512  iter=50
+  R018 | group=lr_x_iter_probe  | k=20 lr=0.01    lamda=0.0001   batch=512  iter=10
+  R019 | group=lr_x_iter_probe  | k=20 lr=0.01    lamda=0.0001   batch=512  iter=20
+  R020 | group=lr_x_iter_probe  | k=20 lr=0.01    lamda=0.0001   batch=512  iter=50
+
+Budget:
+  R1: 21 full configurations × folds 1-2 × seed 42
+  R2: top 5 + best per probe group + baseline + combined-best candidate → fold 3
+  R3: best + best structurally different + baseline × 3 folds × seeds=[42, 123, 2024]
+
+PLAN ONLY: no se entrenó ningún modelo.
