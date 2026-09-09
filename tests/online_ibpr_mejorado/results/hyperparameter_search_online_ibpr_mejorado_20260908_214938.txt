@@ -1,0 +1,423 @@
+
+##############################################################################################################
+ONLINE IBPR HPO TIMESTAMP: 20260908_214938
+##############################################################################################################
+Trials CSV : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\hyperparameter_search_online_ibpr_mejorado_trials_20260908_214938.csv
+Chunks CSV : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\hyperparameter_search_online_ibpr_mejorado_chunks_20260908_214938.csv
+Summary CSV: C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\hyperparameter_search_online_ibpr_mejorado_summary_20260908_214938.csv
+Best CSV   : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\hyperparameter_search_online_ibpr_mejorado_best_20260908_214938.csv
+
+==============================================================================================================
+ONLINE IBPR HPO - DATA PROTOCOL
+==============================================================================================================
+Dataset                         : MovieLens 1M
+Positive threshold              : rating >= 3.0
+Feedback                        : implicit positive = 1.0
+Global HPO horizon              : first 60%
+Later global data used here     : NO
+Total implicit-positive rows    : 836,478
+Rows inside HPO horizon         : 501,886
+Users inside HPO horizon        : 4,037
+
+S50: per-user base=50% | base=249,941 (4,037 users, 3,364 items) | stream_candidate=251,860 | stream_known=251,536 (99.87%) | stream_users=4,000
+    chunk_1: candidate=64,447 | known=64,381 (99.90%) | users=4,000 | items=2,948
+    chunk_2: candidate=63,488 | known=63,423 (99.90%) | users=4,000 | items=2,965
+    chunk_3: candidate=62,467 | known=62,388 (99.87%) | users=4,000 | items=2,989
+    chunk_4: candidate=61,458 | known=61,344 (99.81%) | users=3,999 | items=3,059
+S65: per-user base=65% | base=324,289 (4,037 users, 3,419 items) | stream_candidate=177,484 | stream_known=177,330 (99.91%) | stream_users=3,987
+    chunk_1: candidate=45,878 | known=45,845 (99.93%) | users=3,987 | items=2,848
+    chunk_2: candidate=44,882 | known=44,853 (99.94%) | users=3,987 | items=2,901
+    chunk_3: candidate=43,863 | known=43,830 (99.92%) | users=3,987 | items=2,914
+    chunk_4: candidate=42,861 | known=42,802 (99.86%) | users=3,986 | items=3,002
+S80: per-user base=80% | base=399,898 (4,037 users, 3,461 items) | stream_candidate=101,717 | stream_known=101,653 (99.94%) | stream_users=3,916
+    chunk_1: candidate=26,906 | known=26,900 (99.98%) | users=3,916 | items=2,699
+    chunk_2: candidate=25,863 | known=25,850 (99.95%) | users=3,916 | items=2,732
+    chunk_3: candidate=24,929 | known=24,913 (99.94%) | users=3,916 | items=2,713
+    chunk_4: candidate=24,019 | known=23,990 (99.88%) | users=3,916 | items=2,812
+
+Interpretation: chronology is enforced within each user's history. This protocol is used only for HPO; final H1-H4 remain global/prequential.
+
+==============================================================================================================
+STAGE O-A ONLINE CONFIGURATIONS
+==============================================================================================================
+O001 | source=pilot_online_anchor      | lr=0.01    lamda=0.001    batch=512  epochs=1 loss=cosine_bpr
+O002 | source=frozen_base_like_cosine_anchor | lr=0.0025  lamda=1e-05    batch=512  epochs=1 loss=cosine_bpr
+O003 | source=frozen_base_like_angular_anchor | lr=0.0025  lamda=1e-05    batch=512  epochs=1 loss=angular
+O004 | source=coverage_random_search   | lr=0.005   lamda=1e-05    batch=128  epochs=1 loss=angular
+O005 | source=coverage_random_search   | lr=0.01    lamda=1e-06    batch=256  epochs=1 loss=angular
+O006 | source=coverage_random_search   | lr=0.02    lamda=0        batch=1024 epochs=2 loss=angular
+O007 | source=coverage_random_search   | lr=0.02    lamda=0        batch=256  epochs=3 loss=cosine_bpr
+O008 | source=coverage_random_search   | lr=0.001   lamda=0        batch=128  epochs=2 loss=angular
+O009 | source=coverage_random_search   | lr=0.02    lamda=0.0001   batch=512  epochs=1 loss=cosine_bpr
+O010 | source=random_search            | lr=0.005   lamda=0.001    batch=1024 epochs=2 loss=cosine_bpr
+O011 | source=random_search            | lr=0.01    lamda=0.001    batch=256  epochs=1 loss=cosine_bpr
+O012 | source=random_search            | lr=0.0025  lamda=1e-05    batch=512  epochs=2 loss=angular
+O013 | source=random_search            | lr=0.02    lamda=0.001    batch=1024 epochs=3 loss=cosine_bpr
+O014 | source=random_search            | lr=0.005   lamda=1e-06    batch=1024 epochs=3 loss=angular
+O015 | source=random_search            | lr=0.01    lamda=1e-05    batch=256  epochs=1 loss=angular
+O016 | source=random_search            | lr=0.01    lamda=0        batch=256  epochs=3 loss=cosine_bpr
+O017 | source=random_search            | lr=0.0025  lamda=1e-06    batch=128  epochs=1 loss=angular
+O018 | source=random_search            | lr=0.005   lamda=1e-06    batch=128  epochs=1 loss=cosine_bpr
+O019 | source=random_search            | lr=0.0025  lamda=1e-06    batch=256  epochs=3 loss=angular
+O020 | source=random_search            | lr=0.02    lamda=0.0001   batch=128  epochs=1 loss=angular
+
+Fixed online architecture:
+  k            = 20
+  update_V     = False
+  neg_sampling = uniform
+  normalize    = True
+  max_steps    = None
+
+Budget:
+  O-A: 20 configs × S50,S65 × seed 42
+  O-B: top 5 + protected anchors × S80 × seed 42
+  O-C: top 3 + protected anchors × S50,S65,S80 × seeds=[42, 123, 2024]
+
+PLAN ONLY: no se entrenó ningún modelo.
+
+##############################################################################################################
+ONLINE IBPR HPO TIMESTAMP: 20260908_214938
+##############################################################################################################
+Trials CSV : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\hyperparameter_search_online_ibpr_mejorado_trials_20260908_214938.csv
+Chunks CSV : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\hyperparameter_search_online_ibpr_mejorado_chunks_20260908_214938.csv
+Summary CSV: C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\hyperparameter_search_online_ibpr_mejorado_summary_20260908_214938.csv
+Best CSV   : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\hyperparameter_search_online_ibpr_mejorado_best_20260908_214938.csv
+
+==============================================================================================================
+ONLINE IBPR HPO - DATA PROTOCOL
+==============================================================================================================
+Dataset                         : MovieLens 1M
+Positive threshold              : rating >= 3.0
+Feedback                        : implicit positive = 1.0
+Global HPO horizon              : first 60%
+Later global data used here     : NO
+Total implicit-positive rows    : 836,478
+Rows inside HPO horizon         : 501,886
+Users inside HPO horizon        : 4,037
+
+S50: per-user base=50% | base=249,941 (4,037 users, 3,364 items) | stream_candidate=251,860 | stream_known=251,536 (99.87%) | stream_users=4,000
+    chunk_1: candidate=64,447 | known=64,381 (99.90%) | users=4,000 | items=2,948
+    chunk_2: candidate=63,488 | known=63,423 (99.90%) | users=4,000 | items=2,965
+    chunk_3: candidate=62,467 | known=62,388 (99.87%) | users=4,000 | items=2,989
+    chunk_4: candidate=61,458 | known=61,344 (99.81%) | users=3,999 | items=3,059
+S65: per-user base=65% | base=324,289 (4,037 users, 3,419 items) | stream_candidate=177,484 | stream_known=177,330 (99.91%) | stream_users=3,987
+    chunk_1: candidate=45,878 | known=45,845 (99.93%) | users=3,987 | items=2,848
+    chunk_2: candidate=44,882 | known=44,853 (99.94%) | users=3,987 | items=2,901
+    chunk_3: candidate=43,863 | known=43,830 (99.92%) | users=3,987 | items=2,914
+    chunk_4: candidate=42,861 | known=42,802 (99.86%) | users=3,986 | items=3,002
+S80: per-user base=80% | base=399,898 (4,037 users, 3,461 items) | stream_candidate=101,717 | stream_known=101,653 (99.94%) | stream_users=3,916
+    chunk_1: candidate=26,906 | known=26,900 (99.98%) | users=3,916 | items=2,699
+    chunk_2: candidate=25,863 | known=25,850 (99.95%) | users=3,916 | items=2,732
+    chunk_3: candidate=24,929 | known=24,913 (99.94%) | users=3,916 | items=2,713
+    chunk_4: candidate=24,019 | known=23,990 (99.88%) | users=3,916 | items=2,812
+
+Interpretation: chronology is enforced within each user's history. This protocol is used only for HPO; final H1-H4 remain global/prequential.
+
+==============================================================================================================
+STAGE O-A ONLINE CONFIGURATIONS
+==============================================================================================================
+O001 | source=pilot_online_anchor      | lr=0.01    lamda=0.001    batch=512  epochs=1 loss=cosine_bpr
+O002 | source=frozen_base_like_cosine_anchor | lr=0.0025  lamda=1e-05    batch=512  epochs=1 loss=cosine_bpr
+O003 | source=frozen_base_like_angular_anchor | lr=0.0025  lamda=1e-05    batch=512  epochs=1 loss=angular
+O004 | source=coverage_random_search   | lr=0.005   lamda=1e-05    batch=128  epochs=1 loss=angular
+O005 | source=coverage_random_search   | lr=0.01    lamda=1e-06    batch=256  epochs=1 loss=angular
+O006 | source=coverage_random_search   | lr=0.02    lamda=0        batch=1024 epochs=2 loss=angular
+O007 | source=coverage_random_search   | lr=0.02    lamda=0        batch=256  epochs=3 loss=cosine_bpr
+O008 | source=coverage_random_search   | lr=0.001   lamda=0        batch=128  epochs=2 loss=angular
+O009 | source=coverage_random_search   | lr=0.02    lamda=0.0001   batch=512  epochs=1 loss=cosine_bpr
+O010 | source=random_search            | lr=0.005   lamda=0.001    batch=1024 epochs=2 loss=cosine_bpr
+O011 | source=random_search            | lr=0.01    lamda=0.001    batch=256  epochs=1 loss=cosine_bpr
+O012 | source=random_search            | lr=0.0025  lamda=1e-05    batch=512  epochs=2 loss=angular
+O013 | source=random_search            | lr=0.02    lamda=0.001    batch=1024 epochs=3 loss=cosine_bpr
+O014 | source=random_search            | lr=0.005   lamda=1e-06    batch=1024 epochs=3 loss=angular
+O015 | source=random_search            | lr=0.01    lamda=1e-05    batch=256  epochs=1 loss=angular
+O016 | source=random_search            | lr=0.01    lamda=0        batch=256  epochs=3 loss=cosine_bpr
+O017 | source=random_search            | lr=0.0025  lamda=1e-06    batch=128  epochs=1 loss=angular
+O018 | source=random_search            | lr=0.005   lamda=1e-06    batch=128  epochs=1 loss=cosine_bpr
+O019 | source=random_search            | lr=0.0025  lamda=1e-06    batch=256  epochs=3 loss=angular
+O020 | source=random_search            | lr=0.02    lamda=0.0001   batch=128  epochs=1 loss=angular
+
+Fixed online architecture:
+  k            = 20
+  update_V     = False
+  neg_sampling = uniform
+  normalize    = True
+  max_steps    = None
+
+Budget:
+  O-A: 20 configs × S50,S65 × seed 42
+  O-B: top 5 + protected anchors × S80 × seed 42
+  O-C: top 3 + protected anchors × S50,S65,S80 × seeds=[42, 123, 2024]
+
+RUN    O001 | lr=0.01 lamda=0.001 batch=512 epochs=1 loss=cosine_bpr | S50 | seed=42
+BASE   S50 | seed=42 | IBPR k=20 iter=50 lr=0.0025 lamda=1e-05 batch=512
+       base train=243.72s | prepared_eval_points=3
+       mean ΔNDCG@20=+0.010694 | online NDCG@20=0.068088 | updates=1.7571s | V_equal=True
+RUN    O001 | lr=0.01 lamda=0.001 batch=512 epochs=1 loss=cosine_bpr | S65 | seed=42
+BASE   S65 | seed=42 | IBPR k=20 iter=50 lr=0.0025 lamda=1e-05 batch=512
+       base train=392.18s | prepared_eval_points=3
+       mean ΔNDCG@20=+0.007938 | online NDCG@20=0.055612 | updates=1.3420s | V_equal=True
+RUN    O002 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=cosine_bpr | S50 | seed=42
+       mean ΔNDCG@20=+0.010042 | online NDCG@20=0.067436 | updates=2.9932s | V_equal=True
+RUN    O002 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=cosine_bpr | S65 | seed=42
+       mean ΔNDCG@20=+0.007238 | online NDCG@20=0.054912 | updates=1.3344s | V_equal=True
+RUN    O003 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=angular | S50 | seed=42
+       mean ΔNDCG@20=+0.014528 | online NDCG@20=0.071921 | updates=1.8102s | V_equal=True
+RUN    O003 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=angular | S65 | seed=42
+       mean ΔNDCG@20=+0.012254 | online NDCG@20=0.059928 | updates=1.4480s | V_equal=True
+RUN    O004 | lr=0.005 lamda=1e-05 batch=128 epochs=1 loss=angular | S50 | seed=42
+       mean ΔNDCG@20=+0.015328 | online NDCG@20=0.072721 | updates=3.2651s | V_equal=True
+RUN    O004 | lr=0.005 lamda=1e-05 batch=128 epochs=1 loss=angular | S65 | seed=42
+       mean ΔNDCG@20=+0.014420 | online NDCG@20=0.062094 | updates=2.2729s | V_equal=True
+RUN    O005 | lr=0.01 lamda=1e-06 batch=256 epochs=1 loss=angular | S50 | seed=42
+       mean ΔNDCG@20=+0.013232 | online NDCG@20=0.070626 | updates=2.2843s | V_equal=True
+RUN    O005 | lr=0.01 lamda=1e-06 batch=256 epochs=1 loss=angular | S65 | seed=42
+       mean ΔNDCG@20=+0.011514 | online NDCG@20=0.059188 | updates=1.6215s | V_equal=True
+RUN    O006 | lr=0.02 lamda=0.0 batch=1024 epochs=2 loss=angular | S50 | seed=42
+       mean ΔNDCG@20=+0.015082 | online NDCG@20=0.072476 | updates=2.4843s | V_equal=True
+RUN    O006 | lr=0.02 lamda=0.0 batch=1024 epochs=2 loss=angular | S65 | seed=42
+       mean ΔNDCG@20=+0.013708 | online NDCG@20=0.061382 | updates=2.9250s | V_equal=True
+RUN    O007 | lr=0.02 lamda=0.0 batch=256 epochs=3 loss=cosine_bpr | S50 | seed=42
+       mean ΔNDCG@20=+0.009309 | online NDCG@20=0.066703 | updates=5.5735s | V_equal=True
+RUN    O007 | lr=0.02 lamda=0.0 batch=256 epochs=3 loss=cosine_bpr | S65 | seed=42
+       mean ΔNDCG@20=+0.009326 | online NDCG@20=0.057000 | updates=4.0915s | V_equal=True
+RUN    O008 | lr=0.001 lamda=0.0 batch=128 epochs=2 loss=angular | S50 | seed=42
+       mean ΔNDCG@20=+0.018631 | online NDCG@20=0.076024 | updates=7.1736s | V_equal=True
+RUN    O008 | lr=0.001 lamda=0.0 batch=128 epochs=2 loss=angular | S65 | seed=42
+       mean ΔNDCG@20=+0.016484 | online NDCG@20=0.064158 | updates=4.5127s | V_equal=True
+RUN    O009 | lr=0.02 lamda=0.0001 batch=512 epochs=1 loss=cosine_bpr | S50 | seed=42
+       mean ΔNDCG@20=+0.007639 | online NDCG@20=0.065033 | updates=1.6959s | V_equal=True
+RUN    O009 | lr=0.02 lamda=0.0001 batch=512 epochs=1 loss=cosine_bpr | S65 | seed=42
+       mean ΔNDCG@20=+0.003435 | online NDCG@20=0.051109 | updates=1.3684s | V_equal=True
+RUN    O010 | lr=0.005 lamda=0.001 batch=1024 epochs=2 loss=cosine_bpr | S50 | seed=42
+       mean ΔNDCG@20=+0.014793 | online NDCG@20=0.072187 | updates=2.8133s | V_equal=True
+RUN    O010 | lr=0.005 lamda=0.001 batch=1024 epochs=2 loss=cosine_bpr | S65 | seed=42
+       mean ΔNDCG@20=+0.012605 | online NDCG@20=0.060279 | updates=1.9214s | V_equal=True
+RUN    O011 | lr=0.01 lamda=0.001 batch=256 epochs=1 loss=cosine_bpr | S50 | seed=42
+       mean ΔNDCG@20=+0.009787 | online NDCG@20=0.067181 | updates=2.2768s | V_equal=True
+RUN    O011 | lr=0.01 lamda=0.001 batch=256 epochs=1 loss=cosine_bpr | S65 | seed=42
+       mean ΔNDCG@20=+0.005014 | online NDCG@20=0.052688 | updates=1.6003s | V_equal=True
+RUN    O012 | lr=0.0025 lamda=1e-05 batch=512 epochs=2 loss=angular | S50 | seed=42
+       mean ΔNDCG@20=+0.020012 | online NDCG@20=0.077406 | updates=3.1731s | V_equal=True
+RUN    O012 | lr=0.0025 lamda=1e-05 batch=512 epochs=2 loss=angular | S65 | seed=42
+       mean ΔNDCG@20=+0.018001 | online NDCG@20=0.065675 | updates=2.3505s | V_equal=True
+RUN    O013 | lr=0.02 lamda=0.001 batch=1024 epochs=3 loss=cosine_bpr | S50 | seed=42
+       mean ΔNDCG@20=+0.010709 | online NDCG@20=0.068103 | updates=4.3939s | V_equal=True
+RUN    O013 | lr=0.02 lamda=0.001 batch=1024 epochs=3 loss=cosine_bpr | S65 | seed=42
+       mean ΔNDCG@20=+0.010584 | online NDCG@20=0.058258 | updates=2.6046s | V_equal=True
+RUN    O014 | lr=0.005 lamda=1e-06 batch=1024 epochs=3 loss=angular | S50 | seed=42
+       mean ΔNDCG@20=+0.022866 | online NDCG@20=0.080260 | updates=3.5872s | V_equal=True
+RUN    O014 | lr=0.005 lamda=1e-06 batch=1024 epochs=3 loss=angular | S65 | seed=42
+       mean ΔNDCG@20=+0.022998 | online NDCG@20=0.070672 | updates=2.9165s | V_equal=True
+RUN    O015 | lr=0.01 lamda=1e-05 batch=256 epochs=1 loss=angular | S50 | seed=42
+       mean ΔNDCG@20=+0.013219 | online NDCG@20=0.070612 | updates=2.4048s | V_equal=True
+RUN    O015 | lr=0.01 lamda=1e-05 batch=256 epochs=1 loss=angular | S65 | seed=42
+       mean ΔNDCG@20=+0.011503 | online NDCG@20=0.059177 | updates=1.7091s | V_equal=True
+RUN    O016 | lr=0.01 lamda=0.0 batch=256 epochs=3 loss=cosine_bpr | S50 | seed=42
+       mean ΔNDCG@20=+0.010751 | online NDCG@20=0.068145 | updates=6.2376s | V_equal=True
+RUN    O016 | lr=0.01 lamda=0.0 batch=256 epochs=3 loss=cosine_bpr | S65 | seed=42
+       mean ΔNDCG@20=+0.010823 | online NDCG@20=0.058497 | updates=3.6469s | V_equal=True
+RUN    O017 | lr=0.0025 lamda=1e-06 batch=128 epochs=1 loss=angular | S50 | seed=42
+       mean ΔNDCG@20=+0.017313 | online NDCG@20=0.074707 | updates=4.2321s | V_equal=True
+RUN    O017 | lr=0.0025 lamda=1e-06 batch=128 epochs=1 loss=angular | S65 | seed=42
+       mean ΔNDCG@20=+0.015941 | online NDCG@20=0.063615 | updates=2.3848s | V_equal=True
+RUN    O018 | lr=0.005 lamda=1e-06 batch=128 epochs=1 loss=cosine_bpr | S50 | seed=42
+       mean ΔNDCG@20=+0.011441 | online NDCG@20=0.068835 | updates=2.8352s | V_equal=True
+RUN    O018 | lr=0.005 lamda=1e-06 batch=128 epochs=1 loss=cosine_bpr | S65 | seed=42
+       mean ΔNDCG@20=+0.007359 | online NDCG@20=0.055033 | updates=1.7571s | V_equal=True
+RUN    O019 | lr=0.0025 lamda=1e-06 batch=256 epochs=3 loss=angular | S50 | seed=42
+       mean ΔNDCG@20=+0.022573 | online NDCG@20=0.079967 | updates=4.4275s | V_equal=True
+RUN    O019 | lr=0.0025 lamda=1e-06 batch=256 epochs=3 loss=angular | S65 | seed=42
+       mean ΔNDCG@20=+0.022797 | online NDCG@20=0.070471 | updates=3.2624s | V_equal=True
+RUN    O020 | lr=0.02 lamda=0.0001 batch=128 epochs=1 loss=angular | S50 | seed=42
+       mean ΔNDCG@20=+0.006660 | online NDCG@20=0.064054 | updates=2.4466s | V_equal=True
+RUN    O020 | lr=0.02 lamda=0.0001 batch=128 epochs=1 loss=angular | S65 | seed=42
+       mean ΔNDCG@20=+0.004299 | online NDCG@20=0.051973 | updates=1.8154s | V_equal=True
+
+==============================================================================================================
+STAGE O-A - ONLINE SCREENING
+==============================================================================================================
+#01 O014 | lr=0.005 lamda=1e-06 batch=1024 epochs=3 loss=angular | ΔNDCG@20=+0.022932 ± 0.000093 | NDCG@20=0.075466 | update=3.2518s
+#02 O019 | lr=0.0025 lamda=1e-06 batch=256 epochs=3 loss=angular | ΔNDCG@20=+0.022685 ± 0.000158 | NDCG@20=0.075219 | update=3.8449s
+#03 O012 | lr=0.0025 lamda=1e-05 batch=512 epochs=2 loss=angular | ΔNDCG@20=+0.019006 ± 0.001422 | NDCG@20=0.071540 | update=2.7618s
+#04 O008 | lr=0.001 lamda=0.0 batch=128 epochs=2 loss=angular | ΔNDCG@20=+0.017557 ± 0.001518 | NDCG@20=0.070091 | update=5.8431s
+#05 O017 | lr=0.0025 lamda=1e-06 batch=128 epochs=1 loss=angular | ΔNDCG@20=+0.016627 ± 0.000970 | NDCG@20=0.069161 | update=3.3085s
+#06 O004 | lr=0.005 lamda=1e-05 batch=128 epochs=1 loss=angular | ΔNDCG@20=+0.014874 ± 0.000642 | NDCG@20=0.067407 | update=2.7690s
+#07 O006 | lr=0.02 lamda=0.0 batch=1024 epochs=2 loss=angular | ΔNDCG@20=+0.014395 ± 0.000972 | NDCG@20=0.066929 | update=2.7047s
+#08 O010 | lr=0.005 lamda=0.001 batch=1024 epochs=2 loss=cosine_bpr | ΔNDCG@20=+0.013699 ± 0.001547 | NDCG@20=0.066233 | update=2.3674s
+#09 O003 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=angular | ΔNDCG@20=+0.013391 ± 0.001608 | NDCG@20=0.065925 | update=1.6291s
+#10 O005 | lr=0.01 lamda=1e-06 batch=256 epochs=1 loss=angular | ΔNDCG@20=+0.012373 ± 0.001215 | NDCG@20=0.064907 | update=1.9529s
+#11 O015 | lr=0.01 lamda=1e-05 batch=256 epochs=1 loss=angular | ΔNDCG@20=+0.012361 ± 0.001213 | NDCG@20=0.064895 | update=2.0570s
+#12 O016 | lr=0.01 lamda=0.0 batch=256 epochs=3 loss=cosine_bpr | ΔNDCG@20=+0.010787 ± 0.000051 | NDCG@20=0.063321 | update=4.9423s
+#13 O013 | lr=0.02 lamda=0.001 batch=1024 epochs=3 loss=cosine_bpr | ΔNDCG@20=+0.010646 ± 0.000089 | NDCG@20=0.063180 | update=3.4993s
+#14 O018 | lr=0.005 lamda=1e-06 batch=128 epochs=1 loss=cosine_bpr | ΔNDCG@20=+0.009400 ± 0.002886 | NDCG@20=0.061934 | update=2.2961s
+#15 O007 | lr=0.02 lamda=0.0 batch=256 epochs=3 loss=cosine_bpr | ΔNDCG@20=+0.009318 ± 0.000011 | NDCG@20=0.061851 | update=4.8325s
+#16 O001 | lr=0.01 lamda=0.001 batch=512 epochs=1 loss=cosine_bpr | ΔNDCG@20=+0.009316 ± 0.001949 | NDCG@20=0.061850 | update=1.5496s
+#17 O002 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=cosine_bpr | ΔNDCG@20=+0.008640 ± 0.001983 | NDCG@20=0.061174 | update=2.1638s
+#18 O011 | lr=0.01 lamda=0.001 batch=256 epochs=1 loss=cosine_bpr | ΔNDCG@20=+0.007401 ± 0.003376 | NDCG@20=0.059934 | update=1.9385s
+#19 O009 | lr=0.02 lamda=0.0001 batch=512 epochs=1 loss=cosine_bpr | ΔNDCG@20=+0.005537 ± 0.002973 | NDCG@20=0.058071 | update=1.5321s
+#20 O020 | lr=0.02 lamda=0.0001 batch=128 epochs=1 loss=angular | ΔNDCG@20=+0.005480 ± 0.001669 | NDCG@20=0.058014 | update=2.1310s
+RUN    O014 | lr=0.005 lamda=1e-06 batch=1024 epochs=3 loss=angular | S80 | seed=42
+BASE   S80 | seed=42 | IBPR k=20 iter=50 lr=0.0025 lamda=1e-05 batch=512
+       base train=372.14s | prepared_eval_points=3
+       mean ΔNDCG@20=+0.017769 | online NDCG@20=0.056382 | updates=1.2968s | V_equal=True
+RUN    O019 | lr=0.0025 lamda=1e-06 batch=256 epochs=3 loss=angular | S80 | seed=42
+       mean ΔNDCG@20=+0.017888 | online NDCG@20=0.056502 | updates=2.0226s | V_equal=True
+RUN    O012 | lr=0.0025 lamda=1e-05 batch=512 epochs=2 loss=angular | S80 | seed=42
+       mean ΔNDCG@20=+0.013916 | online NDCG@20=0.052529 | updates=1.1568s | V_equal=True
+RUN    O008 | lr=0.001 lamda=0.0 batch=128 epochs=2 loss=angular | S80 | seed=42
+       mean ΔNDCG@20=+0.011913 | online NDCG@20=0.050527 | updates=2.0199s | V_equal=True
+RUN    O017 | lr=0.0025 lamda=1e-06 batch=128 epochs=1 loss=angular | S80 | seed=42
+       mean ΔNDCG@20=+0.011888 | online NDCG@20=0.050501 | updates=1.1610s | V_equal=True
+RUN    O001 | lr=0.01 lamda=0.001 batch=512 epochs=1 loss=cosine_bpr | S80 | seed=42
+       mean ΔNDCG@20=+0.008004 | online NDCG@20=0.046618 | updates=0.6994s | V_equal=True
+RUN    O002 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=cosine_bpr | S80 | seed=42
+       mean ΔNDCG@20=+0.005746 | online NDCG@20=0.044360 | updates=0.7105s | V_equal=True
+RUN    O003 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=angular | S80 | seed=42
+       mean ΔNDCG@20=+0.008186 | online NDCG@20=0.046799 | updates=0.7255s | V_equal=True
+
+==============================================================================================================
+STAGE O-B - THREE TEMPORAL SCENARIOS
+==============================================================================================================
+#01 O014 | lr=0.005 lamda=1e-06 batch=1024 epochs=3 loss=angular | ΔNDCG@20=+0.021211 ± 0.002982 | NDCG@20=0.069105 | update=2.6002s
+#02 O019 | lr=0.0025 lamda=1e-06 batch=256 epochs=3 loss=angular | ΔNDCG@20=+0.021086 ± 0.002772 | NDCG@20=0.068980 | update=3.2375s
+#03 O012 | lr=0.0025 lamda=1e-05 batch=512 epochs=2 loss=angular | ΔNDCG@20=+0.017310 ± 0.003106 | NDCG@20=0.065203 | update=2.2268s
+#04 O008 | lr=0.001 lamda=0.0 batch=128 epochs=2 loss=angular | ΔNDCG@20=+0.015676 ± 0.003431 | NDCG@20=0.063570 | update=4.5687s
+#05 O017 | lr=0.0025 lamda=1e-06 batch=128 epochs=1 loss=angular | ΔNDCG@20=+0.015047 ± 0.002821 | NDCG@20=0.062941 | update=2.5926s
+#06 O003 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=angular | ΔNDCG@20=+0.011656 ± 0.003213 | NDCG@20=0.059549 | update=1.3279s
+#07 O001 | lr=0.01 lamda=0.001 batch=512 epochs=1 loss=cosine_bpr | ΔNDCG@20=+0.008879 ± 0.001572 | NDCG@20=0.056772 | update=1.2662s
+#08 O002 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=cosine_bpr | ΔNDCG@20=+0.007676 ± 0.002181 | NDCG@20=0.055569 | update=1.6794s
+REUSE  O014 | S50 | seed=42
+REUSE  O014 | S65 | seed=42
+REUSE  O014 | S80 | seed=42
+RUN    O014 | lr=0.005 lamda=1e-06 batch=1024 epochs=3 loss=angular | S50 | seed=123
+BASE   S50 | seed=123 | IBPR k=20 iter=50 lr=0.0025 lamda=1e-05 batch=512
+       base train=230.97s | prepared_eval_points=3
+       mean ΔNDCG@20=+0.022171 | online NDCG@20=0.080506 | updates=2.7995s | V_equal=True
+RUN    O014 | lr=0.005 lamda=1e-06 batch=1024 epochs=3 loss=angular | S65 | seed=123
+BASE   S65 | seed=123 | IBPR k=20 iter=50 lr=0.0025 lamda=1e-05 batch=512
+       base train=284.65s | prepared_eval_points=3
+       mean ΔNDCG@20=+0.022703 | online NDCG@20=0.070184 | updates=2.0369s | V_equal=True
+RUN    O014 | lr=0.005 lamda=1e-06 batch=1024 epochs=3 loss=angular | S80 | seed=123
+BASE   S80 | seed=123 | IBPR k=20 iter=50 lr=0.0025 lamda=1e-05 batch=512
+       base train=353.24s | prepared_eval_points=3
+       mean ΔNDCG@20=+0.019421 | online NDCG@20=0.057944 | updates=1.2611s | V_equal=True
+RUN    O014 | lr=0.005 lamda=1e-06 batch=1024 epochs=3 loss=angular | S50 | seed=2024
+BASE   S50 | seed=2024 | IBPR k=20 iter=50 lr=0.0025 lamda=1e-05 batch=512
+       base train=212.87s | prepared_eval_points=3
+       mean ΔNDCG@20=+0.023093 | online NDCG@20=0.079681 | updates=2.7824s | V_equal=True
+RUN    O014 | lr=0.005 lamda=1e-06 batch=1024 epochs=3 loss=angular | S65 | seed=2024
+BASE   S65 | seed=2024 | IBPR k=20 iter=50 lr=0.0025 lamda=1e-05 batch=512
+       base train=278.92s | prepared_eval_points=3
+       mean ΔNDCG@20=+0.023150 | online NDCG@20=0.069885 | updates=2.0386s | V_equal=True
+RUN    O014 | lr=0.005 lamda=1e-06 batch=1024 epochs=3 loss=angular | S80 | seed=2024
+BASE   S80 | seed=2024 | IBPR k=20 iter=50 lr=0.0025 lamda=1e-05 batch=512
+       base train=347.16s | prepared_eval_points=3
+       mean ΔNDCG@20=+0.020453 | online NDCG@20=0.058015 | updates=1.2416s | V_equal=True
+REUSE  O019 | S50 | seed=42
+REUSE  O019 | S65 | seed=42
+REUSE  O019 | S80 | seed=42
+RUN    O019 | lr=0.0025 lamda=1e-06 batch=256 epochs=3 loss=angular | S50 | seed=123
+       mean ΔNDCG@20=+0.022108 | online NDCG@20=0.080443 | updates=4.4143s | V_equal=True
+RUN    O019 | lr=0.0025 lamda=1e-06 batch=256 epochs=3 loss=angular | S65 | seed=123
+       mean ΔNDCG@20=+0.022414 | online NDCG@20=0.069894 | updates=3.1773s | V_equal=True
+RUN    O019 | lr=0.0025 lamda=1e-06 batch=256 epochs=3 loss=angular | S80 | seed=123
+       mean ΔNDCG@20=+0.019741 | online NDCG@20=0.058265 | updates=1.9388s | V_equal=True
+RUN    O019 | lr=0.0025 lamda=1e-06 batch=256 epochs=3 loss=angular | S50 | seed=2024
+       mean ΔNDCG@20=+0.023435 | online NDCG@20=0.080023 | updates=4.3391s | V_equal=True
+RUN    O019 | lr=0.0025 lamda=1e-06 batch=256 epochs=3 loss=angular | S65 | seed=2024
+       mean ΔNDCG@20=+0.022371 | online NDCG@20=0.069107 | updates=3.1757s | V_equal=True
+RUN    O019 | lr=0.0025 lamda=1e-06 batch=256 epochs=3 loss=angular | S80 | seed=2024
+       mean ΔNDCG@20=+0.020274 | online NDCG@20=0.057836 | updates=1.9763s | V_equal=True
+REUSE  O012 | S50 | seed=42
+REUSE  O012 | S65 | seed=42
+REUSE  O012 | S80 | seed=42
+RUN    O012 | lr=0.0025 lamda=1e-05 batch=512 epochs=2 loss=angular | S50 | seed=123
+       mean ΔNDCG@20=+0.019155 | online NDCG@20=0.077490 | updates=2.2677s | V_equal=True
+RUN    O012 | lr=0.0025 lamda=1e-05 batch=512 epochs=2 loss=angular | S65 | seed=123
+       mean ΔNDCG@20=+0.017164 | online NDCG@20=0.064645 | updates=1.7130s | V_equal=True
+RUN    O012 | lr=0.0025 lamda=1e-05 batch=512 epochs=2 loss=angular | S80 | seed=123
+       mean ΔNDCG@20=+0.014440 | online NDCG@20=0.052963 | updates=1.0798s | V_equal=True
+RUN    O012 | lr=0.0025 lamda=1e-05 batch=512 epochs=2 loss=angular | S50 | seed=2024
+       mean ΔNDCG@20=+0.020285 | online NDCG@20=0.076873 | updates=2.3218s | V_equal=True
+RUN    O012 | lr=0.0025 lamda=1e-05 batch=512 epochs=2 loss=angular | S65 | seed=2024
+       mean ΔNDCG@20=+0.018333 | online NDCG@20=0.065068 | updates=1.9425s | V_equal=True
+RUN    O012 | lr=0.0025 lamda=1e-05 batch=512 epochs=2 loss=angular | S80 | seed=2024
+       mean ΔNDCG@20=+0.015055 | online NDCG@20=0.052617 | updates=1.0844s | V_equal=True
+REUSE  O001 | S50 | seed=42
+REUSE  O001 | S65 | seed=42
+REUSE  O001 | S80 | seed=42
+RUN    O001 | lr=0.01 lamda=0.001 batch=512 epochs=1 loss=cosine_bpr | S50 | seed=123
+       mean ΔNDCG@20=+0.011085 | online NDCG@20=0.069419 | updates=1.2966s | V_equal=True
+RUN    O001 | lr=0.01 lamda=0.001 batch=512 epochs=1 loss=cosine_bpr | S65 | seed=123
+       mean ΔNDCG@20=+0.009506 | online NDCG@20=0.056987 | updates=0.9973s | V_equal=True
+RUN    O001 | lr=0.01 lamda=0.001 batch=512 epochs=1 loss=cosine_bpr | S80 | seed=123
+       mean ΔNDCG@20=+0.006134 | online NDCG@20=0.044658 | updates=0.6686s | V_equal=True
+RUN    O001 | lr=0.01 lamda=0.001 batch=512 epochs=1 loss=cosine_bpr | S50 | seed=2024
+       mean ΔNDCG@20=+0.010823 | online NDCG@20=0.067410 | updates=1.3409s | V_equal=True
+RUN    O001 | lr=0.01 lamda=0.001 batch=512 epochs=1 loss=cosine_bpr | S65 | seed=2024
+       mean ΔNDCG@20=+0.009082 | online NDCG@20=0.055817 | updates=1.0072s | V_equal=True
+RUN    O001 | lr=0.01 lamda=0.001 batch=512 epochs=1 loss=cosine_bpr | S80 | seed=2024
+       mean ΔNDCG@20=+0.007610 | online NDCG@20=0.045172 | updates=0.6837s | V_equal=True
+REUSE  O002 | S50 | seed=42
+REUSE  O002 | S65 | seed=42
+REUSE  O002 | S80 | seed=42
+RUN    O002 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=cosine_bpr | S50 | seed=123
+       mean ΔNDCG@20=+0.009480 | online NDCG@20=0.067815 | updates=1.3138s | V_equal=True
+RUN    O002 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=cosine_bpr | S65 | seed=123
+       mean ΔNDCG@20=+0.007071 | online NDCG@20=0.054552 | updates=0.9835s | V_equal=True
+RUN    O002 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=cosine_bpr | S80 | seed=123
+       mean ΔNDCG@20=+0.005606 | online NDCG@20=0.044130 | updates=0.6696s | V_equal=True
+RUN    O002 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=cosine_bpr | S50 | seed=2024
+       mean ΔNDCG@20=+0.009505 | online NDCG@20=0.066093 | updates=1.3149s | V_equal=True
+RUN    O002 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=cosine_bpr | S65 | seed=2024
+       mean ΔNDCG@20=+0.008739 | online NDCG@20=0.055475 | updates=0.9837s | V_equal=True
+RUN    O002 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=cosine_bpr | S80 | seed=2024
+       mean ΔNDCG@20=+0.006010 | online NDCG@20=0.043572 | updates=0.6767s | V_equal=True
+REUSE  O003 | S50 | seed=42
+REUSE  O003 | S65 | seed=42
+REUSE  O003 | S80 | seed=42
+RUN    O003 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=angular | S50 | seed=123
+       mean ΔNDCG@20=+0.013952 | online NDCG@20=0.072287 | updates=1.3790s | V_equal=True
+RUN    O003 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=angular | S65 | seed=123
+       mean ΔNDCG@20=+0.011561 | online NDCG@20=0.059041 | updates=1.0254s | V_equal=True
+RUN    O003 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=angular | S80 | seed=123
+       mean ΔNDCG@20=+0.008690 | online NDCG@20=0.047214 | updates=0.7228s | V_equal=True
+RUN    O003 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=angular | S50 | seed=2024
+       mean ΔNDCG@20=+0.015738 | online NDCG@20=0.072325 | updates=1.3592s | V_equal=True
+RUN    O003 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=angular | S65 | seed=2024
+       mean ΔNDCG@20=+0.013265 | online NDCG@20=0.060000 | updates=1.0539s | V_equal=True
+RUN    O003 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=angular | S80 | seed=2024
+       mean ΔNDCG@20=+0.009136 | online NDCG@20=0.046698 | updates=0.7014s | V_equal=True
+
+==============================================================================================================
+STAGE O-C - MULTI-SEED FINAL CONFIRMATION
+==============================================================================================================
+#01 O014 | lr=0.005 lamda=1e-06 batch=1024 epochs=3 loss=angular | ΔNDCG@20=+0.021625 ± 0.001952 | NDCG@20=0.069281 | update=2.2178s
+#02 O019 | lr=0.0025 lamda=1e-06 batch=256 epochs=3 loss=angular | ΔNDCG@20=+0.021511 ± 0.001809 | NDCG@20=0.069167 | update=3.1927s
+#03 O012 | lr=0.0025 lamda=1e-05 batch=512 epochs=2 loss=angular | ΔNDCG@20=+0.017374 ± 0.002396 | NDCG@20=0.065030 | update=1.8988s
+#04 O003 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=angular | ΔNDCG@20=+0.011923 ± 0.002731 | NDCG@20=0.059579 | update=1.1361s
+#05 O001 | lr=0.01 lamda=0.001 batch=512 epochs=1 loss=cosine_bpr | ΔNDCG@20=+0.008986 ± 0.001698 | NDCG@20=0.056642 | update=1.0881s
+#06 O002 | lr=0.0025 lamda=1e-05 batch=512 epochs=1 loss=cosine_bpr | ΔNDCG@20=+0.007715 ± 0.001756 | NDCG@20=0.055371 | update=1.2200s
+
+==============================================================================================================
+SELECTED ONLINE ADAPTATION CONFIGURATION
+==============================================================================================================
+ONLINE_ADAPTATION_CONFIG = {
+    "learning_rate": 0.005,
+    "lamda": 1e-06,
+    "batch_size": 1024,
+    "n_epochs": 3,
+    "loss_mode": "angular",
+    "update_V": False,
+    "neg_sampling": "uniform",
+    "normalize": True,
+    "max_steps": None,
+}
+
+Final mean ΔNDCG@20: +0.021625 ± 0.001952
+Final mean NDCG@20: 0.069281
+Mean total partial-update time per scenario: 2.2178s
+All V exact equal: True | max V diff=0
+
+HPO online completed with positive development delta. Freeze this adaptation configuration before running final H1-H3.
