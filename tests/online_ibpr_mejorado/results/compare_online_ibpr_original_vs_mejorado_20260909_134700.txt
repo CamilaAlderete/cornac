@@ -1,0 +1,255 @@
+
+Timestamp: 20260909_134700
+Results directory: C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado\results
+
+==============================================================================================================
+DIAGNOSTIC COMPARISON - ORIGINAL ONLINEIBPR VS ONLINEIBPRMEJORADO
+==============================================================================================================
+Dataset                         : MovieLens 1M
+Positive threshold              : rating >= 3.0
+Feedback                        : implicit positive = 1.0
+Development horizon             : first 60% global chronological
+Later 40% used here             : NO
+Total implicit-positive rows    : 836,478
+Rows in diagnostic horizon      : 501,886
+Diagnostic seeds                : [31415, 27182, 16180]
+Protocol version                : original_vs_mejorado_diag_v2
+Protocol hash                   : 913c8696f00666c73fa70c7f12c04029749ea5d8fe840e66ca2f151f0ddae172
+Online-HPO seeds reused         : NO
+Final H1-H3 seeds reused        : NO
+
+Frozen IBPR R900:
+  {'k': 20, 'max_iter': 50, 'learning_rate': 0.0025, 'lamda': 1e-05, 'batch_size': 512}
+
+Original OnlineIBPR diagnostic numeric config:
+  {'k': 20, 'learning_rate': 0.005, 'lamda': 1e-06, 'batch_size': 1024, 'max_iter': 3}
+  original code is executed literally; no fixes are applied
+
+Frozen OnlineIBPRMejorado O014:
+  {'learning_rate': 0.005, 'lamda': 1e-06, 'batch_size': 1024, 'n_epochs': 3, 'loss_mode': 'angular', 'update_V': False, 'neg_sampling': 'uniform', 'normalize': True, 'max_steps': None}
+
+S50: per-user base=50% | base=249,941 (4,037 users, 3,364 items) | stream_candidate=251,860 | stream_known=251,536 (99.87%) | stream_users=4,000
+    chunk_1: candidate=64,447 | known=64,381 (99.90%) | users=4,000 | items=2,948
+    chunk_2: candidate=63,488 | known=63,423 (99.90%) | users=4,000 | items=2,965
+    chunk_3: candidate=62,467 | known=62,388 (99.87%) | users=4,000 | items=2,989
+    chunk_4: candidate=61,458 | known=61,344 (99.81%) | users=3,999 | items=3,059
+S65: per-user base=65% | base=324,289 (4,037 users, 3,419 items) | stream_candidate=177,484 | stream_known=177,330 (99.91%) | stream_users=3,987
+    chunk_1: candidate=45,878 | known=45,845 (99.93%) | users=3,987 | items=2,848
+    chunk_2: candidate=44,882 | known=44,853 (99.94%) | users=3,987 | items=2,901
+    chunk_3: candidate=43,863 | known=43,830 (99.92%) | users=3,987 | items=2,914
+    chunk_4: candidate=42,861 | known=42,802 (99.86%) | users=3,986 | items=3,002
+S80: per-user base=80% | base=399,898 (4,037 users, 3,461 items) | stream_candidate=101,717 | stream_known=101,653 (99.94%) | stream_users=3,916
+    chunk_1: candidate=26,906 | known=26,900 (99.98%) | users=3,916 | items=2,699
+    chunk_2: candidate=25,863 | known=25,850 (99.95%) | users=3,916 | items=2,732
+    chunk_3: candidate=24,929 | known=24,913 (99.94%) | users=3,916 | items=2,713
+    chunk_4: candidate=24,019 | known=23,990 (99.88%) | users=3,916 | items=2,812
+
+Prequential sequence:
+  update chunk1 -> evaluate chunk2
+  update chunk2 -> evaluate chunk3
+  update chunk3 -> evaluate chunk4
+
+Branches:
+  IBPR_STALE
+  OnlineIBPR ORIGINAL via fit(update_chunk_train_set)
+  OnlineIBPRMejorado O014 via partial_fit_recent(...)
+
+Expected paired points          : 3 scenarios x 3 seeds x 3 eval points = 27
+
+Timing interpretation           : DESCRIPTIVE ONLY; computation budgets are not matched
+Interpretation: diagnostic development comparison only. No retuning of R900 or O014 is allowed.
+
+==============================================================================================================
+RUN S50 | seed=31415
+==============================================================================================================
+BASE trained: rows=249,941 | users=4,037 | items=3,364 | time=160.62s
+epoch: 0 loss: tensor(68922.2344, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(68081.9922, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(67244.3672, grad_fn=<SubBackward0>)
+  update 1 -> eval 2 | NDCG stale=0.063034 | original=0.067151 | improved=0.087202 | Δ imp-orig=+0.020051 | j_known_positive=46.24% | time(desc) orig=0.1790s | imp=0.7438s
+epoch: 0 loss: tensor(68441.8906, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(67639.3750, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(66843.8203, grad_fn=<SubBackward0>)
+  update 2 -> eval 3 | NDCG stale=0.056838 | original=0.058312 | improved=0.080513 | Δ imp-orig=+0.022201 | j_known_positive=52.54% | time(desc) orig=0.1873s | imp=0.7128s
+epoch: 0 loss: tensor(68080.5078, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(67298.0859, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(66523.1016, grad_fn=<SubBackward0>)
+  update 3 -> eval 4 | NDCG stale=0.052179 | original=0.050755 | improved=0.074791 | Δ imp-orig=+0.024036 | j_known_positive=57.27% | time(desc) orig=0.1675s | imp=0.7067s
+DONE S50 seed=31415: mean ΔNDCG improved-original=+0.022096
+
+==============================================================================================================
+RUN S50 | seed=27182
+==============================================================================================================
+BASE trained: rows=249,941 | users=4,037 | items=3,364 | time=172.85s
+epoch: 0 loss: tensor(68911.0078, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(68065.5781, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(67222.0312, grad_fn=<SubBackward0>)
+  update 1 -> eval 2 | NDCG stale=0.064756 | original=0.066776 | improved=0.086905 | Δ imp-orig=+0.020128 | j_known_positive=46.24% | time(desc) orig=0.1757s | imp=0.8158s
+epoch: 0 loss: tensor(68459.0391, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(67649.8516, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(66846.1406, grad_fn=<SubBackward0>)
+  update 2 -> eval 3 | NDCG stale=0.056457 | original=0.057765 | improved=0.077902 | Δ imp-orig=+0.020137 | j_known_positive=52.54% | time(desc) orig=0.1725s | imp=0.7599s
+epoch: 0 loss: tensor(68069.5234, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(67278.4766, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(66493.5703, grad_fn=<SubBackward0>)
+  update 3 -> eval 4 | NDCG stale=0.052484 | original=0.050681 | improved=0.074469 | Δ imp-orig=+0.023788 | j_known_positive=57.27% | time(desc) orig=0.1782s | imp=0.7842s
+DONE S50 seed=27182: mean ΔNDCG improved-original=+0.021351
+
+==============================================================================================================
+RUN S50 | seed=16180
+==============================================================================================================
+BASE trained: rows=249,941 | users=4,037 | items=3,364 | time=171.02s
+epoch: 0 loss: tensor(68921.8359, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(68081.0859, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(67240.8047, grad_fn=<SubBackward0>)
+  update 1 -> eval 2 | NDCG stale=0.062874 | original=0.066108 | improved=0.088588 | Δ imp-orig=+0.022479 | j_known_positive=46.24% | time(desc) orig=0.1662s | imp=0.6977s
+epoch: 0 loss: tensor(68476.7500, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(67670.0391, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(66868.1484, grad_fn=<SubBackward0>)
+  update 2 -> eval 3 | NDCG stale=0.055037 | original=0.056117 | improved=0.079537 | Δ imp-orig=+0.023419 | j_known_positive=52.54% | time(desc) orig=0.1688s | imp=0.7503s
+epoch: 0 loss: tensor(68107.9922, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(67314.7578, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(66527.1406, grad_fn=<SubBackward0>)
+  update 3 -> eval 4 | NDCG stale=0.052357 | original=0.052706 | improved=0.075370 | Δ imp-orig=+0.022664 | j_known_positive=57.27% | time(desc) orig=0.1686s | imp=0.7415s
+DONE S50 seed=16180: mean ΔNDCG improved-original=+0.022854
+
+==============================================================================================================
+RUN S65 | seed=31415
+==============================================================================================================
+BASE trained: rows=324,289 | users=4,037 | items=3,419 | time=224.97s
+epoch: 0 loss: tensor(49225.4141, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(48628.1406, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(48030.0938, grad_fn=<SubBackward0>)
+  update 1 -> eval 2 | NDCG stale=0.051846 | original=0.054632 | improved=0.073741 | Δ imp-orig=+0.019109 | j_known_positive=51.35% | time(desc) orig=0.1270s | imp=0.5945s
+epoch: 0 loss: tensor(48410.3984, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(47828.8203, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(47250.6406, grad_fn=<SubBackward0>)
+  update 2 -> eval 3 | NDCG stale=0.050010 | original=0.052716 | improved=0.072503 | Δ imp-orig=+0.019787 | j_known_positive=55.28% | time(desc) orig=0.1309s | imp=0.5271s
+epoch: 0 loss: tensor(47196.9688, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(46629.2070, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(46065.8828, grad_fn=<SubBackward0>)
+  update 3 -> eval 4 | NDCG stale=0.042218 | original=0.041657 | improved=0.064088 | Δ imp-orig=+0.022431 | j_known_positive=58.41% | time(desc) orig=0.1220s | imp=0.5050s
+DONE S65 seed=31415: mean ΔNDCG improved-original=+0.020442
+
+==============================================================================================================
+RUN S65 | seed=27182
+==============================================================================================================
+BASE trained: rows=324,289 | users=4,037 | items=3,419 | time=218.38s
+epoch: 0 loss: tensor(49141.7031, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(48545.2539, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(47946.9336, grad_fn=<SubBackward0>)
+  update 1 -> eval 2 | NDCG stale=0.052147 | original=0.055384 | improved=0.073208 | Δ imp-orig=+0.017825 | j_known_positive=51.35% | time(desc) orig=0.1269s | imp=0.5603s
+epoch: 0 loss: tensor(48322.2812, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(47736.8281, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(47153.8672, grad_fn=<SubBackward0>)
+  update 2 -> eval 3 | NDCG stale=0.049295 | original=0.051716 | improved=0.072728 | Δ imp-orig=+0.021011 | j_known_positive=55.28% | time(desc) orig=0.1211s | imp=0.5349s
+epoch: 0 loss: tensor(47085.4922, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(46510.4219, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(45939.2109, grad_fn=<SubBackward0>)
+  update 3 -> eval 4 | NDCG stale=0.042099 | original=0.041216 | improved=0.064602 | Δ imp-orig=+0.023386 | j_known_positive=58.41% | time(desc) orig=0.1213s | imp=0.5162s
+DONE S65 seed=27182: mean ΔNDCG improved-original=+0.020741
+
+==============================================================================================================
+RUN S65 | seed=16180
+==============================================================================================================
+BASE trained: rows=324,289 | users=4,037 | items=3,419 | time=231.13s
+epoch: 0 loss: tensor(49270.7148, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(48677.2812, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(48081.7266, grad_fn=<SubBackward0>)
+  update 1 -> eval 2 | NDCG stale=0.051957 | original=0.054239 | improved=0.073994 | Δ imp-orig=+0.019755 | j_known_positive=51.35% | time(desc) orig=0.1321s | imp=0.5648s
+epoch: 0 loss: tensor(48451.4531, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(47872.5117, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(47296.5000, grad_fn=<SubBackward0>)
+  update 2 -> eval 3 | NDCG stale=0.049169 | original=0.049547 | improved=0.069842 | Δ imp-orig=+0.020295 | j_known_positive=55.28% | time(desc) orig=0.1211s | imp=0.5423s
+epoch: 0 loss: tensor(47254.3828, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(46688.1719, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(46126.0977, grad_fn=<SubBackward0>)
+  update 3 -> eval 4 | NDCG stale=0.041387 | original=0.041183 | improved=0.062445 | Δ imp-orig=+0.021262 | j_known_positive=58.41% | time(desc) orig=0.1228s | imp=0.5180s
+DONE S65 seed=16180: mean ΔNDCG improved-original=+0.020437
+
+==============================================================================================================
+RUN S80 | seed=31415
+==============================================================================================================
+BASE trained: rows=399,898 | users=4,037 | items=3,461 | time=285.89s
+epoch: 0 loss: tensor(29266.7109, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(28901.8457, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(28536.4297, grad_fn=<SubBackward0>)
+  update 1 -> eval 2 | NDCG stale=0.043669 | original=0.044990 | improved=0.060741 | Δ imp-orig=+0.015751 | j_known_positive=55.22% | time(desc) orig=0.0829s | imp=0.3598s
+epoch: 0 loss: tensor(28015.9082, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(27662.8145, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(27312.4863, grad_fn=<SubBackward0>)
+  update 2 -> eval 3 | NDCG stale=0.036415 | original=0.040182 | improved=0.057760 | Δ imp-orig=+0.017578 | j_known_positive=57.62% | time(desc) orig=0.0845s | imp=0.3307s
+epoch: 0 loss: tensor(26905.7188, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(26568.6621, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(26234.9941, grad_fn=<SubBackward0>)
+  update 3 -> eval 4 | NDCG stale=0.032720 | original=0.035631 | improved=0.051885 | Δ imp-orig=+0.016254 | j_known_positive=59.29% | time(desc) orig=0.0818s | imp=0.3430s
+DONE S80 seed=31415: mean ΔNDCG improved-original=+0.016528
+
+==============================================================================================================
+RUN S80 | seed=27182
+==============================================================================================================
+BASE trained: rows=399,898 | users=4,037 | items=3,461 | time=286.03s
+epoch: 0 loss: tensor(29196.6426, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(28843.4473, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(28487.8496, grad_fn=<SubBackward0>)
+  update 1 -> eval 2 | NDCG stale=0.042052 | original=0.046585 | improved=0.062912 | Δ imp-orig=+0.016327 | j_known_positive=55.22% | time(desc) orig=0.0710s | imp=0.3471s
+epoch: 0 loss: tensor(27970.9180, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(27625.2559, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(27280.9336, grad_fn=<SubBackward0>)
+  update 2 -> eval 3 | NDCG stale=0.035784 | original=0.041110 | improved=0.056143 | Δ imp-orig=+0.015033 | j_known_positive=57.62% | time(desc) orig=0.0664s | imp=0.3265s
+epoch: 0 loss: tensor(26884.8887, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(26551.2402, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(26220.0547, grad_fn=<SubBackward0>)
+  update 3 -> eval 4 | NDCG stale=0.033971 | original=0.034759 | improved=0.054885 | Δ imp-orig=+0.020127 | j_known_positive=59.29% | time(desc) orig=0.0648s | imp=0.3194s
+DONE S80 seed=27182: mean ΔNDCG improved-original=+0.017162
+
+==============================================================================================================
+RUN S80 | seed=16180
+==============================================================================================================
+BASE trained: rows=399,898 | users=4,037 | items=3,461 | time=282.24s
+epoch: 0 loss: tensor(29289.1504, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(28933.7188, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(28575.7246, grad_fn=<SubBackward0>)
+  update 1 -> eval 2 | NDCG stale=0.042463 | original=0.045644 | improved=0.062625 | Δ imp-orig=+0.016980 | j_known_positive=55.22% | time(desc) orig=0.0875s | imp=0.5142s
+epoch: 0 loss: tensor(28063.2305, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(27715.8398, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(27369.8730, grad_fn=<SubBackward0>)
+  update 2 -> eval 3 | NDCG stale=0.036683 | original=0.040130 | improved=0.057195 | Δ imp-orig=+0.017064 | j_known_positive=57.62% | time(desc) orig=0.0672s | imp=0.3191s
+epoch: 0 loss: tensor(26967.0605, grad_fn=<SubBackward0>)
+epoch: 1 loss: tensor(26631.6953, grad_fn=<SubBackward0>)
+epoch: 2 loss: tensor(26298.7578, grad_fn=<SubBackward0>)
+  update 3 -> eval 4 | NDCG stale=0.033386 | original=0.034753 | improved=0.054827 | Δ imp-orig=+0.020074 | j_known_positive=59.29% | time(desc) orig=0.0673s | imp=0.3288s
+DONE S80 seed=16180: mean ΔNDCG improved-original=+0.018039
+
+==============================================================================================================
+FINAL DIAGNOSTIC SUMMARY
+==============================================================================================================
+Trials                         : 9
+Paired evaluation points       : 27
+
+Stale mean NDCG@20               : 0.047529
+Original mean NDCG@20          : 0.049350
+Improved mean NDCG@20          : 0.069311
+
+Original - Stale               : +0.001821 ± 0.001841 | positive=22/27
+Improved - Stale               : +0.021782 ± 0.001731 | positive=27/27
+Improved - Original            : +0.019961 ± 0.002631 | positive=27/27
+
+Mean total original update time (descriptive): 0.3736s
+Mean total improved update time (descriptive): 1.6405s
+Original/improved time ratio (descriptive): 0.2255x
+
+Original j==positive fraction   : 0.19% ± 0.03%
+Original j known-positive frac  : 54.80% ± 3.99%
+Timing guard                    : DESCRIPTIVE ONLY; optimizer-step budgets are not matched
+
+Original V exact                : True | max diff=0
+Improved V exact                : True | max diff=0
+
+Interpretation guard: development diagnostic only; do not retune R900/O014 from these results.
+
+Files:
+  log     : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado\results\compare_online_ibpr_original_vs_mejorado_20260909_134700.txt
+  steps   : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado\results\compare_online_ibpr_original_vs_mejorado_steps_20260909_134700.csv
+  trials  : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado\results\compare_online_ibpr_original_vs_mejorado_trials_20260909_134700.csv
+  summary : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado\results\compare_online_ibpr_original_vs_mejorado_summary_20260909_134700.csv

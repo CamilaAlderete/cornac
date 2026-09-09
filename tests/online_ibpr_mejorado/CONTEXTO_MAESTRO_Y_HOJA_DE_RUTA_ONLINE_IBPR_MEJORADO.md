@@ -17,7 +17,7 @@ Su función es conectar todas esas piezas y dejar claro **qué se intenta demost
 
 ---
 
-# 2. Idea central de la investigación
+## 2. Idea central de la investigación
 
 El objetivo de la investigación **no es demostrar que OnlineIBPRMejorado reemplaza a IBPR**.
 
@@ -51,7 +51,7 @@ Esta formulación deberá mantenerse abierta a los resultados experimentales. La
 
 ---
 
-# 3. Fundamento teórico
+## 3. Fundamento teórico
 
 ## 3.1 BPR
 
@@ -88,26 +88,155 @@ La representación final puede normalizarse, permitiendo utilizar los vectores c
 
 ---
 
-# 4. Problema técnico identificado
+## 4. Problema técnico identificado
 
 Cornac incluye una implementación denominada `OnlineIBPR`, conceptualmente orientada a actualización online.
 
-La investigación detectó que esa implementación no construía correctamente las tripletas `(u, i, j)` requeridas por el aprendizaje ordinal.
+La revisión directa de su código original confirmó que el mecanismo de construcción de datos de entrenamiento no generaba correctamente las tripletas BPR `(u, i, j)`.
 
-En particular, la información almacenada como valor de interacción podía terminar utilizándose como si fuera el identificador del ítem negativo `j`.
+### 4.1 Construcción incorrecta de las tripletas BPR
 
-Además, la implementación original no proporcionaba un mecanismo explícito y controlado para:
+La implementación original convertía la matriz de interacciones a formato COO y construía una matriz de tres columnas:
 
-- recibir un lote reciente de positivos `(u, i)`;
-- mantener un historial acumulado;
-- impedir que positivos históricos o recientes sean seleccionados como negativos;
-- realizar warm-start desde un IBPR previamente entrenado;
-- controlar si los factores de ítems `V` deben permanecer fijos;
-- realizar sucesivas actualizaciones parciales reproducibles.
+```python
+triplets[:, 0] = X.row
+triplets[:, 1] = X.col
+triplets[:, 2] = X.data
+```
+
+Por tanto, esa estructura representaba realmente:
+
+```text
+(usuario, ítem, valor de interacción)
+```
+
+y no:
+
+```text
+(usuario, ítem positivo, ítem negativo)
+```
+
+Posteriormente se utilizaba:
+
+```python
+regJ = V[triplets[:, 2], :]
+```
+
+tratando directamente el valor almacenado de la interacción como índice del supuesto ítem negativo `j`.
+
+En feedback implícito, donde los positivos se representan típicamente con valor `1.0`, este comportamiento puede producir repetidamente un supuesto `j=1` en lugar de muestrear un ítem no observado válido para cada usuario.
+
+### 4.2 Ausencia de negative sampling controlado
+
+La implementación original no construía explícitamente un negativo `j` que cumpliera:
+
+```text
+j ∉ positivos_conocidos(u)
+```
+
+No existía un historial acumulado utilizado para excluir:
+
+- positivos históricos;
+- positivos recién recibidos;
+- ítems que ya no deben considerarse negativos para el usuario.
+
+Esto impedía garantizar la semántica ordinal esperada de la tripleta BPR.
+
+### 4.3 Ausencia de una operación incremental explícita
+
+El wrapper original exponía `fit(train_set, ...)`, que volvía a invocar el entrenamiento sobre un `train_set`.
+
+No existía una API pública equivalente a:
+
+```python
+partial_fit_recent(recent_pairs, history_csr, ...)
+```
+
+que expresara de manera explícita:
+
+```text
+recent_pairs = nuevas observaciones positivas
+history_csr  = historial acumulado utilizado para negative sampling
+```
+
+### 4.4 Warm-start no obligatorio
+
+La implementación original permitía inicializar `U` y `V` aleatoriamente cuando no se proporcionaban factores previos.
+
+Sin embargo, el optimizador actualizaba únicamente `U`.
+
+Por tanto, era posible ejecutar el supuesto modo online con `V` recién inicializada aleatoriamente y posteriormente congelada, sin exigir un IBPR base previamente entrenado.
+
+### 4.5 `batch_size` declarado pero no utilizado para mini-batches
+
+Aunque la función original recibía `batch_size`, el loop de entrenamiento operaba sobre todas las filas de `triplets` simultáneamente en cada época.
+
+Por tanto, el parámetro estaba expuesto por la API pero no implementaba una partición real en mini-batches.
+
+### 4.6 Inconsistencia entre entrenamiento angular y scoring original
+
+La función de entrenamiento original calculaba la preferencia mediante distancia angular:
+
+```text
+Scorei = arccos(cosine(Uu, Vi))
+Scorej = arccos(cosine(Uu, Vj))
+```
+
+pero la normalización final de `U` y `V` estaba comentada.
+
+Al mismo tiempo, el wrapper utilizaba producto interno para `score()` y declaraba `MEASURE_DOT` como medida de recuperación.
+
+Sin normalización, producto interno y distancia angular no necesariamente inducen el mismo ranking porque las magnitudes de los vectores intervienen en el producto interno.
+
+La implementación vigente utilizada en esta investigación evita esta inconsistencia en la configuración principal:
+
+```text
+IBPR base:
+    U y V normalizadas al finalizar el entrenamiento.
+
+OnlineIBPRMejorado:
+    normalize=True
+    update_V=False
+
+Después de cada partial update:
+    U se normaliza;
+    V permanece exactamente igual a V_base, que ya está normalizada.
+```
+
+Así, en la configuración principal:
+
+```text
+dot(U,V)
+=
+cosine(U,V)
+```
+
+y maximizar producto interno sobre vectores unitarios es equivalente a maximizar coseno y, por monotonía de `arccos`, a minimizar distancia angular.
+
+### 4.7 Consecuencia para la investigación
+
+Estos hallazgos justifican que `OnlineIBPRMejorado` no sea tratado como un simple cambio de hiperparámetros sobre `OnlineIBPR`.
+
+La propuesta introduce y estabiliza explícitamente:
+
+```text
+- positivos recientes (u,i) correctamente representados;
+- muestreo explícito de negativos válidos j;
+- historial acumulado mediante history_csr;
+- warm-start obligatorio;
+- partial_fit_recent como API incremental;
+- mini-batches reales;
+- actualización opcional de V;
+- preservación exacta de V cuando update_V=False;
+- sucesivas actualizaciones reproducibles mediante seeds;
+- consistencia entre representación angular normalizada y scoring.
+```
+
+El alcance continúa siendo warm-start para usuarios e ítems conocidos.
 
 ---
 
-# 5. Solución implementada: OnlineIBPRMejorado
+## 5. Solución implementada: OnlineIBPRMejorado
 
 `OnlineIBPRMejorado` fue desarrollado como una extensión incremental de IBPR.
 
@@ -145,7 +274,7 @@ Cold-start queda fuera del objetivo principal.
 
 ---
 
-# 6. Por qué mantener V fijo es una decisión central
+## 6. Por qué mantener V fijo es una decisión central
 
 En IBPR:
 
@@ -208,7 +337,7 @@ Esta propiedad conecta directamente la adaptación online con la motivación ori
 
 ---
 
-# 7. Pregunta principal de investigación
+## 7. Pregunta principal de investigación
 
 La pregunta principal queda formulada como:
 
@@ -222,7 +351,7 @@ La segunda pregunta debe considerarse una consecuencia experimental a validar, n
 
 ---
 
-# 8. Hipótesis experimentales principales
+## 8. Hipótesis experimentales principales
 
 ## H1 — Adaptación frente a un modelo obsoleto
 
@@ -324,7 +453,7 @@ H4 deberá medir como mínimo:
 
 ---
 
-# 9. Hipótesis de sistema híbrido
+## 9. Hipótesis de sistema híbrido
 
 Si H1-H4 reciben soporte suficiente, el siguiente nivel de la tesis puede formalizarse como una hipótesis adicional:
 
@@ -393,7 +522,7 @@ Esas variantes serían líneas diferentes y requerirían experimentos adicionale
 
 ---
 
-# 10. Posibles conclusiones de tesis según los resultados
+## 10. Posibles conclusiones de tesis según los resultados
 
 La investigación no debe comprometerse con una única conclusión antes de ejecutar los experimentos.
 
@@ -469,7 +598,7 @@ Esto no invalida la investigación; delimita las condiciones bajo las cuales con
 
 ---
 
-# 11. Estado validado de la implementación
+## 11. Estado validado de la implementación
 
 La implementación `OnlineIBPRMejorado` dispone de tests de invariantes para comprobar, entre otros puntos:
 
@@ -487,7 +616,7 @@ Estos tests deben considerarse la base de corrección funcional antes de interpr
 
 ---
 
-# 12. IBPR base: configuración congelada
+## 12. IBPR base: configuración congelada
 
 El HPO del IBPR base está cerrado.
 
@@ -523,44 +652,73 @@ No debe modificarse posteriormente utilizando H1-H4.
 
 ---
 
-# 13. Etapa actual: HPO de OnlineIBPRMejorado
+## 13. HPO de OnlineIBPRMejorado: cerrado y configuración congelada
 
-El siguiente paso inmediato es seleccionar **únicamente los parámetros propios de adaptación online**.
+El HPO de `OnlineIBPRMejorado` está **COMPLETADO**.
 
-El IBPR base permanece congelado.
-
-## Parámetros fijos del modo online principal
-
-```text
-k            = 20
-update_V     = False
-neg_sampling = uniform
-normalize    = True
-max_steps    = None
-```
-
-## Parámetros candidatos
+La búsqueda se ejecutó utilizando el IBPR base ya congelado como punto de partida:
 
 ```python
-learning_rate = [0.001, 0.0025, 0.005, 0.01, 0.02]
-lamda         = [0.0, 1e-6, 1e-5, 1e-4, 1e-3]
-batch_size    = [128, 256, 512, 1024]
-n_epochs      = [1, 2, 3]
-loss_mode     = ["cosine_bpr", "angular"]
+IBPR_CONFIG = {
+    "k": 20,
+    "max_iter": 50,
+    "learning_rate": 0.0025,
+    "lamda": 1e-05,
+    "batch_size": 512,
+}
 ```
 
-## Métrica primaria
+Durante el HPO online no se volvieron a optimizar los parámetros del IBPR base. Cada trial partió de factores `U` y `V` aprendidos por ese IBPR congelado y buscó únicamente los parámetros propios de adaptación incremental.
+
+La configuración seleccionada en la etapa final multi-seed O-C fue:
+
+```python
+ONLINE_ADAPTATION_CONFIG = {
+    "learning_rate": 0.005,
+    "lamda": 1e-06,
+    "batch_size": 1024,
+    "n_epochs": 3,
+    "loss_mode": "angular",
+    "update_V": False,
+    "neg_sampling": "uniform",
+    "normalize": True,
+    "max_steps": None,
+}
+```
+
+Identificador experimental:
 
 ```text
-mean ΔNDCG@20 =
-OnlineIBPRMejorado - IBPR_STALE
+O014
 ```
 
-La selección no utiliza Full Retrain como objetivo del HPO.
+Resultado final de selección:
+
+```text
+mean ΔNDCG@20 = +0.021625 ± 0.001952
+mean NDCG@20  = 0.069281
+mean total partial-update time por escenario = 2.2178 s
+V exact equal = True
+max abs diff(V) = 0
+```
+
+La configuración O019 quedó muy próxima en calidad:
+
+```text
+O019 mean ΔNDCG@20 = +0.021511 ± 0.001809
+```
+
+pero O014 ocupó el primer lugar según la regla de selección predefinida y además presentó menor tiempo medio de adaptación.
+
+La etapa O-C cerró formalmente el HPO online. No se realizará una nueva expansión automática alrededor de `batch_size=1024`, `n_epochs=3` ni de otros límites observados.
+
+Los resultados de este HPO son **resultados de desarrollo y selección de hiperparámetros**. No constituyen por sí mismos evidencia definitiva para H1.
+
+A partir de este punto, tanto el IBPR base como `OnlineIBPRMejorado` quedan completamente congelados para H1-H4.
 
 ---
 
-# 14. Datos utilizados durante HPO online
+## 14. Datos utilizados durante HPO online
 
 MovieLens 1M se transforma a feedback implícito:
 
@@ -605,35 +763,72 @@ El chunk evaluado no se utiliza antes para entrenamiento.
 
 ---
 
-# 15. Advertencia metodológica sobre MovieLens 1M
+## 15. Advertencia metodológica sobre MovieLens 1M
 
-El 40% global posterior está excluido del **HPO actual**.
+El 40% global cronológicamente posterior **no fue utilizado durante las etapas de selección de hiperparámetros del IBPR base ni de OnlineIBPRMejorado**.
 
 Sin embargo, durante etapas piloto anteriores del proyecto ya se observaron resultados sobre particiones posteriores de MovieLens 1M.
 
-Por tanto, ese segmento no debe describirse como un “holdout completamente virgen” o “nunca observado”.
+Por tanto, ese segmento no debe describirse como un “holdout completamente virgen”, “nunca observado” o equivalente.
 
-La formulación más correcta para los experimentos posteriores será:
+La formulación correcta para los experimentos definitivos será:
 
 > **evaluación con configuración completamente congelada y sin utilizar esos resultados para volver a ajustar hiperparámetros.**
 
 La defensa metodológica debe apoyarse en:
 
-- congelación previa de la configuración;
+- congelación previa de R900;
+- congelación previa de O014;
 - ausencia de retuning posterior;
 - evaluación multi-seed;
-- posterior validación de escala/generalización en MovieLens 10M.
+- separación cronológica explícita entre desarrollo y evaluación;
+- posterior validación de escala/generalización en MovieLens 10M con configuración congelada.
+
+La reutilización del mismo primer 60% para los HPO del modelo base y del componente online debe interpretarse como un único horizonte de **desarrollo y selección**, no como dos conjuntos de validación independientes.
+
+El IBPR base se optimizó primero dentro de ese horizonte y quedó congelado. Posteriormente, partiendo de esa configuración fija, se optimizaron únicamente los parámetros de adaptación de `OnlineIBPRMejorado`.
+
+Los resultados de ambas búsquedas pertenecen a la fase de desarrollo y no constituyen por sí mismos evidencia definitiva de H1-H4.
 
 ---
 
-# 16. Comparación experimental definitiva
+## 16. Comparación experimental definitiva — etapa actual
 
-Después del HPO online, se congela la configuración completa.
+Después del cierre del HPO online, la configuración completa queda congelada.
+
+### 16.1 Separación cronológica definitiva
+
+MovieLens 1M se transforma primero a feedback implícito positivo:
+
+```text
+rating >= 3 -> positivo 1.0
+rating < 3  -> no observado
+```
+
+Luego todas las interacciones positivas se ordenan globalmente por timestamp.
+
+La separación experimental definitiva queda fijada conceptualmente como:
+
+```text
+MovieLens 1M positivo, orden cronológico global
+
+0% ----------------------------- 60% ----------------------------- 100%
+      entrenamiento IBPR base R900          stream definitivo H1-H3
+      + horizonte de desarrollo HPO         sin retuning posterior
+```
+
+El tramo `0%-60%` se utiliza para construir el IBPR inicial definitivo con la configuración R900.
+
+El tramo `60%-100%` constituye el stream temporal utilizado para la comparación definitiva H1-H3.
+
+Este tramo posterior no debe llamarse “holdout completamente virgen” debido a observaciones realizadas durante pilotos anteriores; debe describirse como evaluación con configuración completamente congelada y sin retuning posterior.
+
+### 16.2 Ramas experimentales
 
 La comparación principal será:
 
 ```text
-                 mismo IBPR inicial
+                 mismo IBPR inicial R900
                         │
           ┌─────────────┼──────────────┐
           │             │              │
@@ -644,11 +839,60 @@ La comparación principal será:
                     V fija           U y V
 ```
 
-Se utilizarán exactamente las mismas nuevas interacciones y puntos de evaluación para los tres métodos.
+Se utilizarán exactamente las mismas nuevas interacciones, reglas warm-start y puntos de evaluación para los tres métodos.
+
+El protocolo definitivo deberá ser **global y prequential**, a diferencia de los folds/escenarios por usuario utilizados durante HPO.
+
+### 16.3 Configuraciones congeladas
+
+```text
+IBPR base = R900
+OnlineIBPRMejorado = O014
+```
+
+No se permitirá modificar estas configuraciones utilizando resultados de H1-H4.
+
+### 16.4 Seeds reservadas
+
+Las seeds reservadas fuera del HPO online para esta etapa continúan siendo:
+
+```text
+[777, 999]
+```
+
+Esta decisión se mantiene como parte del protocolo congelado mientras no exista una modificación metodológica explícita previa a la ejecución.
+
+### 16.5 Interpretación de H3
+
+Además del delta directo:
+
+```text
+Online - Full Retrain
+```
+
+se podrá registrar como métrica descriptiva complementaria la fracción de adaptación recuperada frente a Stale:
+
+```text
+adaptation_recovery =
+(Online - Stale) / (FullRetrain - Stale)
+```
+
+aplicada a `NDCG@20` cuando el denominador sea positivo y suficientemente definido.
+
+Esta razón no constituye una prueba de equivalencia. Su objetivo es expresar qué proporción de la mejora observada mediante Full Retrain es recuperada por la adaptación online.
+
+La expresión “calidad competitiva” deberá sustentarse en:
+
+- diferencia absoluta y relativa de NDCG@20;
+- deltas pareados por seed y punto temporal;
+- métricas secundarias;
+- coste computacional asociado.
+
+No se afirmará equivalencia estadística salvo que se diseñe específicamente una prueba formal de equivalencia.
 
 ---
 
-# 17. Métricas definitivas
+## 17. Métricas definitivas
 
 ## Calidad
 
@@ -680,6 +924,15 @@ Online - Full Retrain
 
 preferentemente por seed y por punto temporal.
 
+Como medida descriptiva complementaria para H3 podrá calcularse:
+
+```text
+adaptation_recovery =
+(Online - Stale) / (FullRetrain - Stale)
+```
+
+cuando `FullRetrain - Stale > 0`.
+
 ---
 
 ## Eficiencia
@@ -710,7 +963,7 @@ query p95 ms
 
 ---
 
-# 18. Orden experimental oficial
+## 18. Orden experimental oficial
 
 ```text
 1. Implementación OnlineIBPRMejorado                 COMPLETADO
@@ -724,17 +977,24 @@ query p95 ms
    6.3 confirmación multi-seed                        COMPLETADO
    6.4 congelación del IBPR base                      COMPLETADO
 
-7. HPO de OnlineIBPRMejorado                          ETAPA ACTUAL
+7. HPO de OnlineIBPRMejorado                          COMPLETADO
+   7.1 plan validado                                  COMPLETADO
+   7.2 screening O-A                                  COMPLETADO
+   7.3 robustez temporal O-B                          COMPLETADO
+   7.4 confirmación multi-seed O-C                    COMPLETADO
 
-8. Congelar configuración online                      PENDIENTE
+8. Congelar configuración online                      COMPLETADO
+   8.1 configuración seleccionada O014                COMPLETADO
+   8.2 prohibición de retuning con H1-H4              ACTIVA
 
-9. Experimento definitivo H1-H3                       PENDIENTE
-   9.1 IBPR Stale
-   9.2 OnlineIBPRMejorado
-   9.3 IBPR Full Retrain
-   9.4 calidad
-   9.5 coste
-   9.6 análisis pareado multi-seed
+9. Experimento definitivo H1-H3                       ETAPA ACTUAL
+   9.1 definir/validar protocolo global prequential   PENDIENTE
+   9.2 IBPR Stale                                     PENDIENTE
+   9.3 OnlineIBPRMejorado                             PENDIENTE
+   9.4 IBPR Full Retrain                              PENDIENTE
+   9.5 calidad                                        PENDIENTE
+   9.6 coste                                          PENDIENTE
+   9.7 análisis pareado multi-seed                    PENDIENTE
 
 10. H4 — reutilización del índice                     PENDIENTE
     10.1 validar V exacta
@@ -762,7 +1022,7 @@ query p95 ms
 
 ---
 
-# 19. Experimento opcional H5 para demostrar directamente el sistema híbrido
+## 19. Experimento opcional H5 para demostrar directamente el sistema híbrido
 
 Si se desea que la conclusión final diga de forma explícita:
 
@@ -845,7 +1105,7 @@ Este experimento convertiría la “complementariedad” en una afirmación eval
 
 ---
 
-# 20. Ablaciones permitidas
+## 20. Ablaciones permitidas
 
 Las ablaciones deben responder preguntas concretas.
 
@@ -863,7 +1123,7 @@ No se debe transformar la fase de ablaciones en otro HPO encubierto.
 
 ---
 
-# 21. MovieLens 10M
+## 21. MovieLens 10M
 
 MovieLens 10M se utilizará después de congelar todas las decisiones principales.
 
@@ -880,7 +1140,7 @@ La configuración proveniente de desarrollo debe trasladarse congelada.
 
 ---
 
-# 22. Qué no forma parte del objetivo actual
+## 22. Qué no forma parte del objetivo actual
 
 No es objetivo principal demostrar:
 
@@ -896,7 +1156,7 @@ No es objetivo principal demostrar:
 
 ---
 
-# 23. Regla para interpretar los resultados
+## 23. Regla para interpretar los resultados
 
 La interpretación deberá seguir este orden:
 
@@ -914,7 +1174,7 @@ No se debe seleccionar primero una conclusión y buscar después métricas que l
 
 ---
 
-# 24. Contribución esperada
+## 24. Contribución esperada
 
 La contribución técnica potencial de la investigación puede resumirse así:
 
@@ -928,7 +1188,7 @@ Esta formulación es deliberadamente prudente:
 
 ---
 
-# 25. Tesis principal recomendada en este momento
+## 25. Tesis principal recomendada en este momento
 
 Mientras no existan los resultados definitivos, la tesis de trabajo recomendada es:
 
@@ -936,7 +1196,7 @@ Mientras no existan los resultados definitivos, la tesis de trabajo recomendada 
 
 ---
 
-# 26. Fuentes de verdad del proyecto
+## 26. Fuentes de verdad del proyecto
 
 Para continuar el proyecto, deben considerarse vigentes los siguientes tipos de archivo.
 
@@ -953,6 +1213,15 @@ Indexable Bayesian personalized ranking for efficient top-k recom.pdf
 cornac/models/ibpr/ibpr.py
 cornac/models/ibpr/recom_ibpr.py
 ```
+
+## Implementación OnlineIBPR original auditada
+
+```text
+cornac/models/online_ibpr/online_ibpr.py
+cornac/models/online_ibpr/recom_online_ibpr.py
+```
+
+Estos archivos deben conservarse como evidencia de la implementación original auditada y de los problemas técnicos documentados en la sección 4.
 
 ## OnlineIBPRMejorado
 
@@ -974,7 +1243,11 @@ tests/online_ibpr_mejorado/
 hyperparameter_refinement_ibpr_base_resultados_y_decision.md
 ```
 
-## HPO online actual
+Configuración vigente: `R900`.
+
+## HPO online cerrado
+
+Plan y script vigentes:
 
 ```text
 tests/online_ibpr_mejorado/
@@ -983,6 +1256,27 @@ plan_hpo_online_ibpr_mejorado_validated.md
 tests/online_ibpr_mejorado/
 hyperparameter_search_online_ibpr_mejorado.py
 ```
+
+Resultados de cierre que deben conservarse:
+
+```text
+tests/online_ibpr_mejorado/results/
+hyperparameter_search_online_ibpr_mejorado_20260908_214938.txt
+
+tests/online_ibpr_mejorado/results/
+hyperparameter_search_online_ibpr_mejorado_trials_20260908_214938.csv
+
+tests/online_ibpr_mejorado/results/
+hyperparameter_search_online_ibpr_mejorado_chunks_20260908_214938.csv
+
+tests/online_ibpr_mejorado/results/
+hyperparameter_search_online_ibpr_mejorado_summary_20260908_214938.csv
+
+tests/online_ibpr_mejorado/results/
+hyperparameter_search_online_ibpr_mejorado_best_20260908_214938.csv
+```
+
+Configuración vigente: `O014`.
 
 ## Este documento
 
@@ -995,7 +1289,7 @@ CONTEXTO_MAESTRO_Y_HOJA_DE_RUTA_ONLINE_IBPR_MEJORADO.md
 
 ---
 
-# 27. Regla de actualización de este documento
+## 27. Regla de actualización de este documento
 
 Este documento debe modificarse únicamente cuando se cierre una etapa importante.
 
@@ -1024,27 +1318,77 @@ Los resultados detallados deben permanecer en sus CSV, scripts y documentos espe
 
 ---
 
-# 28. Próximo paso exacto
+## 28. Próximo paso exacto
 
 El proyecto se encuentra actualmente en:
 
 ```text
-HPO de OnlineIBPRMejorado
+EXPERIMENTO DEFINITIVO H1-H3
 ```
 
-Antes de ejecutar el HPO completo:
+Los hiperparámetros ya no deben modificarse.
 
-```bash
-python tests/online_ibpr_mejorado/hyperparameter_search_online_ibpr_mejorado.py --plan-only
-```
-
-Después de validar el plan generado:
+Configuraciones congeladas:
 
 ```text
-ejecutar HPO
--> seleccionar configuración online
--> congelarla
--> no volver a utilizar H1-H4 para retuning
+IBPR base = R900
+OnlineIBPRMejorado = O014
+```
+
+El siguiente trabajo consiste en diseñar e implementar el experimento definitivo global/prequential que compare:
+
+```text
+IBPR_STALE
+vs
+OnlineIBPRMejorado
+vs
+IBPR_FULL_RETRAIN
+```
+
+Los tres métodos deben:
+
+```text
+- partir del mismo IBPR inicial;
+- recibir exactamente las mismas nuevas interacciones;
+- evaluarse en exactamente los mismos puntos temporales;
+- utilizar las mismas reglas de filtrado warm-start;
+- registrar las mismas métricas;
+- ejecutarse con configuración completamente congelada.
+```
+
+Seeds reservadas para esta etapa:
+
+```text
+[777, 999]
+```
+
+Antes de ejecutar el experimento completo se debe disponer de un modo de planificación/validación equivalente a `--plan-only` que permita revisar, como mínimo:
+
+```text
+- frontera cronológica global 0%-60% / 60%-100%;
+- tamaño y límites del tramo base;
+- tamaño y cronología del stream futuro;
+- chunks o puntos de evaluación;
+- usuarios e ítems warm-start retenidos;
+- configuración congelada de R900;
+- configuración congelada de O014;
+- seeds;
+- ramas Stale / Online / Full Retrain;
+- métricas de calidad;
+- métricas de coste;
+- deltas pareados que serán calculados;
+- regla descriptiva de adaptation_recovery para H3.
+```
+
+Una vez validado el plan:
+
+```text
+ejecutar H1-H3
+-> analizar Online - Stale
+-> analizar Online - Full Retrain
+-> analizar coste partial vs full retrain
+-> cerrar H1-H3 sin retuning
+-> pasar a H4
 ```
 
 Ese es el punto exacto desde el cual debe continuar la investigación.
