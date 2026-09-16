@@ -1,0 +1,71 @@
+
+######################################################################################################################
+H4 TIMESTAMP: 20260916_062030
+######################################################################################################################
+Log     : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\h4_index_reuse_online_ibpr_mejorado_20260916_062030.txt
+Steps   : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\h4_index_reuse_online_ibpr_mejorado_steps_20260916_062030.csv
+Queries : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\h4_index_reuse_online_ibpr_mejorado_queries_20260916_062030.csv
+Trials  : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\h4_index_reuse_online_ibpr_mejorado_trials_20260916_062030.csv
+Summary : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\h4_index_reuse_online_ibpr_mejorado_summary_20260916_062030.csv
+Protocol: a7bb3104d3ff4445935237d20e93a3e78df8448a95cec012299a17b3e628800a
+
+Environment:
+  Python : 3.12.0
+  OS     : Windows-11-10.0.26200-SP0
+  Cornac : 2.3.5
+  NumPy  : 2.4.2
+  SciPy  : 1.17.1
+  PyTorch: 2.10.0+cpu
+  FAISS  : 1.15.0
+  Threadpools: [{'user_api': 'blas', 'internal_api': 'openblas', 'num_threads': 16, 'prefix': 'libscipy_openblas', 'filepath': 'C:\\Users\\alder\\Desktop\\TESIS\\cornac\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-74a408729250596b0973e69fdd954eea.dll', 'version': '0.3.31.dev', 'threading_layer': 'pthreads', 'architecture': 'Haswell'}, {'user_api': 'openmp', 'internal_api': 'openmp', 'num_threads': 1, 'prefix': 'vcomp', 'filepath': 'C:\\Windows\\System32\\vcomp140.dll', 'version': None}, {'user_api': 'blas', 'internal_api': 'openblas', 'num_threads': 16, 'prefix': 'libscipy_openblas', 'filepath': 'C:\\Users\\alder\\Desktop\\TESIS\\cornac\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-64eda39e79589aedb16f58e5547eb599.dll', 'version': '0.3.30', 'threading_layer': 'pthreads', 'architecture': 'Haswell'}, {'user_api': 'openmp', 'internal_api': 'openmp', 'num_threads': 10, 'prefix': 'libiomp', 'filepath': 'C:\\Users\\alder\\Desktop\\TESIS\\cornac\\.venv\\Lib\\site-packages\\torch\\lib\\libiomp5md.dll', 'version': None}, {'user_api': 'openmp', 'internal_api': 'openmp', 'num_threads': 1, 'prefix': 'libiomp', 'filepath': 'C:\\Users\\alder\\Desktop\\TESIS\\cornac\\.venv\\Lib\\site-packages\\torch\\lib\\libiompstubs5md.dll', 'version': None}, {'user_api': 'blas', 'internal_api': 'openblas', 'num_threads': 16, 'prefix': 'libopenblas', 'filepath': 'C:\\Users\\alder\\Desktop\\TESIS\\cornac\\.venv\\Lib\\site-packages\\faiss_cpu.libs\\libopenblas.dll', 'version': '0.3.30', 'threading_layer': 'pthreads', 'architecture': 'Haswell'}]
+
+
+======================================================================================================================
+RUN H4 | seed=777
+======================================================================================================================
+BASE: rows=501,887 | users=4,037 | items=3,505 | train=681.12s | index_build=0.0307s
+BASE index SHA256: 96299079dd7fad4f9dc69ff566f77eb1e58650b93a5641ea4352e4e0d7a2f102
+  point 1 | PRIMARY rows=5,300 | query_users=212 | Online reused Recall=1.000000 | Full stale Recall=0.732547 | Full rebuilt Recall=1.000000 | Full rebuild=0.0280s | V_online exact=True | V_full exact=False
+  point 2 | PRIMARY rows=8,546 | query_users=315 | Online reused Recall=1.000000 | Full stale Recall=0.735397 | Full rebuilt Recall=1.000000 | Full rebuild=0.0355s | V_online exact=True | V_full exact=False
+  point 3 | PRIMARY rows=9,143 | query_users=306 | Online reused Recall=1.000000 | Full stale Recall=0.750327 | Full rebuilt Recall=1.000000 | Full rebuild=0.0275s | V_online exact=True | V_full exact=False
+
+======================================================================================================================
+RUN H4 | seed=999
+======================================================================================================================
+BASE: rows=501,887 | users=4,037 | items=3,505 | train=584.67s | index_build=0.0313s
+BASE index SHA256: e126352ac54e85d6485fe368c1b66753ab413ace714063ba60839318d4c62172
+  point 1 | PRIMARY rows=5,300 | query_users=212 | Online reused Recall=1.000000 | Full stale Recall=0.741274 | Full rebuilt Recall=1.000000 | Full rebuild=0.0263s | V_online exact=True | V_full exact=False
+  point 2 | PRIMARY rows=8,546 | query_users=315 | Online reused Recall=1.000000 | Full stale Recall=0.710794 | Full rebuilt Recall=1.000000 | Full rebuild=0.0325s | V_online exact=True | V_full exact=False
+  point 3 | PRIMARY rows=9,143 | query_users=306 | Online reused Recall=1.000000 | Full stale Recall=0.682026 | Full rebuilt Recall=1.000000 | Full rebuild=0.0319s | V_online exact=True | V_full exact=False
+
+======================================================================================================================
+H4 SUMMARY
+======================================================================================================================
+Online V exact all points       : True
+Max |V_online - V_base|         : 0
+Full points V exactly base      : 0 / 6
+Base build count == 1 all seeds : True
+Online rebuild count == 0       : True
+Full rebuild count == 3         : True
+Base index SHA unchanged        : True
+Same base ANN object all points : True
+Full rebuilt SHA unchanged      : True
+Online factors query-readonly   : True
+Full factors query-readonly     : True
+
+online_reused    | Recall=1.000000 | PosAgree=1.000000 | ExactSet=1.000000 | ShortfallRate=0.000000 | ANN median=0.0543 ms | Exhaustive median=0.0559 ms
+full_stale       | Recall=0.724070 | PosAgree=0.070408 | ExactSet=0.000600 | ShortfallRate=0.000000 | ANN median=0.0531 ms | Exhaustive median=0.0537 ms
+full_rebuilt     | Recall=1.000000 | PosAgree=0.999940 | ExactSet=1.000000 | ShortfallRate=0.000000 | ANN median=0.0519 ms | Exhaustive median=0.0529 ms
+
+Interpretation guard:
+  - H4a is structural: unchanged V means unchanged indexed item corpus.
+  - FAISS IVF retrieval is approximate; Recall need not equal 1.0.
+  - FULL_STALE_INDEX is a cross-representation operational control.
+  - No ANN retuning is permitted after these results.
+
+Files:
+  log     : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\h4_index_reuse_online_ibpr_mejorado_20260916_062030.txt
+  steps   : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\h4_index_reuse_online_ibpr_mejorado_steps_20260916_062030.csv
+  queries : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\h4_index_reuse_online_ibpr_mejorado_queries_20260916_062030.csv
+  trials  : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\h4_index_reuse_online_ibpr_mejorado_trials_20260916_062030.csv
+  summary : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\h4_index_reuse_online_ibpr_mejorado_summary_20260916_062030.csv
