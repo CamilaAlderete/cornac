@@ -118,13 +118,13 @@ class ComparERSub(MTER):
             The opinion latent factors, optional initialization via init_params
 
         G1: ndarray, shape (n_user_factors, n_item_factors, n_aspect_factors)
-            The core tensor for user, item, and aspect factors, optional initialization via init_params
+            The experiments tensor for user, item, and aspect factors, optional initialization via init_params
 
         G2: ndarray, shape (n_user_factors, n_aspect_factors, n_opinion_factors)
-            The core tensor for user, aspect, and opinion factors, optional initialization via init_params
+            The experiments tensor for user, aspect, and opinion factors, optional initialization via init_params
 
         G3: ndarray, shape (n_item_factors, n_aspect_factors, n_opinion_factors)
-            The core tensor for item, aspect, and opinion factors, optional initialization via init_params
+            The experiments tensor for item, aspect, and opinion factors, optional initialization via init_params
 
     seed: int, optional, default: None
         Random seed for parameters initialization.

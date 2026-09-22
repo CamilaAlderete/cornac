@@ -548,7 +548,7 @@ def validate_implementation_contracts():
     missing_online = [token for token in expected_online_tokens if token not in online_source]
     if missing_online:
         raise RuntimeError(
-            "El core OnlineIBPRMejorado no coincide con la versión estabilizada. "
+            "El experiments OnlineIBPRMejorado no coincide con la versión estabilizada. "
             f"Tokens ausentes: {missing_online}"
         )
 
@@ -562,7 +562,7 @@ def validate_implementation_contracts():
     missing_ibpr = [token for token in expected_ibpr_tokens if token not in ibpr_source]
     if missing_ibpr:
         raise RuntimeError(
-            "El core IBPR no coincide con la implementación R900 auditada. "
+            "El experiments IBPR no coincide con la implementación R900 auditada. "
             f"Tokens ausentes: {missing_ibpr}"
         )
 
@@ -657,9 +657,9 @@ def validate_implementation_contracts():
 
     print("Implementation contracts: OK")
     print(f"  IBPR wrapper     : {inspect.getsourcefile(IBPR) or 'unknown'}")
-    print(f"  IBPR core        : {inspect.getsourcefile(ibpr_core) or 'unknown'}")
+    print(f"  IBPR experiments        : {inspect.getsourcefile(ibpr_core) or 'unknown'}")
     print(f"  Online wrapper   : {inspect.getsourcefile(OnlineIBPRMejorado) or 'unknown'}")
-    print(f"  Online core      : {inspect.getsourcefile(online_core) or 'unknown'}")
+    print(f"  Online experiments      : {inspect.getsourcefile(online_core) or 'unknown'}")
     print("  Online V invariant / seed progression / empty update: OK")
     print()
 

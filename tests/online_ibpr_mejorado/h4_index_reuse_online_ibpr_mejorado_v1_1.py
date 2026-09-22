@@ -660,9 +660,9 @@ def validate_implementation_contracts():
 
     print("Implementation contracts: OK")
     print(f"  IBPR wrapper   : {inspect.getsourcefile(IBPR) or 'unknown'}")
-    print(f"  IBPR core      : {inspect.getsourcefile(ibpr_core) or 'unknown'}")
+    print(f"  IBPR experiments      : {inspect.getsourcefile(ibpr_core) or 'unknown'}")
     print(f"  Online wrapper : {inspect.getsourcefile(OnlineIBPRMejorado) or 'unknown'}")
-    print(f"  Online core    : {inspect.getsourcefile(online_core) or 'unknown'}")
+    print(f"  Online experiments    : {inspect.getsourcefile(online_core) or 'unknown'}")
     print(f"  FaissANN       : {inspect.getsourcefile(FaissANN) or 'unknown'}")
     print()
 

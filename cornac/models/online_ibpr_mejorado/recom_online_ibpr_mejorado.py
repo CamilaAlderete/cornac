@@ -74,7 +74,7 @@ class OnlineIBPRMejorado(Recommender, ANNMixin):
         When update_V=False, V remains unchanged.
 
     loss_mode: str, optional, default: 'angular'
-        Ranking loss mode used by the core training function.
+        Ranking loss mode used by the experiments training function.
         Options:
         - 'angular': uses angular distances with acos and softplus.
         - 'cosine_bpr': uses cosine similarity directly with BPR-style softplus.
