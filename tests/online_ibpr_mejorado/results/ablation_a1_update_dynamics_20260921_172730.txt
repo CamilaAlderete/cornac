@@ -1,0 +1,50 @@
+######################################################################################################################
+ABLATION A1 TIMESTAMP: 20260921_172730
+######################################################################################################################
+Protocol: 8090d3adb71088aac68ea46cdf63e30c5ae65ab3784e3d27ea2ed32ea5b0fef3
+Data SHA: 29da5346c5bcf37dc927771d8ffd7ec3323dc7857ed4b0f6a45278b666954d3e
+Reference steps: C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\final_h1_h3_online_ibpr_mejorado_steps_20260914_175307.csv
+
+======================================================================================================================
+ABLATION A1 | seed=777
+======================================================================================================================
+BASE: rows=501,887 | users=4,037 | items=3,505 | train=625.70s
+  point 1 | update_rows=13,118 | PRIMARY=5,300 | S=0.075302 | H=0.075302 | C=0.075302 | R=0.075302 | stale=0.072993 | current-users rows=5,300 | current S/H/C/R=0.075302/0.075302/0.075302/0.075302 | full_ref=0.079544
+  point 2 | update_rows=13,118 | PRIMARY=8,546 | S=0.081479 | H=0.082669 | C=0.078066 | R=0.080229 | stale=0.074617 | current-users rows=7,538 | current S/H/C/R=0.081645/0.082470/0.076504/0.079596 | full_ref=0.078522
+  point 3 | update_rows=13,114 | PRIMARY=9,143 | S=0.082241 | H=0.081512 | C=0.074671 | R=0.090486 | stale=0.092057 | current-users rows=7,256 | current S/H/C/R=0.081615/0.078534/0.074498/0.093679 | full_ref=0.098138
+======================================================================================================================
+ABLATION A1 | seed=999
+======================================================================================================================
+BASE: rows=501,887 | users=4,037 | items=3,505 | train=1093.12s
+  point 1 | update_rows=13,118 | PRIMARY=5,300 | S=0.077927 | H=0.077927 | C=0.077927 | R=0.077927 | stale=0.071732 | current-users rows=5,300 | current S/H/C/R=0.077927/0.077927/0.077927/0.077927 | full_ref=0.074696
+  point 2 | update_rows=13,118 | PRIMARY=8,546 | S=0.075388 | H=0.078568 | C=0.074457 | R=0.072229 | stale=0.069137 | current-users rows=7,538 | current S/H/C/R=0.076380/0.076187/0.075219/0.071615 | full_ref=0.076588
+  point 3 | update_rows=13,114 | PRIMARY=9,143 | S=0.076048 | H=0.078944 | C=0.075505 | R=0.085477 | stale=0.096292 | current-users rows=7,256 | current S/H/C/R=0.074742/0.077223/0.076075/0.089344 | full_ref=0.092208
+
+======================================================================================================================
+ABLATION A1 SUMMARY
+======================================================================================================================
+SEQUENTIAL_ORIGINAL | mean NDCG=0.078064 | vs Stale=-0.001407 | vs FullRef=-0.005218
+RETROSPECTIVE_FIXED_HISTORY | mean NDCG=0.079154 | vs Stale=-0.000317 | vs FullRef=-0.004129
+RESET_CUMULATIVE   | mean NDCG=0.075988 | vs Stale=-0.003483 | vs FullRef=-0.007294
+RESET_CURRENT      | mean NDCG=0.080275 | vs Stale=+0.000804 | vs FullRef=-0.003008
+Paired contrasts:
+  S - H                  : -0.001089
+  H - C                  : +0.003165
+  S - C                  : +0.002076
+Point 3 contrasts (original PRIMARY):
+  S - H                  : -0.001084
+  H - C                  : +0.005140
+  S - C                  : +0.004056
+RESET_CURRENT diagnostic (current-user matched PRIMARY subset):
+  mean S - R             : -0.003309
+  point3 S - R           : -0.013333
+Point-1 U identical S/H/C/R: True
+All V exact base         : True
+Sequential ref reproduced: True
+Stale ref reproduced     : True
+Interpretation: descriptive within-point diagnostic only; do not retune O014 or infer a unique causal mechanism.
+
+Steps   : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\ablation_a1_update_dynamics_20260921_172730_steps.csv
+Trials  : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\ablation_a1_update_dynamics_20260921_172730_trials.csv
+Summary : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\ablation_a1_update_dynamics_20260921_172730_summary.csv
+Log     : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado\results\ablation_a1_update_dynamics_20260921_172730.txt
