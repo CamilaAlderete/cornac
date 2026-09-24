@@ -1,0 +1,93 @@
+
+##############################################################################################################
+ONLINE IBPR HPO V2 TIMESTAMP: 20260924_171634
+##############################################################################################################
+Trials CSV : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado_v4\experiments\hpo\results\hyperparameter_search_online_ibpr_mejorado_v2_trials_20260924_171634.csv
+Chunks CSV : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado_v4\experiments\hpo\results\hyperparameter_search_online_ibpr_mejorado_v2_chunks_20260924_171634.csv
+Summary CSV: C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado_v4\experiments\hpo\results\hyperparameter_search_online_ibpr_mejorado_v2_summary_20260924_171634.csv
+Best CSV   : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado_v4\experiments\hpo\results\hyperparameter_search_online_ibpr_mejorado_v2_best_20260924_171634.csv
+
+==============================================================================================================
+ONLINE IBPR HPO V2 - GLOBAL PREQUENTIAL DEVELOPMENT PROTOCOL
+==============================================================================================================
+Protocol version                 : online_hpo_global_prequential_v2_20260924
+Protocol hash                    : ebecc34f6812b3020010f5ce02c61704b70b0712d29d800ae02a9c0074f78bd3
+Dataset SHA256                   : 29da5346c5bcf37dc927771d8ffd7ec3323dc7857ed4b0f6a45278b666954d3e
+Dataset                          : MovieLens 1M
+Positive threshold               : rating >= 3.0
+Feedback                         : implicit positive = 1.0
+Target development horizon       : first 60% globally
+Target development rows          : 501,886
+Effective development rows       : 501,887
+Tie rows added at outer boundary : 1
+Untouched final rows             : 334,591
+Later global data used by HPO    : NO
+Total implicit-positive rows     : 836,478
+
+S50: GLOBAL base target=50% | base=250,944 (2,067 users, 3,282 items) | future=250,943 | warm=16,258 (6.48%)
+    base tie adjustment=1 | excluded user/item/both=231,447/457/2,781
+    chunk_1: rows=4,065 | users=125 | items=1,603
+    chunk_2: rows=4,070 | users=124 | items=1,785
+    chunk_3: rows=4,058 | users=179 | items=1,578
+    chunk_4: rows=4,065 | users=156 | items=1,788
+    eval_point_1: update=C1 -> eval=C2 | primary=1,312 rows / 40 users | allwarm=4,070 rows
+    eval_point_2: update=C2 -> eval=C3 | primary=1,631 rows / 86 users | allwarm=4,058 rows
+    eval_point_3: update=C3 -> eval=C4 | primary=2,873 rows / 108 users | allwarm=4,065 rows
+S65: GLOBAL base target=65% | base=326,227 (2,587 users, 3,363 items) | future=175,660 | warm=16,113 (9.17%)
+    base tie adjustment=1 | excluded user/item/both=157,762/337/1,448
+    chunk_1: rows=4,028 | users=155 | items=1,596
+    chunk_2: rows=4,031 | users=164 | items=1,532
+    chunk_3: rows=4,031 | users=157 | items=1,720
+    chunk_4: rows=4,023 | users=163 | items=1,652
+    eval_point_1: update=C1 -> eval=C2 | primary=1,821 rows / 68 users | allwarm=4,031 rows
+    eval_point_2: update=C2 -> eval=C3 | primary=2,616 rows / 96 users | allwarm=4,031 rows
+    eval_point_3: update=C3 -> eval=C4 | primary=2,043 rows / 106 users | allwarm=4,023 rows
+S80: GLOBAL base target=80% | base=401,510 (3,122 users, 3,456 items) | future=100,377 | warm=5,821 (5.80%)
+    base tie adjustment=1 | excluded user/item/both=94,459/14/83
+    chunk_1: rows=1,458 | users=64 | items=946
+    chunk_2: rows=1,454 | users=82 | items=985
+    chunk_3: rows=1,455 | users=69 | items=925
+    chunk_4: rows=1,454 | users=124 | items=911
+    eval_point_1: update=C1 -> eval=C2 | primary=130 rows / 17 users | allwarm=1,454 rows
+    eval_point_2: update=C2 -> eval=C3 | primary=991 rows / 31 users | allwarm=1,455 rows
+    eval_point_3: update=C3 -> eval=C4 | primary=554 rows / 61 users | allwarm=1,454 rows
+
+Interpretation: all scenario boundaries and chunks are GLOBAL chronological. The globally later holdout is untouched by HPO and reserved for final H1-H4.
+
+==============================================================================================================
+STAGE O-A ONLINE CONFIGURATIONS
+==============================================================================================================
+O001 | source=pilot_online_anchor      | lr=0.01    lamda=0.001    batch=512  epochs=1 loss=cosine_bpr
+O002 | source=frozen_base_like_cosine_anchor | lr=0.0025  lamda=1e-05    batch=512  epochs=1 loss=cosine_bpr
+O003 | source=frozen_base_like_angular_anchor | lr=0.0025  lamda=1e-05    batch=512  epochs=1 loss=angular
+O004 | source=coverage_random_search   | lr=0.005   lamda=1e-05    batch=128  epochs=1 loss=angular
+O005 | source=coverage_random_search   | lr=0.01    lamda=1e-06    batch=256  epochs=1 loss=angular
+O006 | source=coverage_random_search   | lr=0.02    lamda=0        batch=1024 epochs=2 loss=angular
+O007 | source=coverage_random_search   | lr=0.02    lamda=0        batch=256  epochs=3 loss=cosine_bpr
+O008 | source=coverage_random_search   | lr=0.001   lamda=0        batch=128  epochs=2 loss=angular
+O009 | source=coverage_random_search   | lr=0.02    lamda=0.0001   batch=512  epochs=1 loss=cosine_bpr
+O010 | source=random_search            | lr=0.005   lamda=0.001    batch=1024 epochs=2 loss=cosine_bpr
+O011 | source=random_search            | lr=0.01    lamda=0.001    batch=256  epochs=1 loss=cosine_bpr
+O012 | source=random_search            | lr=0.0025  lamda=1e-05    batch=512  epochs=2 loss=angular
+O013 | source=random_search            | lr=0.02    lamda=0.001    batch=1024 epochs=3 loss=cosine_bpr
+O014 | source=random_search            | lr=0.005   lamda=1e-06    batch=1024 epochs=3 loss=angular
+O015 | source=random_search            | lr=0.01    lamda=1e-05    batch=256  epochs=1 loss=angular
+O016 | source=random_search            | lr=0.01    lamda=0        batch=256  epochs=3 loss=cosine_bpr
+O017 | source=random_search            | lr=0.0025  lamda=1e-06    batch=128  epochs=1 loss=angular
+O018 | source=random_search            | lr=0.005   lamda=1e-06    batch=128  epochs=1 loss=cosine_bpr
+O019 | source=random_search            | lr=0.0025  lamda=1e-06    batch=256  epochs=3 loss=angular
+O020 | source=random_search            | lr=0.02    lamda=0.0001   batch=128  epochs=1 loss=angular
+
+Fixed online architecture:
+  k            = 20
+  update_V     = False
+  neg_sampling = uniform
+  normalize    = True
+  max_steps    = None
+
+Budget:
+  O-A: 20 configs × S50,S65 × seed 42
+  O-B: top 5 + protected anchors × S80 × seed 42
+  O-C: top 3 + protected anchors × S50,S65,S80 × seeds=[42, 123, 2024]
+
+PLAN ONLY: no se entrenó ningún modelo.

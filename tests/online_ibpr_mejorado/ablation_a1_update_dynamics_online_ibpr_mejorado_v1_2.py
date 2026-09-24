@@ -1092,7 +1092,7 @@ def print_plan(data, data_hash, refs, p_hash, reference_path):
     print("  H-vs-C compares multiple calls vs one call but still bundles optimizer resets,")
     print("  intermediate normalization, shuffling/batching and seed progression.")
     print("  Do not call point-3 behavior generic temporal deterioration: PRIMARY populations differ by point.")
-    print("  Report paired within-point contrasts; no retuning and no new O014 selection.")
+    print("  Report paired within-point contrasts; no retuning and no new O014 hpo.")
     print()
     print("Reference guards:")
     print(f"  final H1-H3 protocol version  : {EXPECTED_FINAL_H1H3_PROTOCOL_VERSION}")

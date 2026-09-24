@@ -74,10 +74,10 @@ class NARRE(Recommender, ANNMixin):
         Initial value of learning rate for the optimizer.
 
     model_selection: str, optional, default: 'last'
-        Model selection strategy is either 'best' or 'last'.
+        Model hpo strategy is either 'best' or 'last'.
 
     user_based: boolean, optional, default: True
-        Evaluation strategy for model selection, by default, it measures for every users and taking the average `user_based=True`. Set `user_based=False` if you want to measure per rating instead.
+        Evaluation strategy for model hpo, by default, it measures for every users and taking the average `user_based=True`. Set `user_based=False` if you want to measure per rating instead.
 
     trainable: boolean, optional, default: True
         When False, the model will not be re-trained, and input of pre-trained parameters are required.
@@ -156,7 +156,7 @@ class NARRE(Recommender, ANNMixin):
             User-Item preference data as well as additional modalities.
 
         val_set: :obj:`cornac.data.Dataset`, optional, default: None
-            User-Item preference data for model selection purposes (e.g., early stopping).
+            User-Item preference data for model hpo purposes (e.g., early stopping).
 
         Returns
         -------

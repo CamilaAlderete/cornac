@@ -42,7 +42,7 @@ def ranking_eval(
         Dataset to be used for evaluation.
 
     val_set: :obj:`cornac.data.Dataset`, optional, default: None
-        Dataset to be used for model selection. This will be used to exclude
+        Dataset to be used for model hpo. This will be used to exclude
         observations already appeared during validation.
 
     rating_threshold: float, optional, default: 1.0

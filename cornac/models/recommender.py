@@ -312,7 +312,7 @@ class Recommender:
             User-Item preference data as well as additional modalities.
 
         val_set: :obj:`cornac.data.Dataset`, optional, default: None
-            User-Item preference data for model selection purposes (e.g., early stopping).
+            User-Item preference data for model hpo purposes (e.g., early stopping).
 
         Returns
         -------
@@ -590,7 +590,7 @@ class Recommender:
             User-Item preference data as well as additional modalities.
 
         val_set: :obj:`cornac.data.Dataset`, optional, default: None
-            User-Item preference data for model selection purposes (e.g., early stopping).
+            User-Item preference data for model hpo purposes (e.g., early stopping).
 
         Returns
         -------
@@ -607,7 +607,7 @@ class Recommender:
             User-Item preference data as well as additional modalities.
 
         val_set: :obj:`cornac.data.Dataset`, optional, default: None
-            User-Item preference data for model selection purposes (e.g., early stopping).
+            User-Item preference data for model hpo purposes (e.g., early stopping).
 
         min_delta: float, optional, default: 0.
             The minimum increase in monitored value on validation set to be considered as improvement,

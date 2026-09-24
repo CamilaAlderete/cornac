@@ -1,6 +1,10 @@
 import argparse
 import csv
+import hashlib
+import importlib
+import inspect
 import itertools
+import json
 import os
 import sys
 import time
@@ -26,9 +30,11 @@ from cornac.utils.Tee import Tee
 RATING_THRESHOLD = 3.0
 VARIANT = "1M"
 TOP_K = 20
+PROTOCOL_VERSION = "ibpr_hpo_per_user_temporal_v2_20260924"
+OUTER_BOUNDARY_POLICY = "extend_to_end_of_equal_timestamp_group"
 
 # Only the first 60% of the chronological positive interactions is used
-# during hyperparameter hpo. The later 40% remains untouched here.
+# during hyperparameter selection. The later 40% remains untouched here.
 HPO_END_FRAC = 0.60
 
 # Warm-start validation sufficiency checks.
@@ -106,7 +112,7 @@ HPO_RANDOM_SEED = 2026
 SCREENING_SEED = 42
 CONFIRMATION_SEEDS = [42, 123, 2024]
 
-# The primary model-hpo metric is fixed before running the HPO.
+# The primary model-selection metric is fixed before running the HPO.
 PRIMARY_METRIC = f"NDCG@{TOP_K}"
 
 QUALITY_METRICS = [
@@ -121,6 +127,11 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 RESULTS_DIR = os.path.join(SCRIPT_DIR, "results")
 
 TRIAL_FIELDS = [
+    "protocol_hash",
+    "dataset_sha256",
+    "script_sha256",
+    "ibpr_wrapper_sha256",
+    "ibpr_core_sha256",
     "origin_stage",
     "config_id",
     "config_source",
@@ -229,7 +240,8 @@ def parse_args():
 def validate_hpo_protocol():
     """
     Validate that:
-      - HPO never uses data outside the first HPO_END_FRAC globally;
+      - the nominal HPO horizon is a valid global fraction;
+      - the actual outer boundary may extend only across an equal-timestamp tie;
       - per-user folds are expanding and contiguous;
       - all ratios are valid.
     """
@@ -316,18 +328,185 @@ def load_positive_chrono_movielens(
 
 def build_hpo_pool(all_positive_rows):
     """
-    Reserve the globally latest 40% of implicit-positive interactions.
+    Reserve the globally latest ~40% of implicit-positive interactions.
 
-    Only the first HPO_END_FRAC of the globally chronological stream is ever
-    visible to hyperparameter hpo.
+    The nominal 60% boundary is extended to the end of its timestamp group so
+    interactions with the same timestamp are never split across development
+    and the untouched later holdout. This is the same outer-boundary policy
+    used by the final global-prequential protocol.
     """
     n_total = len(all_positive_rows)
-    hpo_end = int(n_total * HPO_END_FRAC)
+    target_end = int(n_total * HPO_END_FRAC)
 
-    if hpo_end <= 0:
+    if target_end <= 0:
         raise ValueError("El horizonte HPO quedó vacío.")
 
-    return list(all_positive_rows[:hpo_end])
+    if target_end >= n_total:
+        return list(all_positive_rows), {
+            "target_rows": target_end,
+            "effective_rows": n_total,
+            "tie_rows_added": max(0, n_total - target_end),
+            "boundary_timestamp": int(all_positive_rows[-1][3]),
+        }
+
+    boundary_timestamp = int(all_positive_rows[target_end - 1][3])
+    effective_end = target_end
+
+    while (
+        effective_end < n_total
+        and int(all_positive_rows[effective_end][3]) == boundary_timestamp
+    ):
+        effective_end += 1
+
+    pool = list(all_positive_rows[:effective_end])
+
+    if effective_end < n_total:
+        next_timestamp = int(all_positive_rows[effective_end][3])
+        if not boundary_timestamp < next_timestamp:
+            raise ValueError(
+                "La frontera HPO no quedó estrictamente separada por timestamp."
+            )
+
+    return pool, {
+        "target_rows": target_end,
+        "effective_rows": effective_end,
+        "tie_rows_added": effective_end - target_end,
+        "boundary_timestamp": boundary_timestamp,
+    }
+
+
+def sha256_file(path):
+    hasher = hashlib.sha256()
+    with open(path, "rb") as file:
+        for chunk in iter(lambda: file.read(1024 * 1024), b""):
+            hasher.update(chunk)
+    return hasher.hexdigest()
+
+
+def sha256_processed_rows(rows):
+    hasher = hashlib.sha256()
+    for user_id, item_id, value, timestamp in rows:
+        payload = (
+            f"{user_id}\t{item_id}\t{float(value):.1f}\t{int(timestamp)}\n"
+        )
+        hasher.update(payload.encode("utf-8"))
+    return hasher.hexdigest()
+
+
+def protocol_payload(screening_configs):
+    return {
+        "protocol_version": PROTOCOL_VERSION,
+        "outer_boundary_policy": OUTER_BOUNDARY_POLICY,
+        "variant": VARIANT,
+        "rating_threshold": RATING_THRESHOLD,
+        "feedback": "implicit_positive_1.0",
+        "top_k": TOP_K,
+        "hpo_end_frac": HPO_END_FRAC,
+        "folds": FOLDS,
+        "min_user_interactions_for_validation": MIN_USER_INTERACTIONS_FOR_VALIDATION,
+        "min_known_validation_rows": MIN_KNOWN_VALIDATION_ROWS,
+        "min_validation_users": MIN_VALIDATION_USERS,
+        "min_validation_items": MIN_VALIDATION_ITEMS,
+        "k_values": K_VALUES,
+        "learning_rate_values": LEARNING_RATE_VALUES,
+        "lamda_values": LAMDA_VALUES,
+        "batch_size_values": BATCH_SIZE_VALUES,
+        "screening_max_iter": SCREENING_MAX_ITER,
+        "max_iter_values": MAX_ITER_VALUES,
+        "screening_configs": int(screening_configs),
+        "top_stage_a": TOP_STAGE_A,
+        "top_stage_b": TOP_STAGE_B,
+        "top_stage_c": TOP_STAGE_C,
+        "protected_config_sources": sorted(PROTECTED_CONFIG_SOURCES),
+        "hpo_random_seed": HPO_RANDOM_SEED,
+        "screening_seed": SCREENING_SEED,
+        "confirmation_seeds": CONFIRMATION_SEEDS,
+        "primary_metric": PRIMARY_METRIC,
+        "quality_metrics": QUALITY_METRICS,
+    }
+
+
+def sha256_json(payload):
+    canonical = json.dumps(
+        payload, sort_keys=True, separators=(",", ":"), ensure_ascii=True
+    ).encode("utf-8")
+    return hashlib.sha256(canonical).hexdigest()
+
+
+def resolve_ibpr_source_hashes():
+    wrapper_path = inspect.getsourcefile(IBPR) or inspect.getfile(IBPR)
+    core_module = importlib.import_module("cornac.models.ibpr.ibpr")
+    core_path = inspect.getsourcefile(core_module) or inspect.getfile(core_module)
+
+    if not wrapper_path or not os.path.isfile(wrapper_path):
+        raise RuntimeError("No se pudo resolver el fuente del wrapper IBPR.")
+    if not core_path or not os.path.isfile(core_path):
+        raise RuntimeError("No se pudo resolver el fuente core de IBPR.")
+
+    return {
+        "ibpr_wrapper_path": os.path.abspath(wrapper_path),
+        "ibpr_wrapper_sha256": sha256_file(wrapper_path),
+        "ibpr_core_path": os.path.abspath(core_path),
+        "ibpr_core_sha256": sha256_file(core_path),
+    }
+
+
+def build_provenance(all_positive_rows, screening_configs):
+    source_hashes = resolve_ibpr_source_hashes()
+    payload = protocol_payload(screening_configs)
+    return {
+        "protocol_version": PROTOCOL_VERSION,
+        "protocol_hash": sha256_json(payload),
+        "dataset_sha256": sha256_processed_rows(all_positive_rows),
+        "script_sha256": sha256_file(os.path.abspath(__file__)),
+        **source_hashes,
+        "protocol_payload": payload,
+    }
+
+
+def save_or_validate_manifest(path, provenance):
+    current = {
+        "protocol_version": provenance["protocol_version"],
+        "protocol_hash": provenance["protocol_hash"],
+        "dataset_sha256": provenance["dataset_sha256"],
+        "script_sha256": provenance["script_sha256"],
+        "ibpr_wrapper_sha256": provenance["ibpr_wrapper_sha256"],
+        "ibpr_core_sha256": provenance["ibpr_core_sha256"],
+        "ibpr_wrapper_path": provenance["ibpr_wrapper_path"],
+        "ibpr_core_path": provenance["ibpr_core_path"],
+        "protocol_payload": provenance["protocol_payload"],
+    }
+
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as file:
+            existing = json.load(file)
+
+        identity_fields = [
+            "protocol_version",
+            "protocol_hash",
+            "dataset_sha256",
+            "script_sha256",
+            "ibpr_wrapper_sha256",
+            "ibpr_core_sha256",
+            "protocol_payload",
+        ]
+        mismatch = [
+            field
+            for field in identity_fields
+            if existing.get(field) != current.get(field)
+        ]
+        if mismatch:
+            raise ValueError(
+                "El manifest existente no coincide con el protocolo/dataset/"
+                "fuentes actuales. Campos distintos: "
+                + ", ".join(mismatch)
+                + ". Use un timestamp nuevo."
+            )
+        return
+
+    with open(path, "w", encoding="utf-8") as file:
+        json.dump(current, file, indent=2, sort_keys=True)
+        file.write("\n")
 
 
 def build_user_histories(hpo_pool_rows):
@@ -480,6 +659,24 @@ def prepare_fold_rows(user_histories, fold):
         i
         for _, i, _, _ in train_rows
     }
+
+    if len(validation_known) < MIN_KNOWN_VALIDATION_ROWS:
+        raise ValueError(
+            f"{fold['name']}: validación warm-start insuficiente: "
+            f"{len(validation_known)} filas < {MIN_KNOWN_VALIDATION_ROWS}."
+        )
+
+    if len(validation_users) < MIN_VALIDATION_USERS:
+        raise ValueError(
+            f"{fold['name']}: usuarios de validación insuficientes: "
+            f"{len(validation_users)} < {MIN_VALIDATION_USERS}."
+        )
+
+    if len(validation_items) < MIN_VALIDATION_ITEMS:
+        raise ValueError(
+            f"{fold['name']}: ítems de validación insuficientes: "
+            f"{len(validation_items)} < {MIN_VALIDATION_ITEMS}."
+        )
 
     # Per-user temporal integrity check.
     max_train_ts_by_user = {}
@@ -769,6 +966,9 @@ def existing_trial_lookup(rows):
     return lookup
 
 
+CURRENT_PROVENANCE = None
+
+
 # ============================================================
 # Training / evaluation
 # ============================================================
@@ -844,7 +1044,15 @@ def run_physical_trial(
     n_original = len(fold_rows["validation_original"])
     n_known = len(fold_rows["validation_known"])
 
+    if CURRENT_PROVENANCE is None:
+        raise RuntimeError("Provenance no inicializada antes del entrenamiento.")
+
     row = {
+        "protocol_hash": CURRENT_PROVENANCE["protocol_hash"],
+        "dataset_sha256": CURRENT_PROVENANCE["dataset_sha256"],
+        "script_sha256": CURRENT_PROVENANCE["script_sha256"],
+        "ibpr_wrapper_sha256": CURRENT_PROVENANCE["ibpr_wrapper_sha256"],
+        "ibpr_core_sha256": CURRENT_PROVENANCE["ibpr_core_sha256"],
         "origin_stage": origin_stage,
         "config_id": config["config_id"],
         "config_source": config["config_source"],
@@ -1062,7 +1270,7 @@ def aggregate_configuration(
 
 def ranking_key(summary):
     """
-    Fixed deterministic hpo rule:
+    Fixed deterministic selection rule:
       1) higher mean NDCG@20
       2) lower NDCG@20 variability
       3) lower mean training time
@@ -1345,8 +1553,10 @@ def run_stage_d(
 def print_data_protocol(
     all_positive_rows,
     hpo_pool_rows,
+    hpo_boundary_info,
     user_histories,
     fold_data,
+    provenance,
 ):
     print("=" * 100)
     print(
@@ -1357,15 +1567,25 @@ def print_data_protocol(
     print(f"Dataset variant                 : MovieLens {VARIANT}")
     print(f"Positive threshold              : rating >= {RATING_THRESHOLD}")
     print("Feedback used by IBPR           : implicit positive (value = 1.0)")
-    print(f"Primary hpo metric        : {PRIMARY_METRIC}")
-    print(f"Global HPO horizon              : first {100 * HPO_END_FRAC:.0f}%")
+    print(f"Primary selection metric        : {PRIMARY_METRIC}")
+    print(f"Global HPO horizon              : first {100 * HPO_END_FRAC:.0f}% target")
+    print(f"Outer boundary policy           : {OUTER_BOUNDARY_POLICY}")
     print(
         "Later global data used here     : NO "
-        "(60-100% remains outside HPO)"
+        "(strictly later timestamps remain outside HPO)"
     )
     print(f"Total implicit-positive rows    : {len(all_positive_rows):,}")
-    print(f"Rows inside HPO horizon         : {len(hpo_pool_rows):,}")
+    print(f"Target development rows         : {hpo_boundary_info['target_rows']:,}")
+    print(f"Effective development rows      : {hpo_boundary_info['effective_rows']:,}")
+    print(f"Tie rows added at boundary      : {hpo_boundary_info['tie_rows_added']:,}")
+    print(f"Boundary timestamp              : {hpo_boundary_info['boundary_timestamp']}")
     print(f"Users inside HPO horizon        : {len(user_histories):,}")
+    print(f"Protocol version                : {provenance['protocol_version']}")
+    print(f"Protocol hash                   : {provenance['protocol_hash']}")
+    print(f"Processed dataset SHA256        : {provenance['dataset_sha256']}")
+    print(f"Script SHA256                   : {provenance['script_sha256']}")
+    print(f"IBPR wrapper SHA256             : {provenance['ibpr_wrapper_sha256']}")
+    print(f"IBPR core SHA256                : {provenance['ibpr_core_sha256']}")
 
     eligible_user_count = sum(
         1
@@ -1473,6 +1693,7 @@ def final_best_row(stage_d_ranked):
     best["rating_threshold"] = RATING_THRESHOLD
     best["dataset_variant"] = VARIANT
     best["hpo_end_fraction"] = HPO_END_FRAC
+    best["outer_boundary_policy"] = OUTER_BOUNDARY_POLICY
 
     return best
 
@@ -1482,6 +1703,8 @@ def final_best_row(stage_d_ranked):
 # ============================================================
 
 def main():
+    global CURRENT_PROVENANCE
+
     args = parse_args()
 
     validate_hpo_protocol()
@@ -1509,6 +1732,11 @@ def main():
         f"hyperparameter_search_ibpr_best_{timestamp}.csv",
     )
 
+    manifest_path = os.path.join(
+        RESULTS_DIR,
+        f"hyperparameter_search_ibpr_manifest_{timestamp}.json",
+    )
+
     log_path = os.path.join(
         RESULTS_DIR,
         f"hyperparameter_search_ibpr_{timestamp}.txt",
@@ -1527,11 +1755,17 @@ def main():
             print(f"Trials CSV : {trials_path}")
             print(f"Summary CSV: {summary_path}")
             print(f"Best CSV   : {best_path}")
+            print(f"Manifest   : {manifest_path}")
             print()
 
             all_positive_rows = load_positive_chrono_movielens()
 
-            hpo_pool_rows = build_hpo_pool(
+            CURRENT_PROVENANCE = build_provenance(
+                all_positive_rows,
+                args.screening_configs,
+            )
+
+            hpo_pool_rows, hpo_boundary_info = build_hpo_pool(
                 all_positive_rows
             )
 
@@ -1559,8 +1793,10 @@ def main():
             print_data_protocol(
                 all_positive_rows,
                 hpo_pool_rows,
+                hpo_boundary_info,
                 user_histories,
                 fold_data,
+                CURRENT_PROVENANCE,
             )
 
             print_search_plan(configs)
@@ -1568,6 +1804,18 @@ def main():
             if args.plan_only:
                 print("PLAN ONLY: no se entrenó ningún modelo.")
                 return
+
+            if os.path.exists(trials_path) and not os.path.exists(manifest_path):
+                raise ValueError(
+                    "Existe un CSV de trials sin manifest V2 para este timestamp. "
+                    "Use un timestamp nuevo; no se reutilizan resultados de un "
+                    "protocolo no fingerprinted."
+                )
+
+            save_or_validate_manifest(
+                manifest_path,
+                CURRENT_PROVENANCE,
+            )
 
             trial_rows = load_existing_trials(
                 trials_path
@@ -1669,12 +1917,32 @@ def main():
                 stage_d_ranked
             )
 
+            best["target_development_rows"] = hpo_boundary_info["target_rows"]
+            best["effective_development_rows"] = hpo_boundary_info["effective_rows"]
+            best["tie_rows_added_at_boundary"] = hpo_boundary_info["tie_rows_added"]
+            best["protocol_version"] = CURRENT_PROVENANCE["protocol_version"]
+            best["protocol_hash"] = CURRENT_PROVENANCE["protocol_hash"]
+            best["dataset_sha256"] = CURRENT_PROVENANCE["dataset_sha256"]
+            best["script_sha256"] = CURRENT_PROVENANCE["script_sha256"]
+            best["ibpr_wrapper_sha256"] = CURRENT_PROVENANCE["ibpr_wrapper_sha256"]
+            best["ibpr_core_sha256"] = CURRENT_PROVENANCE["ibpr_core_sha256"]
+
             best_fields = list(SUMMARY_FIELDS) + [
                 "selection_metric",
                 "feedback_type",
                 "rating_threshold",
                 "dataset_variant",
                 "hpo_end_fraction",
+                "outer_boundary_policy",
+                "target_development_rows",
+                "effective_development_rows",
+                "tie_rows_added_at_boundary",
+                "protocol_version",
+                "protocol_hash",
+                "dataset_sha256",
+                "script_sha256",
+                "ibpr_wrapper_sha256",
+                "ibpr_core_sha256",
             ]
 
             save_csv(

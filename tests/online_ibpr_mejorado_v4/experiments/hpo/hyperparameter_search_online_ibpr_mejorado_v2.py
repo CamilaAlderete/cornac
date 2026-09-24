@@ -1,8 +1,11 @@
 import argparse
 import csv
+import hashlib
 import itertools
 import inspect
+import json
 import os
+import platform
 import sys
 import time
 from collections import OrderedDict
@@ -12,6 +15,7 @@ from datetime import datetime
 import numpy as np
 import torch
 import cornac
+import scipy
 from scipy.sparse import csr_matrix
 from cornac.data import Dataset
 from cornac.datasets import movielens
@@ -33,6 +37,7 @@ RATING_THRESHOLD = 3.0
 VARIANT = "1M"
 TOP_K = 20
 HPO_END_FRAC = 0.60
+PROTOCOL_VERSION = "online_hpo_global_prequential_v2_20260924"
 
 FROZEN_IBPR_CONFIG = {
     "k": 20,
@@ -92,9 +97,23 @@ PROTECTED_SOURCES = {
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 RESULTS_DIR = os.path.join(SCRIPT_DIR, "results")
+RUN_CONTEXT = {"protocol_hash": None, "data_sha256": None}
+
+
+def run_meta():
+    if not RUN_CONTEXT["protocol_hash"] or not RUN_CONTEXT["data_sha256"]:
+        raise RuntimeError("RUN_CONTEXT no inicializado.")
+    return {
+        "protocol_version": PROTOCOL_VERSION,
+        "protocol_hash": RUN_CONTEXT["protocol_hash"],
+        "data_sha256": RUN_CONTEXT["data_sha256"],
+    }
 
 
 TRIAL_FIELDS = [
+    "protocol_version",
+    "protocol_hash",
+    "data_sha256",
     "origin_stage",
     "config_id",
     "config_source",
@@ -143,10 +162,14 @@ TRIAL_FIELDS = [
 
 
 CHUNK_FIELDS = [
+    "protocol_version",
+    "protocol_hash",
+    "data_sha256",
     "origin_stage",
     "config_id",
     "seed",
     "scenario",
+    "eval_point",
     "eval_chunk",
     "trained_on_chunks",
     "online_learning_rate",
@@ -157,6 +180,9 @@ CHUNK_FIELDS = [
     "n_eval_rows",
     "n_eval_users",
     "n_eval_items",
+    "n_allwarm_eval_rows",
+    "n_allwarm_eval_users",
+    "n_users_exposed_to_update",
     "update_time_s_before_eval",
     "AUC",
     "MAP",
@@ -177,6 +203,9 @@ CHUNK_FIELDS = [
 
 
 SUMMARY_FIELDS = [
+    "protocol_version",
+    "protocol_hash",
+    "data_sha256",
     "stage",
     "rank",
     "config_id",
@@ -223,8 +252,8 @@ SUMMARY_FIELDS = [
 def parse_args():
     parser = argparse.ArgumentParser(
         description=(
-            "Hyperparameter hpo for OnlineIBPRMejorado incremental "
-            "adaptation using per-user temporal prequential streams."
+            "Hyperparameter selection for OnlineIBPRMejorado incremental "
+            "adaptation using global chronological prequential development streams."
         )
     )
 
@@ -519,210 +548,465 @@ def unique_preserving_order(values):
 # Data preparation
 # ============================================================
 
+def sha256_bytes(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def _source_sha256(obj):
+    try:
+        return sha256_bytes(inspect.getsource(obj).encode("utf-8"))
+    except (OSError, TypeError):
+        return "unavailable"
+
+
+def _script_sha256():
+    try:
+        with open(os.path.abspath(__file__), "rb") as f:
+            return sha256_bytes(f.read())
+    except OSError:
+        return "unavailable"
+
+
+def dataset_sha256(rows):
+    digest = hashlib.sha256()
+    for u, i, value, timestamp, original_position in rows:
+        payload = (
+            f"{u}\t{i}\t{float(value):.1f}\t{int(timestamp)}\t"
+            f"{int(original_position)}\n"
+        )
+        digest.update(payload.encode("utf-8"))
+    return digest.hexdigest()
+
+
+def ts_min(rows):
+    return int(min(row[3] for row in rows))
+
+
+def ts_max(rows):
+    return int(max(row[3] for row in rows))
+
+
+def rows_pairs(rows):
+    return {(row[0], row[1]) for row in rows}
+
+
+def assert_unique_user_item_pairs(rows, label):
+    n_rows = len(rows)
+    n_pairs = len(rows_pairs(rows))
+    if n_rows != n_pairs:
+        raise RuntimeError(
+            f"{label}: pares (u,i) duplicados: rows={n_rows}, unique_pairs={n_pairs}."
+        )
+
+
+def cornac_rows(rows):
+    return [(u, i, float(value), int(timestamp)) for u, i, value, timestamp, _ in rows]
+
+
 def load_positive_chrono_movielens():
     data = movielens.load_feedback(fmt="UIRT", variant=VARIANT)
+    positive = []
 
-    positive = [
-        (str(u), str(i), 1.0, int(ts))
-        for u, i, r, ts in data
-        if float(r) >= RATING_THRESHOLD
-    ]
+    for original_position, (u, i, rating, timestamp) in enumerate(data):
+        if float(rating) >= RATING_THRESHOLD:
+            positive.append(
+                (
+                    str(u),
+                    str(i),
+                    1.0,
+                    int(timestamp),
+                    int(original_position),
+                )
+            )
 
-    positive.sort(key=lambda row: row[3])
+    positive.sort(key=lambda row: (row[3], row[4]))
+    if not positive:
+        raise ValueError("MovieLens 1M no produjo interacciones positivas.")
 
+    assert_unique_user_item_pairs(positive, "all_positive_rows")
     return positive
 
 
 def build_hpo_pool(all_positive_rows):
-    end = int(len(all_positive_rows) * HPO_END_FRAC)
+    """Reserve the globally latest ~40% for final H1-H4.
 
-    if end <= 0:
-        raise ValueError("El horizonte HPO quedó vacío.")
+    The development boundary moves forward through an equal-timestamp group so
+    no timestamp is split between development and untouched final evaluation.
+    """
+    n = len(all_positive_rows)
+    target = int(n * HPO_END_FRAC)
 
-    return list(all_positive_rows[:end])
+    if target <= 0 or target >= n:
+        raise ValueError(f"Corte HPO inválido: target={target}, n={n}")
 
+    effective = target
+    boundary_ts = all_positive_rows[target - 1][3]
+    while effective < n and all_positive_rows[effective][3] == boundary_ts:
+        effective += 1
 
-def build_user_histories(rows):
-    histories = {}
+    if effective >= n:
+        raise ValueError("El ajuste temporal del HPO consumió todo el holdout final.")
 
-    for row in rows:
-        histories.setdefault(row[0], []).append(row)
+    hpo_pool = list(all_positive_rows[:effective])
+    untouched_final = list(all_positive_rows[effective:])
 
-    for history in histories.values():
-        history.sort(key=lambda row: row[3])
-
-    return histories
-
-
-def split_future_into_chunks(future_rows, n_chunks=N_STREAM_CHUNKS):
-    n = len(future_rows)
-
-    if n < n_chunks:
-        raise ValueError(
-            f"Se requieren al menos {n_chunks} interacciones futuras, recibidas={n}."
-        )
-
-    index_chunks = np.array_split(np.arange(n), n_chunks)
-
-    return [
-        [future_rows[int(index)] for index in indices]
-        for indices in index_chunks
-    ]
-
-
-def build_stream_scenario(user_histories, scenario):
-    base_ratio = float(scenario["base_ratio"])
-
-    if not (0.0 < base_ratio < 1.0):
-        raise ValueError(f"base_ratio inválido: {base_ratio}")
-
-    base_rows = []
-    candidate_chunks = [[] for _ in range(N_STREAM_CHUNKS)]
-    eligible_users = set()
-
-    for user_id, history in user_histories.items():
-        n = len(history)
-
-        if n == 0:
-            continue
-
-        base_end = int(np.floor(n * base_ratio))
-        base_end = max(1, min(base_end, n))
-
-        future = history[base_end:]
-
-        # Only users with enough future interactions become stream/eval users.
-        if len(future) >= N_STREAM_CHUNKS:
-            eligible_users.add(user_id)
-            base_rows.extend(history[:base_end])
-
-            user_chunks = split_future_into_chunks(future)
-
-            for chunk_index, chunk_rows in enumerate(user_chunks):
-                candidate_chunks[chunk_index].extend(chunk_rows)
-        else:
-            # Sparse users contribute only their temporal prefix.
-            base_rows.extend(history[:base_end])
-
-    base_rows.sort(key=lambda row: row[3])
-
-    if not base_rows:
-        raise ValueError(f"{scenario['name']}: base vacío.")
-
-    known_users = {u for u, _, _, _ in base_rows}
-    known_items = {i for _, i, _, _ in base_rows}
-
-    known_chunks = []
-
-    for candidate in candidate_chunks:
-        candidate.sort(key=lambda row: row[3])
-
-        known = [
-            row
-            for row in candidate
-            if row[0] in known_users and row[1] in known_items
-        ]
-
-        known_chunks.append(known)
-
-    if any(len(chunk) == 0 for chunk in known_chunks):
-        raise ValueError(
-            f"{scenario['name']}: al menos un stream chunk quedó vacío "
-            "después del filtrado warm-start."
-        )
-
-    # Audit per-user temporal integrity.
-    last_ts_by_user = {}
-
-    for u, _, _, ts in base_rows:
-        previous = last_ts_by_user.get(u)
-        if previous is None or ts > previous:
-            last_ts_by_user[u] = ts
-
-    for chunk_index, chunk in enumerate(known_chunks, start=1):
-        min_ts_in_chunk = {}
-        max_ts_in_chunk = {}
-
-        for u, _, _, ts in chunk:
-            min_ts_in_chunk[u] = min(min_ts_in_chunk.get(u, ts), ts)
-            max_ts_in_chunk[u] = max(max_ts_in_chunk.get(u, ts), ts)
-
-        for user_id, min_ts in min_ts_in_chunk.items():
-            if user_id in last_ts_by_user and last_ts_by_user[user_id] > min_ts:
-                raise ValueError(
-                    f"{scenario['name']} chunk {chunk_index}: fuga temporal "
-                    f"detectada para usuario {user_id}."
-                )
-
-        for user_id, max_ts in max_ts_in_chunk.items():
-            last_ts_by_user[user_id] = max_ts
-
-    candidate_total = sum(len(chunk) for chunk in candidate_chunks)
-    known_total = sum(len(chunk) for chunk in known_chunks)
+    if ts_max(hpo_pool) >= ts_min(untouched_final):
+        raise RuntimeError("Development/final no tienen separación temporal estricta.")
 
     return {
-        "name": scenario["name"],
-        "base_ratio": base_ratio,
-        "base_rows": base_rows,
-        "candidate_chunks": candidate_chunks,
-        "known_chunks": known_chunks,
-        "eligible_users": eligible_users,
-        "n_stream_candidate": candidate_total,
-        "n_stream_known": known_total,
-        "stream_known_fraction": (
-            known_total / candidate_total if candidate_total else 0.0
-        ),
+        "target_rows": target,
+        "effective_rows": effective,
+        "boundary_tie_rows_added": effective - target,
+        "boundary_timestamp": int(boundary_ts),
+        "hpo_pool": hpo_pool,
+        "untouched_final": untouched_final,
     }
 
 
-def print_data_plan(all_rows, hpo_pool, user_histories, scenario_data):
+def split_global_base_future_strict(rows, base_ratio, label):
+    n = len(rows)
+    target = int(np.floor(n * float(base_ratio)))
+
+    if target <= 0 or target >= n:
+        raise ValueError(f"{label}: corte base/future inválido: target={target}, n={n}")
+
+    effective = target
+    boundary_ts = rows[target - 1][3]
+    while effective < n and rows[effective][3] == boundary_ts:
+        effective += 1
+
+    if effective >= n:
+        raise ValueError(f"{label}: empate temporal consumió todo el future stream.")
+
+    base_rows = list(rows[:effective])
+    future_rows = list(rows[effective:])
+
+    if ts_max(base_rows) >= ts_min(future_rows):
+        raise RuntimeError(f"{label}: base/future no son estrictamente cronológicos.")
+
+    return {
+        "target_base_rows": target,
+        "effective_base_rows": effective,
+        "boundary_tie_rows_added": effective - target,
+        "boundary_timestamp": int(boundary_ts),
+        "base_rows": base_rows,
+        "future_rows": future_rows,
+    }
+
+
+def warm_start_filter(base_rows, future_rows):
+    base_users = {row[0] for row in base_rows}
+    base_items = {row[1] for row in base_rows}
+
+    warm_rows = []
+    excluded_user = 0
+    excluded_item = 0
+    excluded_both = 0
+
+    for row in future_rows:
+        known_u = row[0] in base_users
+        known_i = row[1] in base_items
+        if known_u and known_i:
+            warm_rows.append(row)
+        elif not known_u and not known_i:
+            excluded_both += 1
+        elif not known_u:
+            excluded_user += 1
+        else:
+            excluded_item += 1
+
+    if not warm_rows:
+        raise ValueError("El stream quedó vacío después del filtrado warm-start.")
+
+    return {
+        "warm_rows": warm_rows,
+        "excluded_user": excluded_user,
+        "excluded_item": excluded_item,
+        "excluded_both": excluded_both,
+        "warm_fraction": len(warm_rows) / len(future_rows),
+    }
+
+
+def split_chrono_chunks_strict(rows, n_chunks=N_STREAM_CHUNKS, label="warm stream"):
+    n = len(rows)
+    if n < n_chunks:
+        raise ValueError(f"{label} demasiado pequeño para {n_chunks} chunks.")
+
+    boundaries = [0]
+    adjustments = []
+
+    for k in range(1, n_chunks):
+        target = int(np.floor(n * k / n_chunks))
+        target = max(target, boundaries[-1] + 1)
+        if target >= n:
+            raise ValueError(f"No se pudo crear un límite interno válido en {label}.")
+
+        effective = target
+        boundary_ts = rows[target - 1][3]
+        while effective < n and rows[effective][3] == boundary_ts:
+            effective += 1
+
+        if effective >= n:
+            raise ValueError(f"Un empate temporal consumiría el resto de {label}.")
+        if effective <= boundaries[-1]:
+            raise RuntimeError(f"Límite no creciente en {label}.")
+
+        boundaries.append(effective)
+        adjustments.append(
+            {
+                "boundary": k,
+                "target": target,
+                "effective": effective,
+                "rows_shifted": effective - target,
+                "timestamp": int(boundary_ts),
+            }
+        )
+
+    boundaries.append(n)
+    chunks = [
+        list(rows[boundaries[idx] : boundaries[idx + 1]])
+        for idx in range(n_chunks)
+    ]
+
+    for idx in range(n_chunks - 1):
+        if ts_max(chunks[idx]) >= ts_min(chunks[idx + 1]):
+            raise RuntimeError(
+                f"Chunks {idx+1}/{idx+2} de {label} no son estrictamente temporales."
+            )
+
+    return chunks, boundaries, adjustments
+
+
+def primary_eval_rows_for_step(known_chunks, step_idx):
+    """Rows whose user has received at least one prior/current update chunk."""
+    users_exposed_to_update = {
+        row[0]
+        for chunk in known_chunks[: step_idx + 1]
+        for row in chunk
+    }
+    allwarm_eval_rows = list(known_chunks[step_idx + 1])
+    primary_rows = [row for row in allwarm_eval_rows if row[0] in users_exposed_to_update]
+
+    if not primary_rows:
+        raise ValueError(
+            f"eval_point={step_idx+1}: población primaria adaptada quedó vacía."
+        )
+
+    return primary_rows, allwarm_eval_rows, users_exposed_to_update
+
+
+def build_stream_scenario(hpo_pool, scenario):
+    """Build one globally chronological development scenario.
+
+    S50/S65/S80 refer to a GLOBAL base fraction inside the development horizon,
+    not to per-user history fractions.
+    """
+    name = str(scenario["name"])
+    base_ratio = float(scenario["base_ratio"])
+
+    if not (0.0 < base_ratio < 1.0):
+        raise ValueError(f"{name}: base_ratio inválido: {base_ratio}")
+
+    split = split_global_base_future_strict(hpo_pool, base_ratio, name)
+    warm = warm_start_filter(split["base_rows"], split["future_rows"])
+    known_chunks, boundaries, adjustments = split_chrono_chunks_strict(
+        warm["warm_rows"],
+        n_chunks=N_STREAM_CHUNKS,
+        label=f"{name} warm-start stream",
+    )
+
+    assert_unique_user_item_pairs(split["base_rows"], f"{name}_base")
+    observed = rows_pairs(split["base_rows"])
+    for idx, chunk in enumerate(known_chunks, start=1):
+        assert_unique_user_item_pairs(chunk, f"{name}_chunk_{idx}")
+        overlap = observed & rows_pairs(chunk)
+        if overlap:
+            sample = next(iter(overlap))
+            raise RuntimeError(
+                f"{name}: par (u,i) repetido entre historial y chunk {idx}: {sample}"
+            )
+        observed.update(rows_pairs(chunk))
+
+    primary_plan = []
+    for step_idx in range(N_STREAM_CHUNKS - 1):
+        primary, allwarm, exposed = primary_eval_rows_for_step(known_chunks, step_idx)
+        if ts_max(known_chunks[step_idx]) >= ts_min(allwarm):
+            raise RuntimeError(f"{name}: update/eval no son estrictamente temporales.")
+        primary_plan.append(
+            {
+                "eval_point": step_idx + 1,
+                "update_chunk": step_idx + 1,
+                "eval_chunk": step_idx + 2,
+                "n_primary_rows": len(primary),
+                "n_primary_users": len({row[0] for row in primary}),
+                "n_allwarm_rows": len(allwarm),
+                "n_allwarm_users": len({row[0] for row in allwarm}),
+                "n_users_exposed": len(exposed),
+            }
+        )
+
+    return {
+        "name": name,
+        "base_ratio": base_ratio,
+        "target_base_rows": split["target_base_rows"],
+        "effective_base_rows": split["effective_base_rows"],
+        "boundary_tie_rows_added": split["boundary_tie_rows_added"],
+        "base_rows": split["base_rows"],
+        "future_rows": split["future_rows"],
+        "known_chunks": known_chunks,
+        "chunk_boundaries": boundaries,
+        "chunk_adjustments": adjustments,
+        "primary_eval_plan": primary_plan,
+        "n_stream_candidate": len(split["future_rows"]),
+        "n_stream_known": len(warm["warm_rows"]),
+        "stream_known_fraction": warm["warm_fraction"],
+        "n_excluded_unknown_user": warm["excluded_user"],
+        "n_excluded_unknown_item": warm["excluded_item"],
+        "n_excluded_unknown_both": warm["excluded_both"],
+    }
+
+
+def protocol_payload(data_hash, configs):
+    return {
+        "protocol_version": PROTOCOL_VERSION,
+        "dataset": "MovieLens 1M",
+        "rating_threshold": RATING_THRESHOLD,
+        "outer_development_fraction": HPO_END_FRAC,
+        "outer_boundary_rule": "move forward to end of equal-timestamp group",
+        "scenario_base_ratios": STREAM_SCENARIOS,
+        "scenario_rule": "global chronological base/future split within development",
+        "warm_start_rule": "future row retained iff user and item exist in scenario base",
+        "chunk_rule": "four global chronological warm chunks; move boundaries forward through timestamp ties",
+        "primary_eval_rule": "evaluate next chunk only for users exposed to an earlier update chunk",
+        "prequential_sequence": [[1, 2], [2, 3], [3, 4]],
+        "frozen_ibpr_config": FROZEN_IBPR_CONFIG,
+        "fixed_online_constraints": {
+            "update_V": FIXED_UPDATE_V,
+            "neg_sampling": FIXED_NEG_SAMPLING,
+            "normalize": FIXED_NORMALIZE,
+            "max_steps": FIXED_MAX_STEPS,
+        },
+        "search_space": {
+            "learning_rate": ONLINE_LR_VALUES,
+            "lamda": ONLINE_LAMDA_VALUES,
+            "batch_size": ONLINE_BATCH_VALUES,
+            "n_epochs": ONLINE_EPOCH_VALUES,
+            "loss_mode": LOSS_MODES,
+        },
+        "screening_configs": [
+            {
+                "config_id": c["config_id"],
+                "signature": config_signature(c),
+                "config_source": c["config_source"],
+            }
+            for c in configs
+        ],
+        "search_random_seed": SEARCH_RANDOM_SEED,
+        "screening_seed": SCREENING_SEED,
+        "confirmation_seeds": CONFIRMATION_SEEDS,
+        "top_stage_a": TOP_STAGE_A,
+        "top_stage_b": TOP_STAGE_B,
+        "primary_selection_metric": PRIMARY_DELTA_METRIC,
+        "secondary_selection_metric": PRIMARY_ABSOLUTE_METRIC,
+        "data_sha256": data_hash,
+        "script_sha256": _script_sha256(),
+        "python": platform.python_version(),
+        "cornac": getattr(cornac, "__version__", "unavailable"),
+        "numpy": np.__version__,
+        "scipy": scipy.__version__,
+        "torch": torch.__version__,
+        "ibpr_wrapper_sha256": _source_sha256(IBPR),
+        "online_wrapper_sha256": _source_sha256(OnlineIBPRMejorado),
+        "online_core_sha256": _source_sha256(_online_core_contract_check),
+    }
+
+
+def current_protocol_hash(data_hash, configs):
+    canonical = json.dumps(
+        protocol_payload(data_hash, configs),
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=True,
+        default=list,
+    )
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def validate_resume_protocol(rows, path, protocol_hash, data_hash):
+    if not rows:
+        return
+
+    for idx, row in enumerate(rows):
+        if (
+            row.get("protocol_version") != PROTOCOL_VERSION
+            or row.get("protocol_hash") != protocol_hash
+            or row.get("data_sha256") != data_hash
+        ):
+            raise RuntimeError(
+                f"{path}: fila {idx} pertenece a otro protocolo/dataset. "
+                "Usa un timestamp nuevo; no mezcles ejecuciones."
+            )
+
+
+def print_data_plan(all_rows, hpo_info, scenario_data, data_hash, protocol_hash):
     print("=" * 110)
-    print("ONLINE IBPR HPO - DATA PROTOCOL")
+    print("ONLINE IBPR HPO V2 - GLOBAL PREQUENTIAL DEVELOPMENT PROTOCOL")
     print("=" * 110)
-    print(f"Dataset                         : MovieLens {VARIANT}")
-    print(f"Positive threshold              : rating >= {RATING_THRESHOLD}")
-    print("Feedback                        : implicit positive = 1.0")
-    print(f"Global HPO horizon              : first {HPO_END_FRAC:.0%}")
-    print("Later global data used here     : NO")
-    print(f"Total implicit-positive rows    : {len(all_rows):,}")
-    print(f"Rows inside HPO horizon         : {len(hpo_pool):,}")
-    print(f"Users inside HPO horizon        : {len(user_histories):,}")
+    print(f"Protocol version                 : {PROTOCOL_VERSION}")
+    print(f"Protocol hash                    : {protocol_hash}")
+    print(f"Dataset SHA256                   : {data_hash}")
+    print(f"Dataset                          : MovieLens {VARIANT}")
+    print(f"Positive threshold               : rating >= {RATING_THRESHOLD}")
+    print("Feedback                         : implicit positive = 1.0")
+    print(f"Target development horizon       : first {HPO_END_FRAC:.0%} globally")
+    print(f"Target development rows          : {hpo_info['target_rows']:,}")
+    print(f"Effective development rows       : {hpo_info['effective_rows']:,}")
+    print(f"Tie rows added at outer boundary : {hpo_info['boundary_tie_rows_added']:,}")
+    print(f"Untouched final rows             : {len(hpo_info['untouched_final']):,}")
+    print("Later global data used by HPO    : NO")
+    print(f"Total implicit-positive rows     : {len(all_rows):,}")
     print()
 
     for scenario in scenario_data.values():
         base_rows = scenario["base_rows"]
-        base_users = {u for u, _, _, _ in base_rows}
-        base_items = {i for _, i, _, _ in base_rows}
-
         print(
-            f"{scenario['name']}: per-user base={scenario['base_ratio']:.0%} | "
+            f"{scenario['name']}: GLOBAL base target={scenario['base_ratio']:.0%} | "
             f"base={len(base_rows):,} "
-            f"({len(base_users):,} users, {len(base_items):,} items) | "
-            f"stream_candidate={scenario['n_stream_candidate']:,} | "
-            f"stream_known={scenario['n_stream_known']:,} "
-            f"({scenario['stream_known_fraction']:.2%}) | "
-            f"stream_users={len(scenario['eligible_users']):,}"
+            f"({len({r[0] for r in base_rows}):,} users, "
+            f"{len({r[1] for r in base_rows}):,} items) | "
+            f"future={scenario['n_stream_candidate']:,} | "
+            f"warm={scenario['n_stream_known']:,} "
+            f"({scenario['stream_known_fraction']:.2%})"
+        )
+        print(
+            f"    base tie adjustment={scenario['boundary_tie_rows_added']:,} | "
+            f"excluded user/item/both="
+            f"{scenario['n_excluded_unknown_user']:,}/"
+            f"{scenario['n_excluded_unknown_item']:,}/"
+            f"{scenario['n_excluded_unknown_both']:,}"
         )
 
-        for index, (candidate, known) in enumerate(
-            zip(scenario["candidate_chunks"], scenario["known_chunks"]),
+        for idx, (chunk, plan) in enumerate(
+            zip(scenario["known_chunks"], [None] + scenario["primary_eval_plan"]),
             start=1,
         ):
-            eval_users = {u for u, _, _, _ in known}
-            eval_items = {i for _, i, _, _ in known}
-
-            retention = len(known) / len(candidate) if candidate else 0.0
-
             print(
-                f"    chunk_{index}: candidate={len(candidate):,} | "
-                f"known={len(known):,} ({retention:.2%}) | "
-                f"users={len(eval_users):,} | items={len(eval_items):,}"
+                f"    chunk_{idx}: rows={len(chunk):,} | "
+                f"users={len({r[0] for r in chunk}):,} | "
+                f"items={len({r[1] for r in chunk}):,}"
+            )
+
+        for plan in scenario["primary_eval_plan"]:
+            print(
+                f"    eval_point_{plan['eval_point']}: update=C{plan['update_chunk']} -> "
+                f"eval=C{plan['eval_chunk']} | primary={plan['n_primary_rows']:,} rows / "
+                f"{plan['n_primary_users']:,} users | allwarm={plan['n_allwarm_rows']:,} rows"
             )
 
     print()
     print(
-        "Interpretation: chronology is enforced within each user's history. "
-        "This protocol is used only for HPO; final H1-H4 remain global/prequential."
+        "Interpretation: all scenario boundaries and chunks are GLOBAL chronological. "
+        "The globally later holdout is untouched by HPO and reserved for final H1-H4."
     )
     print()
 
@@ -958,7 +1242,7 @@ def build_dataset(rows, uid_map=None, iid_map=None, seed=42, exclude_unknowns=Fa
     if iid_map is not None:
         kwargs["global_iid_map"] = iid_map
 
-    return Dataset.build(rows, **kwargs)
+    return Dataset.build(cornac_rows(rows), **kwargs)
 
 
 def build_metrics():
@@ -993,10 +1277,7 @@ def evaluate_model(model, train_set, test_set):
 
 def rows_to_pairs(rows, uid_map, iid_map):
     pairs = np.asarray(
-        [
-            [uid_map[u], iid_map[i]]
-            for u, i, _, _ in rows
-        ],
+        [[uid_map[row[0]], iid_map[row[1]]] for row in rows],
         dtype=np.int64,
     )
 
@@ -1049,13 +1330,29 @@ def prepare_prequential_steps(scenario, seed, base_model, base_train_set):
         eval_chunk_number = update_chunk_number + 1
 
         update_rows = list(scenario["known_chunks"][update_index])
-        eval_rows = list(scenario["known_chunks"][update_index + 1])
+        eval_rows, allwarm_eval_rows, users_exposed = primary_eval_rows_for_step(
+            scenario["known_chunks"], update_index
+        )
 
-        # The update chunk has arrived and is therefore part of the known
-        # positive history used for negative sampling. This matches the
-        # validated master prequential experiment and guarantees that no
-        # positive from the current chunk can be sampled as a negative.
+        if ts_max(update_rows) >= ts_min(allwarm_eval_rows):
+            raise RuntimeError(
+                f"{scenario['name']} point {update_index+1}: update/eval no son estrictamente temporales."
+            )
+
+        eval_pairs = rows_pairs(allwarm_eval_rows)
+        if eval_pairs & rows_pairs(observed_rows):
+            sample = next(iter(eval_pairs & rows_pairs(observed_rows)))
+            raise RuntimeError(
+                f"{scenario['name']} point {update_index+1}: eval ya observado antes del update: {sample}"
+            )
+
+        # Current update chunk becomes observed before evaluating the next chunk.
         post_update_rows = observed_rows + update_rows
+        if eval_pairs & rows_pairs(post_update_rows):
+            sample = next(iter(eval_pairs & rows_pairs(post_update_rows)))
+            raise RuntimeError(
+                f"{scenario['name']} point {update_index+1}: eval aparece en historial post-update: {sample}"
+            )
 
         history_train_set = build_dataset(
             post_update_rows,
@@ -1064,13 +1361,7 @@ def prepare_prequential_steps(scenario, seed, base_model, base_train_set):
             seed=seed,
             exclude_unknowns=False,
         )
-
         recent_pairs = rows_to_pairs(update_rows, uid_map, iid_map)
-
-        # After the update, the same post-chunk history is used to filter
-        # already-observed items while evaluating the next unseen chunk.
-        observed_rows = post_update_rows
-        eval_train_set = history_train_set
 
         eval_test_set = build_dataset(
             eval_rows,
@@ -1082,22 +1373,27 @@ def prepare_prequential_steps(scenario, seed, base_model, base_train_set):
 
         stale_metrics = evaluate_model(
             base_model,
-            eval_train_set,
+            history_train_set,
             eval_test_set,
         )
 
         steps.append(
             {
+                "eval_point": update_index + 1,
                 "update_chunk": update_chunk_number,
                 "eval_chunk": eval_chunk_number,
                 "history_csr": history_train_set.csr_matrix.copy(),
                 "recent_pairs": recent_pairs,
-                "eval_train_set": eval_train_set,
+                "eval_train_set": history_train_set,
                 "eval_test_set": eval_test_set,
                 "eval_rows": eval_rows,
+                "allwarm_eval_rows": allwarm_eval_rows,
+                "n_users_exposed_to_update": len(users_exposed),
                 "stale_metrics": stale_metrics,
             }
         )
+
+        observed_rows = post_update_rows
 
     return steps
 
@@ -1268,10 +1564,12 @@ def physical_trial(
         stale_metrics = step["stale_metrics"]
 
         row = {
+            **run_meta(),
             "origin_stage": origin_stage,
             "config_id": config["config_id"],
             "seed": seed,
             "scenario": scenario_name,
+            "eval_point": step["eval_point"],
             "eval_chunk": step["eval_chunk"],
             "trained_on_chunks": step["update_chunk"],
             "online_learning_rate": config["online_learning_rate"],
@@ -1280,8 +1578,11 @@ def physical_trial(
             "n_epochs": config["n_epochs"],
             "loss_mode": config["loss_mode"],
             "n_eval_rows": len(step["eval_rows"]),
-            "n_eval_users": len({u for u, _, _, _ in step["eval_rows"]}),
-            "n_eval_items": len({i for _, i, _, _ in step["eval_rows"]}),
+            "n_eval_users": len({row[0] for row in step["eval_rows"]}),
+            "n_eval_items": len({row[1] for row in step["eval_rows"]}),
+            "n_allwarm_eval_rows": len(step["allwarm_eval_rows"]),
+            "n_allwarm_eval_users": len({row[0] for row in step["allwarm_eval_rows"]}),
+            "n_users_exposed_to_update": step["n_users_exposed_to_update"],
             "update_time_s_before_eval": update_time,
         }
 
@@ -1305,8 +1606,8 @@ def physical_trial(
         )
 
     base_rows = scenario["base_rows"]
-    base_users = {u for u, _, _, _ in base_rows}
-    base_items = {i for _, i, _, _ in base_rows}
+    base_users = {row[0] for row in base_rows}
+    base_items = {row[1] for row in base_rows}
     stream_known_rows = [
         row
         for chunk in scenario["known_chunks"]
@@ -1314,6 +1615,7 @@ def physical_trial(
     ]
 
     trial = {
+        **run_meta(),
         "origin_stage": origin_stage,
         "config_id": config["config_id"],
         "config_source": config["config_source"],
@@ -1335,8 +1637,8 @@ def physical_trial(
         "n_stream_candidate": scenario["n_stream_candidate"],
         "n_stream_known": scenario["n_stream_known"],
         "stream_known_fraction": scenario["stream_known_fraction"],
-        "n_stream_users": len({u for u, _, _, _ in stream_known_rows}),
-        "n_stream_items": len({i for _, i, _, _ in stream_known_rows}),
+        "n_stream_users": len({row[0] for row in stream_known_rows}),
+        "n_stream_items": len({row[1] for row in stream_known_rows}),
         "n_eval_points": len(chunk_metric_rows),
         "total_update_time_s": float(np.sum(update_times)),
         "mean_update_time_s": float(np.mean(update_times)),
@@ -1525,6 +1827,7 @@ def aggregate_config(stage, config, scenarios, seeds, trial_rows):
     )
 
     summary = {
+        **run_meta(),
         "stage": stage,
         "config_id": config["config_id"],
         "config_source": config["config_source"],
@@ -1777,23 +2080,23 @@ def main():
 
     trials_path = os.path.join(
         RESULTS_DIR,
-        f"hyperparameter_search_online_ibpr_mejorado_trials_{timestamp}.csv",
+        f"hyperparameter_search_online_ibpr_mejorado_v2_trials_{timestamp}.csv",
     )
     chunks_path = os.path.join(
         RESULTS_DIR,
-        f"hyperparameter_search_online_ibpr_mejorado_chunks_{timestamp}.csv",
+        f"hyperparameter_search_online_ibpr_mejorado_v2_chunks_{timestamp}.csv",
     )
     summary_path = os.path.join(
         RESULTS_DIR,
-        f"hyperparameter_search_online_ibpr_mejorado_summary_{timestamp}.csv",
+        f"hyperparameter_search_online_ibpr_mejorado_v2_summary_{timestamp}.csv",
     )
     best_path = os.path.join(
         RESULTS_DIR,
-        f"hyperparameter_search_online_ibpr_mejorado_best_{timestamp}.csv",
+        f"hyperparameter_search_online_ibpr_mejorado_v2_best_{timestamp}.csv",
     )
     log_path = os.path.join(
         RESULTS_DIR,
-        f"hyperparameter_search_online_ibpr_mejorado_{timestamp}.txt",
+        f"hyperparameter_search_online_ibpr_mejorado_v2_{timestamp}.txt",
     )
 
     log_mode = "a" if os.path.exists(log_path) else "w"
@@ -1804,7 +2107,7 @@ def main():
         with redirect_stdout(tee):
             print()
             print("#" * 110)
-            print(f"ONLINE IBPR HPO TIMESTAMP: {timestamp}")
+            print(f"ONLINE IBPR HPO V2 TIMESTAMP: {timestamp}")
             print("#" * 110)
             print(f"Trials CSV : {trials_path}")
             print(f"Chunks CSV : {chunks_path}")
@@ -1813,26 +2116,26 @@ def main():
             print()
 
             all_rows = load_positive_chrono_movielens()
-            hpo_pool = build_hpo_pool(all_rows)
-            user_histories = build_user_histories(hpo_pool)
+            data_hash = dataset_sha256(all_rows)
+            hpo_info = build_hpo_pool(all_rows)
+            hpo_pool = hpo_info["hpo_pool"]
+
+            configs = build_screening_configs(args.screening_configs)
+            protocol_hash = current_protocol_hash(data_hash, configs)
+            RUN_CONTEXT["protocol_hash"] = protocol_hash
+            RUN_CONTEXT["data_sha256"] = data_hash
 
             scenario_data = {
-                scenario["name"]: build_stream_scenario(
-                    user_histories,
-                    scenario,
-                )
+                scenario["name"]: build_stream_scenario(hpo_pool, scenario)
                 for scenario in STREAM_SCENARIOS
             }
 
             print_data_plan(
                 all_rows,
-                hpo_pool,
-                user_histories,
+                hpo_info,
                 scenario_data,
-            )
-
-            configs = build_screening_configs(
-                args.screening_configs
+                data_hash,
+                protocol_hash,
             )
 
             print_candidate_plan(configs)
@@ -1842,6 +2145,9 @@ def main():
                 return
 
             trial_rows = load_csv(trials_path)
+            chunk_rows_existing = load_csv(chunks_path)
+            validate_resume_protocol(trial_rows, trials_path, protocol_hash, data_hash)
+            validate_resume_protocol(chunk_rows_existing, chunks_path, protocol_hash, data_hash)
             trial_lookup = build_trial_lookup(trial_rows)
 
             if trial_rows:
@@ -1935,7 +2241,7 @@ def main():
             best["fixed_normalize"] = FIXED_NORMALIZE
             best["fixed_max_steps"] = FIXED_MAX_STEPS
             best["validation_protocol"] = (
-                "first_60pct_global_then_per_user_prequential_streams"
+                "first_60pct_global_holdout_then_global_prequential_development_scenarios"
             )
 
             save_csv(
@@ -1989,7 +2295,7 @@ def main():
                 )
             else:
                 print(
-                    "HPO online completed with positive development delta. "
+                    "HPO online V2 completed with positive development delta. "
                     "Freeze this adaptation configuration before running final H1-H3."
                 )
 

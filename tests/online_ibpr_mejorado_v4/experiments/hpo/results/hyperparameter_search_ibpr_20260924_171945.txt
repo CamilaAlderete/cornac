@@ -1,0 +1,63 @@
+
+####################################################################################################
+HPO TIMESTAMP: 20260924_171945
+####################################################################################################
+Trials CSV : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado_v4\experiments\hpo\results\hyperparameter_search_ibpr_trials_20260924_171945.csv
+Summary CSV: C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado_v4\experiments\hpo\results\hyperparameter_search_ibpr_summary_20260924_171945.csv
+Best CSV   : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado_v4\experiments\hpo\results\hyperparameter_search_ibpr_best_20260924_171945.csv
+
+====================================================================================================
+IBPR BASE HYPERPARAMETER SEARCH - PER-USER TEMPORAL IMPLICIT-FEEDBACK PROTOCOL
+====================================================================================================
+Dataset variant                 : MovieLens 1M
+Positive threshold              : rating >= 3.0
+Feedback used by IBPR           : implicit positive (value = 1.0)
+Primary selection metric        : NDCG@20
+Global HPO horizon              : first 60%
+Later global data used here     : NO (60-100% remains outside HPO)
+Total implicit-positive rows    : 836,478
+Rows inside HPO horizon         : 501,886
+Users inside HPO horizon        : 4,037
+Users eligible for validation   : 4,000 (>= 7 positives)
+
+Per-user temporal folds:
+  fold_1: user-train first 50% | user-validation until 65% | train=249,941 (4,037 users, 3,364 items) | val_candidate=74,337 | val_known=74,260 (99.90%) | eval_users=4,000 | eval_items=2,995
+  fold_2: user-train first 65% | user-validation until 80% | train=324,289 (4,037 users, 3,419 items) | val_candidate=75,578 | val_known=75,525 (99.93%) | eval_users=4,000 | eval_items=3,052
+  fold_3: user-train first 80% | user-validation until 100% | train=399,898 (4,037 users, 3,461 items) | val_candidate=101,945 | val_known=101,879 (99.94%) | eval_users=4,000 | eval_items=3,202
+
+Scope interpretation             : user warm-start is guaranteed by construction; candidate validation items not present in fold training are excluded.
+Temporal interpretation          : chronology is enforced within each user's history; this is not the global prequential protocol used later for H1-H4.
+
+====================================================================================================
+STAGE-A CORE CONFIGURATIONS
+====================================================================================================
+C001 | source=paper_region_plus_cornac_defaults  | k=20  lr=0.05   lamda=0.001   batch=100
+C002 | source=pilot                              | k=50  lr=0.01   lamda=0.001   batch=512
+C003 | source=random_search                      | k=100 lr=0.02   lamda=0.0001  batch=512
+C004 | source=random_search                      | k=50  lr=0.005  lamda=0.0001  batch=100
+C005 | source=random_search                      | k=50  lr=0.05   lamda=0.01    batch=512
+C006 | source=random_search                      | k=20  lr=0.02   lamda=0.0001  batch=100
+C007 | source=random_search                      | k=20  lr=0.05   lamda=0.01    batch=256
+C008 | source=random_search                      | k=50  lr=0.05   lamda=0.0001  batch=256
+C009 | source=random_search                      | k=100 lr=0.005  lamda=0.0001  batch=256
+C010 | source=random_search                      | k=100 lr=0.005  lamda=0.001   batch=512
+C011 | source=random_search                      | k=20  lr=0.05   lamda=0.01    batch=512
+C012 | source=random_search                      | k=100 lr=0.02   lamda=0.001   batch=256
+C013 | source=random_search                      | k=20  lr=0.005  lamda=0.01    batch=256
+C014 | source=random_search                      | k=50  lr=0.02   lamda=0.01    batch=100
+C015 | source=random_search                      | k=100 lr=0.01   lamda=0.0001  batch=100
+C016 | source=random_search                      | k=100 lr=0.01   lamda=0.001   batch=100
+C017 | source=random_search                      | k=100 lr=0.005  lamda=0.001   batch=256
+C018 | source=random_search                      | k=20  lr=0.005  lamda=0.0001  batch=512
+C019 | source=random_search                      | k=50  lr=0.005  lamda=0.01    batch=512
+C020 | source=random_search                      | k=20  lr=0.01   lamda=0.01    batch=256
+
+Protected through Stage C: C001, C002
+
+Budget schedule:
+  Stage A: 20 configs × folds 1-2 × seed 42 × 20 iter
+  Stage B: top 5 + protected anchors × fold 3 × seed 42 × 20 iter
+  Stage C: top 3 + protected anchors × folds 1-3 × max_iter=[20, 50, 100]
+  Stage D: top 2 full configs × folds 1-3 × seeds=[42, 123, 2024]
+
+PLAN ONLY: no se entrenó ningún modelo.

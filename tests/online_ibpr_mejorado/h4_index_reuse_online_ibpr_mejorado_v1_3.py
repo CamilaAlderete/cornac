@@ -663,7 +663,7 @@ def protocol_payload(data_hash):
             "threadpool context overhead excluded"
         ),
         "exhaustive_latency_definition": (
-            "V.dot(U) + eligible/seen mask + deterministic top-k selection; "
+            "V.dot(U) + eligible/seen mask + deterministic top-k hpo; "
             "threadpool context overhead excluded"
         ),
         "summary_aggregation": (

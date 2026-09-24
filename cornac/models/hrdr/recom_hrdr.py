@@ -150,7 +150,7 @@ class HRDR(Recommender, ANNMixin):
             User-Item preference data as well as additional modalities.
 
         val_set: :obj:`cornac.data.Dataset`, optional, default: None
-            User-Item preference data for model selection purposes (e.g., early stopping).
+            User-Item preference data for model hpo purposes (e.g., early stopping).
 
         Returns
         -------

@@ -28,7 +28,7 @@ VARIANT = "1M"
 TOP_K = 20
 
 # Only the first 60% of the chronological positive interactions is used
-# during hyperparameter hpo. The later 40% remains untouched here.
+# during hyperparameter selection. The later 40% remains untouched here.
 HPO_END_FRAC = 0.60
 
 # Warm-start validation sufficiency checks.
@@ -106,7 +106,7 @@ HPO_RANDOM_SEED = 2026
 SCREENING_SEED = 42
 CONFIRMATION_SEEDS = [42, 123, 2024]
 
-# The primary model-hpo metric is fixed before running the HPO.
+# The primary model-selection metric is fixed before running the HPO.
 PRIMARY_METRIC = f"NDCG@{TOP_K}"
 
 QUALITY_METRICS = [
@@ -319,7 +319,7 @@ def build_hpo_pool(all_positive_rows):
     Reserve the globally latest 40% of implicit-positive interactions.
 
     Only the first HPO_END_FRAC of the globally chronological stream is ever
-    visible to hyperparameter hpo.
+    visible to hyperparameter selection.
     """
     n_total = len(all_positive_rows)
     hpo_end = int(n_total * HPO_END_FRAC)
@@ -1062,7 +1062,7 @@ def aggregate_configuration(
 
 def ranking_key(summary):
     """
-    Fixed deterministic hpo rule:
+    Fixed deterministic selection rule:
       1) higher mean NDCG@20
       2) lower NDCG@20 variability
       3) lower mean training time
@@ -1357,7 +1357,7 @@ def print_data_protocol(
     print(f"Dataset variant                 : MovieLens {VARIANT}")
     print(f"Positive threshold              : rating >= {RATING_THRESHOLD}")
     print("Feedback used by IBPR           : implicit positive (value = 1.0)")
-    print(f"Primary hpo metric        : {PRIMARY_METRIC}")
+    print(f"Primary selection metric        : {PRIMARY_METRIC}")
     print(f"Global HPO horizon              : first {100 * HPO_END_FRAC:.0f}%")
     print(
         "Later global data used here     : NO "

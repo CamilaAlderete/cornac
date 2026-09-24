@@ -47,7 +47,7 @@ class HypAR(Recommender):
         non_linear: bool, default: True
             Whether to use non-linear activation function.
         model_selection: str, default: 'best'
-            Model selection method, i.e., whether to use the best model or the last model.
+            Model hpo method, i.e., whether to use the best model or the last model.
         objective: str, default: 'ranking'
             Objective, i.e., whether to use ranking or rating.
         review_aggregator: str, default: 'narre'
