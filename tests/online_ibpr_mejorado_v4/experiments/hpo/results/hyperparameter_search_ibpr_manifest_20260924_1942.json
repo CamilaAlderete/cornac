@@ -1,0 +1,90 @@
+{
+  "dataset_sha256": "3112900cf5f4966e117bbc0ccfb33cb2e0128ac8b36c2b79a154019651d1ba42",
+  "ibpr_core_path": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\cornac\\models\\ibpr\\ibpr.py",
+  "ibpr_core_sha256": "e33e61a20862e8dc3d6bb3270998ba75557b8eefd48a52dcaac63271b6b38059",
+  "ibpr_wrapper_path": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\cornac\\models\\ibpr\\recom_ibpr.py",
+  "ibpr_wrapper_sha256": "ec525d4dfc21dfc9d0389033cddbfdd600aed25122ff0e78630e9c08fab6fb1e",
+  "protocol_hash": "77b8935af88542bf1b5ae3a5a8b2d73e5bef35f3e5f3d462389b714b59ed1b15",
+  "protocol_payload": {
+    "batch_size_values": [
+      100,
+      256,
+      512
+    ],
+    "confirmation_seeds": [
+      42,
+      123,
+      2024
+    ],
+    "feedback": "implicit_positive_1.0",
+    "folds": [
+      {
+        "name": "fold_1",
+        "train_end_ratio": 0.5,
+        "val_end_ratio": 0.65
+      },
+      {
+        "name": "fold_2",
+        "train_end_ratio": 0.65,
+        "val_end_ratio": 0.8
+      },
+      {
+        "name": "fold_3",
+        "train_end_ratio": 0.8,
+        "val_end_ratio": 1.0
+      }
+    ],
+    "hpo_end_frac": 0.6,
+    "hpo_random_seed": 2026,
+    "k_values": [
+      20,
+      50,
+      100
+    ],
+    "lamda_values": [
+      0.0001,
+      0.001,
+      0.01
+    ],
+    "learning_rate_values": [
+      0.005,
+      0.01,
+      0.02,
+      0.05
+    ],
+    "max_iter_values": [
+      20,
+      50,
+      100
+    ],
+    "min_known_validation_rows": 3000,
+    "min_user_interactions_for_validation": 7,
+    "min_validation_items": 100,
+    "min_validation_users": 100,
+    "outer_boundary_policy": "extend_to_end_of_equal_timestamp_group",
+    "primary_metric": "NDCG@20",
+    "protected_config_sources": [
+      "paper_region_plus_cornac_defaults",
+      "pilot"
+    ],
+    "protocol_version": "ibpr_hpo_per_user_temporal_v2_20260924",
+    "quality_metrics": [
+      "AUC",
+      "MAP",
+      "NDCG@20",
+      "Precision@20",
+      "Recall@20"
+    ],
+    "rating_threshold": 3.0,
+    "screening_configs": 20,
+    "screening_max_iter": 20,
+    "screening_seed": 42,
+    "top_k": 20,
+    "top_stage_a": 5,
+    "top_stage_b": 3,
+    "top_stage_c": 2,
+    "variant": "1M"
+  },
+  "protocol_version": "ibpr_hpo_per_user_temporal_v2_20260924",
+  "script_sha256": "73b46b33c4ca1aba8a739d3e18370c6acfdaf27f024f794f82468a08c09b262d"
+}
