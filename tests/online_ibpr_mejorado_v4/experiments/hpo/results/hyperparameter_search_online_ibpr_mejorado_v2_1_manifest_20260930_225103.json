@@ -1,0 +1,372 @@
+{
+  "c1_compatible_dataset_sha256": "3112900cf5f4966e117bbc0ccfb33cb2e0128ac8b36c2b79a154019651d1ba42",
+  "dataset_sha256": "29da5346c5bcf37dc927771d8ffd7ec3323dc7857ed4b0f6a45278b666954d3e",
+  "frozen_ibpr_config": {
+    "batch_size": 512,
+    "k": 20,
+    "lamda": 1e-05,
+    "learning_rate": 0.0025,
+    "max_iter": 50
+  },
+  "ibpr_core_file_sha256": "e33e61a20862e8dc3d6bb3270998ba75557b8eefd48a52dcaac63271b6b38059",
+  "ibpr_core_path": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\cornac\\models\\ibpr\\ibpr.py",
+  "ibpr_wrapper_file_sha256": "ec525d4dfc21dfc9d0389033cddbfdd600aed25122ff0e78630e9c08fab6fb1e",
+  "ibpr_wrapper_path": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\cornac\\models\\ibpr\\recom_ibpr.py",
+  "ibpr_wrapper_source_sha256": "8ea5c0cbf8442912ac8c935b86838b4c8680201998fb5c3fc39d0d65b62d5d78",
+  "online_core_file_sha256": "e27630a4b7fc4b819a8a4ef1757eea7d1cb21f8bc25efc028a0954964b16b801",
+  "online_core_path": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\cornac\\models\\online_ibpr_mejorado\\online_ibpr_mejorado.py",
+  "online_core_source_sha256": "867e31e364159f77ddde84e0fbfc46b5799be21467c5fda3de103b8dccd5891f",
+  "online_wrapper_file_sha256": "3650a9a035e5baac492263af71c4572198375d97a7bb178a453281d3e01e8450",
+  "online_wrapper_path": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\cornac\\models\\online_ibpr_mejorado\\recom_online_ibpr_mejorado.py",
+  "online_wrapper_source_sha256": "080588efe040791f5ba783cdd5c98d16c7e42a503ea4ed132652e6dd73897c77",
+  "parent_ibpr_best_file_sha256": "c38547e811a6931fdd04b9bd17eff49e36f89eecb8ef604542f0bd160f4b56d1",
+  "parent_ibpr_best_path": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\tests\\online_ibpr_mejorado_v4\\experiments\\hpo\\results\\hyperparameter_refinement_ibpr_v2_1_best_20260929_231439.csv",
+  "parent_ibpr_config_id": "R900",
+  "parent_ibpr_manifest_file_sha256": "5c8c598014024a5a9f5c2f25bbb952a7d6ff7d037ff291fcf15bb407d99f4d1e",
+  "parent_ibpr_manifest_path": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\tests\\online_ibpr_mejorado_v4\\experiments\\hpo\\results\\hyperparameter_refinement_ibpr_v2_1_manifest_20260929_231439.json",
+  "parent_ibpr_refinement_protocol_hash": "7adec0037dba1cd31c9100942d5fa9dfb0aa00dbb9a5bf8dc7b8ff4b51154112",
+  "parent_ibpr_refinement_protocol_version": "ibpr_local_refinement_v2_1_20260929",
+  "parent_ibpr_refinement_script_sha256": "3f4b0d21676216fbf135a9a8d2d8ee73ef9f0795bdfb10bcc1d2fb509e5bd6e9",
+  "parent_ibpr_refinement_timestamp": "20260929_231439",
+  "protocol_hash": "61215894da0d3cadf5966b3cc503558884955ee6314b01e6f95a914e6f0b9621",
+  "protocol_payload": {
+    "chunk_rule": "four global chronological warm chunks; move boundaries forward through timestamp ties",
+    "confirmation_seeds": [
+      42,
+      123,
+      2024
+    ],
+    "cornac": "2.3.5",
+    "data_sha256": "29da5346c5bcf37dc927771d8ffd7ec3323dc7857ed4b0f6a45278b666954d3e",
+    "dataset": "MovieLens 1M",
+    "fixed_online_constraints": {
+      "max_steps": null,
+      "neg_sampling": "uniform",
+      "normalize": true,
+      "update_V": false
+    },
+    "frozen_ibpr_config": {
+      "batch_size": 512,
+      "k": 20,
+      "lamda": 1e-05,
+      "learning_rate": 0.0025,
+      "max_iter": 50
+    },
+    "ibpr_wrapper_sha256": "8ea5c0cbf8442912ac8c935b86838b4c8680201998fb5c3fc39d0d65b62d5d78",
+    "numpy": "2.4.2",
+    "online_core_sha256": "867e31e364159f77ddde84e0fbfc46b5799be21467c5fda3de103b8dccd5891f",
+    "online_wrapper_sha256": "080588efe040791f5ba783cdd5c98d16c7e42a503ea4ed132652e6dd73897c77",
+    "outer_boundary_rule": "move forward to end of equal-timestamp group",
+    "outer_development_fraction": 0.6,
+    "parent_ibpr_refinement": {
+      "best_config_id": "R900",
+      "best_file_sha256": "c38547e811a6931fdd04b9bd17eff49e36f89eecb8ef604542f0bd160f4b56d1",
+      "c1_compatible_dataset_sha256": "3112900cf5f4966e117bbc0ccfb33cb2e0128ac8b36c2b79a154019651d1ba42",
+      "dataset_sha256": "3112900cf5f4966e117bbc0ccfb33cb2e0128ac8b36c2b79a154019651d1ba42",
+      "manifest_file_sha256": "5c8c598014024a5a9f5c2f25bbb952a7d6ff7d037ff291fcf15bb407d99f4d1e",
+      "protocol_hash": "7adec0037dba1cd31c9100942d5fa9dfb0aa00dbb9a5bf8dc7b8ff4b51154112",
+      "protocol_version": "ibpr_local_refinement_v2_1_20260929",
+      "script_sha256": "3f4b0d21676216fbf135a9a8d2d8ee73ef9f0795bdfb10bcc1d2fb509e5bd6e9",
+      "selection_metric": "NDCG@20",
+      "timestamp": "20260929_231439"
+    },
+    "prequential_sequence": [
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        4
+      ]
+    ],
+    "primary_eval_rule": "evaluate next chunk only for users exposed to an earlier update chunk",
+    "primary_selection_metric": "delta_NDCG@20",
+    "protocol_version": "online_hpo_global_prequential_v2_1_20260930",
+    "python": "3.12.0",
+    "rating_threshold": 3.0,
+    "scenario_base_ratios": [
+      {
+        "base_ratio": 0.5,
+        "name": "S50"
+      },
+      {
+        "base_ratio": 0.65,
+        "name": "S65"
+      },
+      {
+        "base_ratio": 0.8,
+        "name": "S80"
+      }
+    ],
+    "scenario_rule": "global chronological base/future split within development",
+    "scipy": "1.17.1",
+    "screening_configs": [
+      {
+        "config_id": "O001",
+        "config_source": "pilot_online_anchor",
+        "signature": [
+          0.01,
+          0.001,
+          512,
+          1,
+          "cosine_bpr"
+        ]
+      },
+      {
+        "config_id": "O002",
+        "config_source": "frozen_base_like_cosine_anchor",
+        "signature": [
+          0.0025,
+          1e-05,
+          512,
+          1,
+          "cosine_bpr"
+        ]
+      },
+      {
+        "config_id": "O003",
+        "config_source": "frozen_base_like_angular_anchor",
+        "signature": [
+          0.0025,
+          1e-05,
+          512,
+          1,
+          "angular"
+        ]
+      },
+      {
+        "config_id": "O004",
+        "config_source": "coverage_random_search",
+        "signature": [
+          0.005,
+          1e-05,
+          128,
+          1,
+          "angular"
+        ]
+      },
+      {
+        "config_id": "O005",
+        "config_source": "coverage_random_search",
+        "signature": [
+          0.01,
+          1e-06,
+          256,
+          1,
+          "angular"
+        ]
+      },
+      {
+        "config_id": "O006",
+        "config_source": "coverage_random_search",
+        "signature": [
+          0.02,
+          0.0,
+          1024,
+          2,
+          "angular"
+        ]
+      },
+      {
+        "config_id": "O007",
+        "config_source": "coverage_random_search",
+        "signature": [
+          0.02,
+          0.0,
+          256,
+          3,
+          "cosine_bpr"
+        ]
+      },
+      {
+        "config_id": "O008",
+        "config_source": "coverage_random_search",
+        "signature": [
+          0.001,
+          0.0,
+          128,
+          2,
+          "angular"
+        ]
+      },
+      {
+        "config_id": "O009",
+        "config_source": "coverage_random_search",
+        "signature": [
+          0.02,
+          0.0001,
+          512,
+          1,
+          "cosine_bpr"
+        ]
+      },
+      {
+        "config_id": "O010",
+        "config_source": "random_search",
+        "signature": [
+          0.005,
+          0.001,
+          1024,
+          2,
+          "cosine_bpr"
+        ]
+      },
+      {
+        "config_id": "O011",
+        "config_source": "random_search",
+        "signature": [
+          0.01,
+          0.001,
+          256,
+          1,
+          "cosine_bpr"
+        ]
+      },
+      {
+        "config_id": "O012",
+        "config_source": "random_search",
+        "signature": [
+          0.0025,
+          1e-05,
+          512,
+          2,
+          "angular"
+        ]
+      },
+      {
+        "config_id": "O013",
+        "config_source": "random_search",
+        "signature": [
+          0.02,
+          0.001,
+          1024,
+          3,
+          "cosine_bpr"
+        ]
+      },
+      {
+        "config_id": "O014",
+        "config_source": "random_search",
+        "signature": [
+          0.005,
+          1e-06,
+          1024,
+          3,
+          "angular"
+        ]
+      },
+      {
+        "config_id": "O015",
+        "config_source": "random_search",
+        "signature": [
+          0.01,
+          1e-05,
+          256,
+          1,
+          "angular"
+        ]
+      },
+      {
+        "config_id": "O016",
+        "config_source": "random_search",
+        "signature": [
+          0.01,
+          0.0,
+          256,
+          3,
+          "cosine_bpr"
+        ]
+      },
+      {
+        "config_id": "O017",
+        "config_source": "random_search",
+        "signature": [
+          0.0025,
+          1e-06,
+          128,
+          1,
+          "angular"
+        ]
+      },
+      {
+        "config_id": "O018",
+        "config_source": "random_search",
+        "signature": [
+          0.005,
+          1e-06,
+          128,
+          1,
+          "cosine_bpr"
+        ]
+      },
+      {
+        "config_id": "O019",
+        "config_source": "random_search",
+        "signature": [
+          0.0025,
+          1e-06,
+          256,
+          3,
+          "angular"
+        ]
+      },
+      {
+        "config_id": "O020",
+        "config_source": "random_search",
+        "signature": [
+          0.02,
+          0.0001,
+          128,
+          1,
+          "angular"
+        ]
+      }
+    ],
+    "screening_seed": 42,
+    "script_sha256": "06f7324609bc001a784599b0e15b997f8c7bf002bd8549434f20515e3f47a57b",
+    "search_random_seed": 2026,
+    "search_space": {
+      "batch_size": [
+        128,
+        256,
+        512,
+        1024
+      ],
+      "lamda": [
+        0.0,
+        1e-06,
+        1e-05,
+        0.0001,
+        0.001
+      ],
+      "learning_rate": [
+        0.001,
+        0.0025,
+        0.005,
+        0.01,
+        0.02
+      ],
+      "loss_mode": [
+        "cosine_bpr",
+        "angular"
+      ],
+      "n_epochs": [
+        1,
+        2,
+        3
+      ]
+    },
+    "secondary_selection_metric": "NDCG@20",
+    "top_stage_a": 5,
+    "top_stage_b": 3,
+    "torch": "2.10.0+cpu",
+    "warm_start_rule": "future row retained iff user and item exist in scenario base"
+  },
+  "protocol_version": "online_hpo_global_prequential_v2_1_20260930",
+  "script_sha256": "06f7324609bc001a784599b0e15b997f8c7bf002bd8549434f20515e3f47a57b"
+}

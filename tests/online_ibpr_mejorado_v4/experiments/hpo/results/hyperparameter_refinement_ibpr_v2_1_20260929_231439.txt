@@ -1,0 +1,358 @@
+
+##############################################################################################################
+IBPR REFINEMENT V2.1 TIMESTAMP: 20260929_231439
+##############################################################################################################
+Parent HPO : 20260924_1942
+Trials CSV : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado_v4\experiments\hpo\results\hyperparameter_refinement_ibpr_v2_1_trials_20260929_231439.csv
+Summary CSV: C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado_v4\experiments\hpo\results\hyperparameter_refinement_ibpr_v2_1_summary_20260929_231439.csv
+Best CSV   : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado_v4\experiments\hpo\results\hyperparameter_refinement_ibpr_v2_1_best_20260929_231439.csv
+Manifest   : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado_v4\experiments\hpo\results\hyperparameter_refinement_ibpr_v2_1_manifest_20260929_231439.json
+
+==============================================================================================================
+IBPR LOCAL REFINEMENT V2 - SAME DEVELOPMENT PROTOCOL AS PARENT HPO
+==============================================================================================================
+Parent HPO timestamp             : 20260924_1942
+Parent protocol hash             : 77b8935af88542bf1b5ae3a5a8b2d73e5bef35f3e5f3d462389b714b59ed1b15
+Parent winner                    : {'config_id': 'R000', 'config_source': 'parent_hpo_winner_20260924_1942', 'refinement_group': 'baseline', 'k': 20, 'learning_rate': 0.005, 'lamda': 0.0001, 'batch_size': 512, 'max_iter': 20}
+Dataset                          : MovieLens 1M
+Positive threshold               : rating >= 3.0
+Primary metric                   : NDCG@20
+Total implicit-positive rows     : 836,478
+Target development rows          : 501,886
+Effective development rows       : 501,887
+Tie rows added at boundary       : 1
+Boundary timestamp               : 974678223
+Users inside development horizon : 4,037
+Refinement protocol version      : ibpr_local_refinement_v2_1_20260929
+Refinement protocol hash         : 7adec0037dba1cd31c9100942d5fa9dfb0aa00dbb9a5bf8dc7b8ff4b51154112
+Processed dataset SHA256         : 3112900cf5f4966e117bbc0ccfb33cb2e0128ac8b36c2b79a154019651d1ba42
+Refinement script SHA256         : 3f4b0d21676216fbf135a9a8d2d8ee73ef9f0795bdfb10bcc1d2fb509e5bd6e9
+IBPR wrapper SHA256              : ec525d4dfc21dfc9d0389033cddbfdd600aed25122ff0e78630e9c08fab6fb1e
+IBPR core SHA256                 : e33e61a20862e8dc3d6bb3270998ba75557b8eefd48a52dcaac63271b6b38059
+
+Per-user temporal folds:
+  fold_1: train=249,941 | val_candidate=74,338 | val_known=74,261 (99.90%) | eval_users=4,000
+  fold_2: train=324,290 | val_candidate=75,578 | val_known=75,525 (99.93%) | eval_users=4,000
+  fold_3: train=399,899 | val_candidate=101,945 | val_known=101,879 (99.94%) | eval_users=4,000
+
+==============================================================================================================
+IBPR TARGETED LOCAL REFINEMENT PLAN
+==============================================================================================================
+Parent winner:
+{'config_id': 'R000', 'config_source': 'parent_hpo_winner_20260924_1942', 'refinement_group': 'baseline', 'k': 20, 'learning_rate': 0.005, 'lamda': 0.0001, 'batch_size': 512, 'max_iter': 20}
+Original-search boundary hits:
+  k=LOW(20), learning_rate=LOW(0.005), lamda=LOW(0.0001), batch_size=HIGH(512), max_iter=LOW(20)
+
+Stage R1 candidates:
+  R000 | group=baseline         | k=20  lr=0.005   lamda=0.0001   batch=512  iter=20
+  R001 | group=k_probe          | k=5   lr=0.005   lamda=0.0001   batch=512  iter=20
+  R002 | group=k_probe          | k=10  lr=0.005   lamda=0.0001   batch=512  iter=20
+  R003 | group=k_probe          | k=30  lr=0.005   lamda=0.0001   batch=512  iter=20
+  R004 | group=lamda_probe      | k=20  lr=0.005   lamda=1e-05    batch=512  iter=20
+  R005 | group=lamda_probe      | k=20  lr=0.005   lamda=5e-05    batch=512  iter=20
+  R006 | group=lamda_probe      | k=20  lr=0.005   lamda=0.0005   batch=512  iter=20
+  R007 | group=batch_probe      | k=20  lr=0.005   lamda=0.0001   batch=256  iter=20
+  R008 | group=batch_probe      | k=20  lr=0.005   lamda=0.0001   batch=1024 iter=20
+  R009 | group=batch_probe      | k=20  lr=0.005   lamda=0.0001   batch=2048 iter=20
+  R010 | group=lr_x_iter_probe  | k=20  lr=0.001   lamda=0.0001   batch=512  iter=10
+  R011 | group=lr_x_iter_probe  | k=20  lr=0.001   lamda=0.0001   batch=512  iter=20
+  R012 | group=lr_x_iter_probe  | k=20  lr=0.001   lamda=0.0001   batch=512  iter=50
+  R013 | group=lr_x_iter_probe  | k=20  lr=0.0025  lamda=0.0001   batch=512  iter=10
+  R014 | group=lr_x_iter_probe  | k=20  lr=0.0025  lamda=0.0001   batch=512  iter=20
+  R015 | group=lr_x_iter_probe  | k=20  lr=0.0025  lamda=0.0001   batch=512  iter=50
+  R016 | group=lr_x_iter_probe  | k=20  lr=0.005   lamda=0.0001   batch=512  iter=10
+  R017 | group=lr_x_iter_probe  | k=20  lr=0.005   lamda=0.0001   batch=512  iter=50
+  R018 | group=lr_x_iter_probe  | k=20  lr=0.01    lamda=0.0001   batch=512  iter=10
+  R019 | group=lr_x_iter_probe  | k=20  lr=0.01    lamda=0.0001   batch=512  iter=20
+  R020 | group=lr_x_iter_probe  | k=20  lr=0.01    lamda=0.0001   batch=512  iter=50
+
+Budget:
+  R1: 21 configs × folds 1-2 × seed 42
+  R2: top 5 + group winners + parent + combined candidate → fold 3
+  R3: top 2 de R2 + parent × 3 folds × seeds=[42, 123, 2024]
+
+PLAN ONLY: no se entrenó ningún modelo.
+
+##############################################################################################################
+IBPR REFINEMENT V2.1 TIMESTAMP: 20260929_231439
+##############################################################################################################
+Parent HPO : 20260924_1942
+Trials CSV : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado_v4\experiments\hpo\results\hyperparameter_refinement_ibpr_v2_1_trials_20260929_231439.csv
+Summary CSV: C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado_v4\experiments\hpo\results\hyperparameter_refinement_ibpr_v2_1_summary_20260929_231439.csv
+Best CSV   : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado_v4\experiments\hpo\results\hyperparameter_refinement_ibpr_v2_1_best_20260929_231439.csv
+Manifest   : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado_v4\experiments\hpo\results\hyperparameter_refinement_ibpr_v2_1_manifest_20260929_231439.json
+
+==============================================================================================================
+IBPR LOCAL REFINEMENT V2 - SAME DEVELOPMENT PROTOCOL AS PARENT HPO
+==============================================================================================================
+Parent HPO timestamp             : 20260924_1942
+Parent protocol hash             : 77b8935af88542bf1b5ae3a5a8b2d73e5bef35f3e5f3d462389b714b59ed1b15
+Parent winner                    : {'config_id': 'R000', 'config_source': 'parent_hpo_winner_20260924_1942', 'refinement_group': 'baseline', 'k': 20, 'learning_rate': 0.005, 'lamda': 0.0001, 'batch_size': 512, 'max_iter': 20}
+Dataset                          : MovieLens 1M
+Positive threshold               : rating >= 3.0
+Primary metric                   : NDCG@20
+Total implicit-positive rows     : 836,478
+Target development rows          : 501,886
+Effective development rows       : 501,887
+Tie rows added at boundary       : 1
+Boundary timestamp               : 974678223
+Users inside development horizon : 4,037
+Refinement protocol version      : ibpr_local_refinement_v2_1_20260929
+Refinement protocol hash         : 7adec0037dba1cd31c9100942d5fa9dfb0aa00dbb9a5bf8dc7b8ff4b51154112
+Processed dataset SHA256         : 3112900cf5f4966e117bbc0ccfb33cb2e0128ac8b36c2b79a154019651d1ba42
+Refinement script SHA256         : 3f4b0d21676216fbf135a9a8d2d8ee73ef9f0795bdfb10bcc1d2fb509e5bd6e9
+IBPR wrapper SHA256              : ec525d4dfc21dfc9d0389033cddbfdd600aed25122ff0e78630e9c08fab6fb1e
+IBPR core SHA256                 : e33e61a20862e8dc3d6bb3270998ba75557b8eefd48a52dcaac63271b6b38059
+
+Per-user temporal folds:
+  fold_1: train=249,941 | val_candidate=74,338 | val_known=74,261 (99.90%) | eval_users=4,000
+  fold_2: train=324,290 | val_candidate=75,578 | val_known=75,525 (99.93%) | eval_users=4,000
+  fold_3: train=399,899 | val_candidate=101,945 | val_known=101,879 (99.94%) | eval_users=4,000
+
+==============================================================================================================
+IBPR TARGETED LOCAL REFINEMENT PLAN
+==============================================================================================================
+Parent winner:
+{'config_id': 'R000', 'config_source': 'parent_hpo_winner_20260924_1942', 'refinement_group': 'baseline', 'k': 20, 'learning_rate': 0.005, 'lamda': 0.0001, 'batch_size': 512, 'max_iter': 20}
+Original-search boundary hits:
+  k=LOW(20), learning_rate=LOW(0.005), lamda=LOW(0.0001), batch_size=HIGH(512), max_iter=LOW(20)
+
+Stage R1 candidates:
+  R000 | group=baseline         | k=20  lr=0.005   lamda=0.0001   batch=512  iter=20
+  R001 | group=k_probe          | k=5   lr=0.005   lamda=0.0001   batch=512  iter=20
+  R002 | group=k_probe          | k=10  lr=0.005   lamda=0.0001   batch=512  iter=20
+  R003 | group=k_probe          | k=30  lr=0.005   lamda=0.0001   batch=512  iter=20
+  R004 | group=lamda_probe      | k=20  lr=0.005   lamda=1e-05    batch=512  iter=20
+  R005 | group=lamda_probe      | k=20  lr=0.005   lamda=5e-05    batch=512  iter=20
+  R006 | group=lamda_probe      | k=20  lr=0.005   lamda=0.0005   batch=512  iter=20
+  R007 | group=batch_probe      | k=20  lr=0.005   lamda=0.0001   batch=256  iter=20
+  R008 | group=batch_probe      | k=20  lr=0.005   lamda=0.0001   batch=1024 iter=20
+  R009 | group=batch_probe      | k=20  lr=0.005   lamda=0.0001   batch=2048 iter=20
+  R010 | group=lr_x_iter_probe  | k=20  lr=0.001   lamda=0.0001   batch=512  iter=10
+  R011 | group=lr_x_iter_probe  | k=20  lr=0.001   lamda=0.0001   batch=512  iter=20
+  R012 | group=lr_x_iter_probe  | k=20  lr=0.001   lamda=0.0001   batch=512  iter=50
+  R013 | group=lr_x_iter_probe  | k=20  lr=0.0025  lamda=0.0001   batch=512  iter=10
+  R014 | group=lr_x_iter_probe  | k=20  lr=0.0025  lamda=0.0001   batch=512  iter=20
+  R015 | group=lr_x_iter_probe  | k=20  lr=0.0025  lamda=0.0001   batch=512  iter=50
+  R016 | group=lr_x_iter_probe  | k=20  lr=0.005   lamda=0.0001   batch=512  iter=10
+  R017 | group=lr_x_iter_probe  | k=20  lr=0.005   lamda=0.0001   batch=512  iter=50
+  R018 | group=lr_x_iter_probe  | k=20  lr=0.01    lamda=0.0001   batch=512  iter=10
+  R019 | group=lr_x_iter_probe  | k=20  lr=0.01    lamda=0.0001   batch=512  iter=20
+  R020 | group=lr_x_iter_probe  | k=20  lr=0.01    lamda=0.0001   batch=512  iter=50
+
+Budget:
+  R1: 21 configs × folds 1-2 × seed 42
+  R2: top 5 + group winners + parent + combined candidate → fold 3
+  R3: top 2 de R2 + parent × 3 folds × seeds=[42, 123, 2024]
+
+RUN    R000 | group=baseline | k=20 lr=0.005 lamda=0.0001 batch=512 iter=20 | fold_1 | seed=42
+       NDCG@20=0.081945 | train=88.82s
+RUN    R000 | group=baseline | k=20 lr=0.005 lamda=0.0001 batch=512 iter=20 | fold_2 | seed=42
+       NDCG@20=0.074239 | train=115.91s
+RUN    R001 | group=k_probe | k=5 lr=0.005 lamda=0.0001 batch=512 iter=20 | fold_1 | seed=42
+       NDCG@20=0.071892 | train=84.21s
+RUN    R001 | group=k_probe | k=5 lr=0.005 lamda=0.0001 batch=512 iter=20 | fold_2 | seed=42
+       NDCG@20=0.070014 | train=110.46s
+RUN    R002 | group=k_probe | k=10 lr=0.005 lamda=0.0001 batch=512 iter=20 | fold_1 | seed=42
+       NDCG@20=0.080750 | train=86.27s
+RUN    R002 | group=k_probe | k=10 lr=0.005 lamda=0.0001 batch=512 iter=20 | fold_2 | seed=42
+       NDCG@20=0.073338 | train=113.45s
+RUN    R003 | group=k_probe | k=30 lr=0.005 lamda=0.0001 batch=512 iter=20 | fold_1 | seed=42
+       NDCG@20=0.082410 | train=90.54s
+RUN    R003 | group=k_probe | k=30 lr=0.005 lamda=0.0001 batch=512 iter=20 | fold_2 | seed=42
+       NDCG@20=0.073756 | train=119.10s
+RUN    R004 | group=lamda_probe | k=20 lr=0.005 lamda=1e-05 batch=512 iter=20 | fold_1 | seed=42
+       NDCG@20=0.082313 | train=89.00s
+RUN    R004 | group=lamda_probe | k=20 lr=0.005 lamda=1e-05 batch=512 iter=20 | fold_2 | seed=42
+       NDCG@20=0.075008 | train=115.87s
+RUN    R005 | group=lamda_probe | k=20 lr=0.005 lamda=5e-05 batch=512 iter=20 | fold_1 | seed=42
+       NDCG@20=0.081897 | train=88.83s
+RUN    R005 | group=lamda_probe | k=20 lr=0.005 lamda=5e-05 batch=512 iter=20 | fold_2 | seed=42
+       NDCG@20=0.074807 | train=115.81s
+RUN    R006 | group=lamda_probe | k=20 lr=0.005 lamda=0.0005 batch=512 iter=20 | fold_1 | seed=42
+       NDCG@20=0.080314 | train=88.11s
+RUN    R006 | group=lamda_probe | k=20 lr=0.005 lamda=0.0005 batch=512 iter=20 | fold_2 | seed=42
+       NDCG@20=0.071617 | train=115.61s
+RUN    R007 | group=batch_probe | k=20 lr=0.005 lamda=0.0001 batch=256 iter=20 | fold_1 | seed=42
+       NDCG@20=0.079359 | train=105.18s
+RUN    R007 | group=batch_probe | k=20 lr=0.005 lamda=0.0001 batch=256 iter=20 | fold_2 | seed=42
+       NDCG@20=0.071835 | train=137.06s
+RUN    R008 | group=batch_probe | k=20 lr=0.005 lamda=0.0001 batch=1024 iter=20 | fold_1 | seed=42
+       NDCG@20=0.079302 | train=79.21s
+RUN    R008 | group=batch_probe | k=20 lr=0.005 lamda=0.0001 batch=1024 iter=20 | fold_2 | seed=42
+       NDCG@20=0.075941 | train=104.20s
+RUN    R009 | group=batch_probe | k=20 lr=0.005 lamda=0.0001 batch=2048 iter=20 | fold_1 | seed=42
+       NDCG@20=0.072789 | train=73.20s
+RUN    R009 | group=batch_probe | k=20 lr=0.005 lamda=0.0001 batch=2048 iter=20 | fold_2 | seed=42
+       NDCG@20=0.075756 | train=95.83s
+RUN    R010 | group=lr_x_iter_probe | k=20 lr=0.001 lamda=0.0001 batch=512 iter=10 | fold_1 | seed=42
+       NDCG@20=0.008357 | train=44.56s
+RUN    R010 | group=lr_x_iter_probe | k=20 lr=0.001 lamda=0.0001 batch=512 iter=10 | fold_2 | seed=42
+       NDCG@20=0.010792 | train=58.53s
+RUN    R011 | group=lr_x_iter_probe | k=20 lr=0.001 lamda=0.0001 batch=512 iter=20 | fold_1 | seed=42
+       NDCG@20=0.036270 | train=87.88s
+RUN    R011 | group=lr_x_iter_probe | k=20 lr=0.001 lamda=0.0001 batch=512 iter=20 | fold_2 | seed=42
+       NDCG@20=0.043364 | train=115.15s
+RUN    R012 | group=lr_x_iter_probe | k=20 lr=0.001 lamda=0.0001 batch=512 iter=50 | fold_1 | seed=42
+       NDCG@20=0.074899 | train=217.71s
+RUN    R012 | group=lr_x_iter_probe | k=20 lr=0.001 lamda=0.0001 batch=512 iter=50 | fold_2 | seed=42
+       NDCG@20=0.078102 | train=285.74s
+RUN    R013 | group=lr_x_iter_probe | k=20 lr=0.0025 lamda=0.0001 batch=512 iter=10 | fold_1 | seed=42
+       NDCG@20=0.045236 | train=44.35s
+RUN    R013 | group=lr_x_iter_probe | k=20 lr=0.0025 lamda=0.0001 batch=512 iter=10 | fold_2 | seed=42
+       NDCG@20=0.053109 | train=58.68s
+RUN    R014 | group=lr_x_iter_probe | k=20 lr=0.0025 lamda=0.0001 batch=512 iter=20 | fold_1 | seed=42
+       NDCG@20=0.073489 | train=87.81s
+RUN    R014 | group=lr_x_iter_probe | k=20 lr=0.0025 lamda=0.0001 batch=512 iter=20 | fold_2 | seed=42
+       NDCG@20=0.075771 | train=115.80s
+RUN    R015 | group=lr_x_iter_probe | k=20 lr=0.0025 lamda=0.0001 batch=512 iter=50 | fold_1 | seed=42
+       NDCG@20=0.083203 | train=218.38s
+RUN    R015 | group=lr_x_iter_probe | k=20 lr=0.0025 lamda=0.0001 batch=512 iter=50 | fold_2 | seed=42
+       NDCG@20=0.076597 | train=285.85s
+RUN    R016 | group=lr_x_iter_probe | k=20 lr=0.005 lamda=0.0001 batch=512 iter=10 | fold_1 | seed=42
+       NDCG@20=0.069178 | train=44.73s
+RUN    R016 | group=lr_x_iter_probe | k=20 lr=0.005 lamda=0.0001 batch=512 iter=10 | fold_2 | seed=42
+       NDCG@20=0.074077 | train=59.38s
+RUN    R017 | group=lr_x_iter_probe | k=20 lr=0.005 lamda=0.0001 batch=512 iter=50 | fold_1 | seed=42
+       NDCG@20=0.081947 | train=218.50s
+RUN    R017 | group=lr_x_iter_probe | k=20 lr=0.005 lamda=0.0001 batch=512 iter=50 | fold_2 | seed=42
+       NDCG@20=0.075384 | train=286.69s
+RUN    R018 | group=lr_x_iter_probe | k=20 lr=0.01 lamda=0.0001 batch=512 iter=10 | fold_1 | seed=42
+       NDCG@20=0.077992 | train=44.81s
+RUN    R018 | group=lr_x_iter_probe | k=20 lr=0.01 lamda=0.0001 batch=512 iter=10 | fold_2 | seed=42
+       NDCG@20=0.071575 | train=58.24s
+RUN    R019 | group=lr_x_iter_probe | k=20 lr=0.01 lamda=0.0001 batch=512 iter=20 | fold_1 | seed=42
+       NDCG@20=0.078193 | train=88.02s
+RUN    R019 | group=lr_x_iter_probe | k=20 lr=0.01 lamda=0.0001 batch=512 iter=20 | fold_2 | seed=42
+       NDCG@20=0.071104 | train=115.54s
+RUN    R020 | group=lr_x_iter_probe | k=20 lr=0.01 lamda=0.0001 batch=512 iter=50 | fold_1 | seed=42
+       NDCG@20=0.079228 | train=218.75s
+RUN    R020 | group=lr_x_iter_probe | k=20 lr=0.01 lamda=0.0001 batch=512 iter=50 | fold_2 | seed=42
+       NDCG@20=0.074229 | train=285.59s
+
+==============================================================================================================
+STAGE R1 - LOCAL SCREENING
+==============================================================================================================
+#01 R015 [lr_x_iter_probe] | k=20 lr=0.0025 lamda=0.0001 batch=512 iter=50 | NDCG@20=0.079900 ± 0.004670 | Δparent=+0.001808
+#02 R017 [lr_x_iter_probe] | k=20 lr=0.005 lamda=0.0001 batch=512 iter=50 | NDCG@20=0.078666 ± 0.004641 | Δparent=+0.000574
+#03 R004 [lamda_probe] | k=20 lr=0.005 lamda=1e-05 batch=512 iter=20 | NDCG@20=0.078661 ± 0.005166 | Δparent=+0.000569
+#04 R005 [lamda_probe] | k=20 lr=0.005 lamda=5e-05 batch=512 iter=20 | NDCG@20=0.078352 ± 0.005013 | Δparent=+0.000260
+#05 R000 [baseline] | k=20 lr=0.005 lamda=0.0001 batch=512 iter=20 | NDCG@20=0.078092 ± 0.005448 | Δparent=+0.000000
+#06 R003 [k_probe] | k=30 lr=0.005 lamda=0.0001 batch=512 iter=20 | NDCG@20=0.078083 ± 0.006119 | Δparent=-0.000009
+#07 R008 [batch_probe] | k=20 lr=0.005 lamda=0.0001 batch=1024 iter=20 | NDCG@20=0.077621 ± 0.002376 | Δparent=-0.000471
+#08 R002 [k_probe] | k=10 lr=0.005 lamda=0.0001 batch=512 iter=20 | NDCG@20=0.077044 ± 0.005241 | Δparent=-0.001048
+#09 R020 [lr_x_iter_probe] | k=20 lr=0.01 lamda=0.0001 batch=512 iter=50 | NDCG@20=0.076729 ± 0.003535 | Δparent=-0.001363
+#10 R012 [lr_x_iter_probe] | k=20 lr=0.001 lamda=0.0001 batch=512 iter=50 | NDCG@20=0.076500 ± 0.002265 | Δparent=-0.001592
+#11 R006 [lamda_probe] | k=20 lr=0.005 lamda=0.0005 batch=512 iter=20 | NDCG@20=0.075966 ± 0.006149 | Δparent=-0.002127
+#12 R007 [batch_probe] | k=20 lr=0.005 lamda=0.0001 batch=256 iter=20 | NDCG@20=0.075597 ± 0.005320 | Δparent=-0.002495
+#13 R018 [lr_x_iter_probe] | k=20 lr=0.01 lamda=0.0001 batch=512 iter=10 | NDCG@20=0.074783 ± 0.004538 | Δparent=-0.003309
+#14 R019 [lr_x_iter_probe] | k=20 lr=0.01 lamda=0.0001 batch=512 iter=20 | NDCG@20=0.074648 ± 0.005013 | Δparent=-0.003444
+#15 R014 [lr_x_iter_probe] | k=20 lr=0.0025 lamda=0.0001 batch=512 iter=20 | NDCG@20=0.074630 ± 0.001614 | Δparent=-0.003462
+#16 R009 [batch_probe] | k=20 lr=0.005 lamda=0.0001 batch=2048 iter=20 | NDCG@20=0.074272 ± 0.002098 | Δparent=-0.003820
+#17 R016 [lr_x_iter_probe] | k=20 lr=0.005 lamda=0.0001 batch=512 iter=10 | NDCG@20=0.071627 ± 0.003464 | Δparent=-0.006465
+#18 R001 [k_probe] | k=5 lr=0.005 lamda=0.0001 batch=512 iter=20 | NDCG@20=0.070953 ± 0.001328 | Δparent=-0.007139
+#19 R013 [lr_x_iter_probe] | k=20 lr=0.0025 lamda=0.0001 batch=512 iter=10 | NDCG@20=0.049173 ± 0.005566 | Δparent=-0.028920
+#20 R011 [lr_x_iter_probe] | k=20 lr=0.001 lamda=0.0001 batch=512 iter=20 | NDCG@20=0.039817 ± 0.005016 | Δparent=-0.038275
+#21 R010 [lr_x_iter_probe] | k=20 lr=0.001 lamda=0.0001 batch=512 iter=10 | NDCG@20=0.009575 ± 0.001722 | Δparent=-0.068518
+
+Combined-best construction:
+{'best_k_source': 'R000', 'best_lamda_source': 'R004', 'best_batch_source': 'R000', 'best_lr_iter_source': 'R015', 'combined_was_existing': False}
+Combined candidate:
+{'config_id': 'R900', 'config_source': 'combined_from_group_winners', 'refinement_group': 'combined_best', 'k': 20, 'learning_rate': 0.0025, 'lamda': 1e-05, 'batch_size': 512, 'max_iter': 50}
+RUN    R900 | group=combined_best | k=20 lr=0.0025 lamda=1e-05 batch=512 iter=50 | fold_1 | seed=42
+       NDCG@20=0.083703 | train=217.14s
+RUN    R900 | group=combined_best | k=20 lr=0.0025 lamda=1e-05 batch=512 iter=50 | fold_2 | seed=42
+       NDCG@20=0.077362 | train=287.16s
+RUN    R015 | group=lr_x_iter_probe | k=20 lr=0.0025 lamda=0.0001 batch=512 iter=50 | fold_3 | seed=42
+       NDCG@20=0.082495 | train=353.78s
+RUN    R017 | group=lr_x_iter_probe | k=20 lr=0.005 lamda=0.0001 batch=512 iter=50 | fold_3 | seed=42
+       NDCG@20=0.080442 | train=359.32s
+RUN    R004 | group=lamda_probe | k=20 lr=0.005 lamda=1e-05 batch=512 iter=20 | fold_3 | seed=42
+       NDCG@20=0.082287 | train=142.83s
+RUN    R005 | group=lamda_probe | k=20 lr=0.005 lamda=5e-05 batch=512 iter=20 | fold_3 | seed=42
+       NDCG@20=0.082194 | train=144.50s
+RUN    R000 | group=baseline | k=20 lr=0.005 lamda=0.0001 batch=512 iter=20 | fold_3 | seed=42
+       NDCG@20=0.082235 | train=142.98s
+RUN    R900 | group=combined_best | k=20 lr=0.0025 lamda=1e-05 batch=512 iter=50 | fold_3 | seed=42
+       NDCG@20=0.083127 | train=357.61s
+
+==============================================================================================================
+STAGE R2 - THREE-FOLD TEMPORAL CONFIRMATION
+==============================================================================================================
+#01 R900 [combined_best] | k=20 lr=0.0025 lamda=1e-05 batch=512 iter=50 | NDCG@20=0.081397 ± 0.003506 | Δparent=+0.001924
+#02 R015 [lr_x_iter_probe] | k=20 lr=0.0025 lamda=0.0001 batch=512 iter=50 | NDCG@20=0.080765 ± 0.003627 | Δparent=+0.001292
+#03 R004 [lamda_probe] | k=20 lr=0.005 lamda=1e-05 batch=512 iter=20 | NDCG@20=0.079869 ± 0.004210 | Δparent=+0.000396
+#04 R005 [lamda_probe] | k=20 lr=0.005 lamda=5e-05 batch=512 iter=20 | NDCG@20=0.079633 ± 0.004182 | Δparent=+0.000160
+#05 R000 [baseline] | k=20 lr=0.005 lamda=0.0001 batch=512 iter=20 | NDCG@20=0.079473 ± 0.004535 | Δparent=+0.000000
+#06 R017 [lr_x_iter_probe] | k=20 lr=0.005 lamda=0.0001 batch=512 iter=50 | NDCG@20=0.079258 ± 0.003438 | Δparent=-0.000215
+
+Stage R3 finalists: R900, R015, R000
+REUSE  R900 | fold_1 | seed=42 | iter=50
+REUSE  R900 | fold_2 | seed=42 | iter=50
+REUSE  R900 | fold_3 | seed=42 | iter=50
+RUN    R900 | group=combined_best | k=20 lr=0.0025 lamda=1e-05 batch=512 iter=50 | fold_1 | seed=123
+       NDCG@20=0.086308 | train=216.95s
+RUN    R900 | group=combined_best | k=20 lr=0.0025 lamda=1e-05 batch=512 iter=50 | fold_2 | seed=123
+       NDCG@20=0.076078 | train=285.20s
+RUN    R900 | group=combined_best | k=20 lr=0.0025 lamda=1e-05 batch=512 iter=50 | fold_3 | seed=123
+       NDCG@20=0.083712 | train=355.12s
+RUN    R900 | group=combined_best | k=20 lr=0.0025 lamda=1e-05 batch=512 iter=50 | fold_1 | seed=2024
+       NDCG@20=0.082319 | train=217.93s
+RUN    R900 | group=combined_best | k=20 lr=0.0025 lamda=1e-05 batch=512 iter=50 | fold_2 | seed=2024
+       NDCG@20=0.076346 | train=286.23s
+RUN    R900 | group=combined_best | k=20 lr=0.0025 lamda=1e-05 batch=512 iter=50 | fold_3 | seed=2024
+       NDCG@20=0.082924 | train=355.87s
+REUSE  R015 | fold_1 | seed=42 | iter=50
+REUSE  R015 | fold_2 | seed=42 | iter=50
+REUSE  R015 | fold_3 | seed=42 | iter=50
+RUN    R015 | group=lr_x_iter_probe | k=20 lr=0.0025 lamda=0.0001 batch=512 iter=50 | fold_1 | seed=123
+       NDCG@20=0.085847 | train=218.87s
+RUN    R015 | group=lr_x_iter_probe | k=20 lr=0.0025 lamda=0.0001 batch=512 iter=50 | fold_2 | seed=123
+       NDCG@20=0.075814 | train=286.81s
+RUN    R015 | group=lr_x_iter_probe | k=20 lr=0.0025 lamda=0.0001 batch=512 iter=50 | fold_3 | seed=123
+       NDCG@20=0.082943 | train=354.51s
+RUN    R015 | group=lr_x_iter_probe | k=20 lr=0.0025 lamda=0.0001 batch=512 iter=50 | fold_1 | seed=2024
+       NDCG@20=0.081713 | train=217.38s
+RUN    R015 | group=lr_x_iter_probe | k=20 lr=0.0025 lamda=0.0001 batch=512 iter=50 | fold_2 | seed=2024
+       NDCG@20=0.075841 | train=287.71s
+RUN    R015 | group=lr_x_iter_probe | k=20 lr=0.0025 lamda=0.0001 batch=512 iter=50 | fold_3 | seed=2024
+       NDCG@20=0.081940 | train=356.20s
+REUSE  R000 | fold_1 | seed=42 | iter=20
+REUSE  R000 | fold_2 | seed=42 | iter=20
+REUSE  R000 | fold_3 | seed=42 | iter=20
+RUN    R000 | group=baseline | k=20 lr=0.005 lamda=0.0001 batch=512 iter=20 | fold_1 | seed=123
+       NDCG@20=0.080982 | train=87.74s
+RUN    R000 | group=baseline | k=20 lr=0.005 lamda=0.0001 batch=512 iter=20 | fold_2 | seed=123
+       NDCG@20=0.075712 | train=115.16s
+RUN    R000 | group=baseline | k=20 lr=0.005 lamda=0.0001 batch=512 iter=20 | fold_3 | seed=123
+       NDCG@20=0.081382 | train=143.05s
+RUN    R000 | group=baseline | k=20 lr=0.005 lamda=0.0001 batch=512 iter=20 | fold_1 | seed=2024
+       NDCG@20=0.082888 | train=88.03s
+RUN    R000 | group=baseline | k=20 lr=0.005 lamda=0.0001 batch=512 iter=20 | fold_2 | seed=2024
+       NDCG@20=0.075744 | train=115.58s
+RUN    R000 | group=baseline | k=20 lr=0.005 lamda=0.0001 batch=512 iter=20 | fold_3 | seed=2024
+       NDCG@20=0.080161 | train=144.67s
+
+==============================================================================================================
+STAGE R3 - MULTI-SEED FINAL CONFIRMATION
+==============================================================================================================
+#01 R900 [combined_best] | k=20 lr=0.0025 lamda=1e-05 batch=512 iter=50 | NDCG@20=0.081320 ± 0.003725 | Δparent=+0.001843
+#02 R015 [lr_x_iter_probe] | k=20 lr=0.0025 lamda=0.0001 batch=512 iter=50 | NDCG@20=0.080710 ± 0.003672 | Δparent=+0.001234
+#03 R000 [baseline] | k=20 lr=0.005 lamda=0.0001 batch=512 iter=20 | NDCG@20=0.079477 ± 0.003302 | Δparent=+0.000000
+
+==============================================================================================================
+REFINEMENT WINNER
+==============================================================================================================
+IBPR_CONFIG = {
+    "k": 20,
+    "max_iter": 50,
+    "learning_rate": 0.0025,
+    "lamda": 1e-05,
+    "batch_size": 512,
+    "verbose": True,
+}
+Final NDCG@20: 0.081320 ± 0.003725
+Delta vs parent HPO winner: +0.001843
+
+BOUNDARY REVIEW WARNING: lamda=LOW(1e-05), max_iter=HIGH(50)
+No expanda automáticamente otra vez; revise magnitud y consistencia antes de decidir.

@@ -1,0 +1,107 @@
+{
+  "dataset_sha256": "3112900cf5f4966e117bbc0ccfb33cb2e0128ac8b36c2b79a154019651d1ba42",
+  "ibpr_core_path": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\cornac\\models\\ibpr\\ibpr.py",
+  "ibpr_core_sha256": "e33e61a20862e8dc3d6bb3270998ba75557b8eefd48a52dcaac63271b6b38059",
+  "ibpr_wrapper_path": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\cornac\\models\\ibpr\\recom_ibpr.py",
+  "ibpr_wrapper_sha256": "ec525d4dfc21dfc9d0389033cddbfdd600aed25122ff0e78630e9c08fab6fb1e",
+  "parent_hpo_best_path": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\tests\\online_ibpr_mejorado_v4\\experiments\\hpo\\results\\hyperparameter_search_ibpr_best_20260924_1942.csv",
+  "parent_hpo_manifest_path": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\tests\\online_ibpr_mejorado_v4\\experiments\\hpo\\results\\hyperparameter_search_ibpr_manifest_20260924_1942.json",
+  "parent_hpo_tfimestamp": "20260924_1942",
+  "parent_protocol_hash": "77b8935af88542bf1b5ae3a5a8b2d73e5bef35f3e5f3d462389b714b59ed1b15",
+  "parent_script_sha256": "73b46b33c4ca1aba8a739d3e18370c6acfdaf27f024f794f82468a08c09b262d",
+  "protocol_hash": "7adec0037dba1cd31c9100942d5fa9dfb0aa00dbb9a5bf8dc7b8ff4b51154112",
+  "protocol_payload": {
+    "batch_probes": [
+      256,
+      1024,
+      2048
+    ],
+    "confirmation_seeds": [
+      42,
+      123,
+      2024
+    ],
+    "expanded_bounds": {
+      "batch_size": [
+        256,
+        2048
+      ],
+      "k": [
+        5,
+        30
+      ],
+      "lamda": [
+        1e-05,
+        0.0005
+      ],
+      "learning_rate": [
+        0.001,
+        0.01
+      ],
+      "max_iter": [
+        10,
+        50
+      ]
+    },
+    "folds": [
+      {
+        "name": "fold_1",
+        "train_end_ratio": 0.5,
+        "val_end_ratio": 0.65
+      },
+      {
+        "name": "fold_2",
+        "train_end_ratio": 0.65,
+        "val_end_ratio": 0.8
+      },
+      {
+        "name": "fold_3",
+        "train_end_ratio": 0.8,
+        "val_end_ratio": 1.0
+      }
+    ],
+    "iter_values": [
+      10,
+      20,
+      50
+    ],
+    "k_probes": [
+      5,
+      10,
+      30
+    ],
+    "lamda_probes": [
+      1e-05,
+      5e-05,
+      0.0005
+    ],
+    "lr_values": [
+      0.001,
+      0.0025,
+      0.005,
+      0.01
+    ],
+    "parent_dataset_sha256": "3112900cf5f4966e117bbc0ccfb33cb2e0128ac8b36c2b79a154019651d1ba42",
+    "parent_hpo_timestamp": "20260924_1942",
+    "parent_protocol_hash": "77b8935af88542bf1b5ae3a5a8b2d73e5bef35f3e5f3d462389b714b59ed1b15",
+    "parent_protocol_version": "ibpr_hpo_per_user_temporal_v2_20260924",
+    "parent_script_sha256": "73b46b33c4ca1aba8a739d3e18370c6acfdaf27f024f794f82468a08c09b262d",
+    "parent_winner": {
+      "batch_size": 512,
+      "config_id": "R000",
+      "config_source": "parent_hpo_winner_20260924_1942",
+      "k": 20,
+      "lamda": 0.0001,
+      "learning_rate": 0.005,
+      "max_iter": 20,
+      "refinement_group": "baseline"
+    },
+    "primary_metric": "NDCG@20",
+    "protocol_version": "ibpr_local_refinement_v2_1_20260929",
+    "screening_seed": 42,
+    "selection_strategy": "R1 folds1-2 seed42; R2 top5+group-winners+baseline+combined on fold3; R3 top2-from-R2+baseline on all folds and seeds",
+    "top_stage_r1": 5
+  },
+  "protocol_version": "ibpr_local_refinement_v2_1_20260929",
+  "script_sha256": "3f4b0d21676216fbf135a9a8d2d8ee73ef9f0795bdfb10bcc1d2fb509e5bd6e9"
+}

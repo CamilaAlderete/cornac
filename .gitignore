@@ -58,7 +58,7 @@ docs/_build/
 
 # Dataset stuff
 **.pickle
-**.csv
+#**.csv
 **.lock
 **.zip
 

@@ -1,0 +1,9 @@
+figure_id,file_base,hypothesis,purpose
+fig_01,fig_01_ndcg20_evolucion_prequential,H1 / H3,"Mostrar la evolución prequential de NDCG@20 entre IBPR Stale, OnlineIBPR y Full Retrain."
+fig_02,fig_02_recall20_evolucion_prequential,H1 / H3,Mostrar la evolución prequential de Recall@20 durante el flujo incremental.
+fig_03,fig_03_precision20_evolucion_prequential,H1 / H3,Mostrar la evolución prequential de Precision@20 durante el flujo incremental.
+fig_04,fig_04_deltas_online_vs_stale_ic95,H1,Mostrar el delta medio OnlineIBPR - IBPR Stale y su IC95% para las métricas de calidad.
+fig_05,fig_05_coste_adaptacion_log,H2,Comparar el coste acumulado de adaptación OnlineIBPR frente a Full Retrain.
+fig_06,fig_06_coste_acumulado_prequential_log,H2,Mostrar cómo evoluciona el coste computacional acumulado de los tres modelos a lo largo del stream.
+fig_07,fig_07_ndcg20_variabilidad_seeds_holdout,H1 / H3,Mostrar la variabilidad entre seeds de NDCG@20 en el holdout final.
+fig_08,fig_08_recall20_variabilidad_seeds_holdout,H1 / H3,Mostrar la variabilidad entre seeds de Recall@20 en el holdout final.

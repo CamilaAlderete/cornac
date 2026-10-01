@@ -3,6 +3,7 @@ import csv
 import hashlib
 import itertools
 import inspect
+import importlib
 import json
 import os
 import platform
@@ -37,15 +38,11 @@ RATING_THRESHOLD = 3.0
 VARIANT = "1M"
 TOP_K = 20
 HPO_END_FRAC = 0.60
-PROTOCOL_VERSION = "online_hpo_global_prequential_v2_20260924"
+PROTOCOL_VERSION = "online_hpo_global_prequential_v2_1_20260930"
+REQUIRED_PARENT_REFINEMENT_PROTOCOL_VERSION = "ibpr_local_refinement_v2_1_20260929"
 
-FROZEN_IBPR_CONFIG = {
-    "k": 20,
-    "max_iter": 50,
-    "learning_rate": 0.0025,
-    "lamda": 1e-05,
-    "batch_size": 512,
-}
+# Bound at runtime from the fingerprinted C1 refinement winner.
+FROZEN_IBPR_CONFIG = {}
 
 # ============================================================
 # Online HPO protocol
@@ -258,11 +255,21 @@ def parse_args():
     )
 
     parser.add_argument(
+        "--parent-ibpr-refinement-timestamp",
+        required=True,
+        help=(
+            "Timestamp of the completed IBPR refinement V2.1 whose best CSV "
+            "and manifest define IBPR_FINAL for this Online HPO."
+        ),
+    )
+
+    parser.add_argument(
         "--timestamp",
         default=None,
         help=(
             "Timestamp YYYYMMDD_HHMMSS. Reusing an existing timestamp "
-            "resumes completed configuration/scenario/seed trials."
+            "resumes completed configuration/scenario/seed trials only when "
+            "the frozen manifest matches exactly."
         ),
     )
 
@@ -542,6 +549,178 @@ def unique_preserving_order(values):
             output.append(value)
 
     return output
+
+
+# ============================================================
+# C1 parent binding / provenance
+# ============================================================
+
+def load_one_csv_row(path):
+    if not os.path.exists(path):
+        raise FileNotFoundError(path)
+    with open(path, "r", newline="", encoding="utf-8") as file:
+        rows = list(csv.DictReader(file))
+    if len(rows) != 1:
+        raise ValueError(
+            f"Se esperaba exactamente una fila en {path}; hay {len(rows)}."
+        )
+    return rows[0]
+
+
+def sha256_file(path):
+    digest = hashlib.sha256()
+    with open(path, "rb") as file:
+        for chunk in iter(lambda: file.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def resolve_ibpr_file_hashes():
+    wrapper_path = inspect.getsourcefile(IBPR) or inspect.getfile(IBPR)
+    core_module = importlib.import_module("cornac.models.ibpr.ibpr")
+    core_path = inspect.getsourcefile(core_module) or inspect.getfile(core_module)
+
+    if not wrapper_path or not os.path.isfile(wrapper_path):
+        raise RuntimeError("No se pudo resolver el fuente del wrapper IBPR.")
+    if not core_path or not os.path.isfile(core_path):
+        raise RuntimeError("No se pudo resolver el fuente core de IBPR.")
+
+    return {
+        "ibpr_wrapper_path": os.path.abspath(wrapper_path),
+        "ibpr_wrapper_sha256": sha256_file(wrapper_path),
+        "ibpr_core_path": os.path.abspath(core_path),
+        "ibpr_core_sha256": sha256_file(core_path),
+    }
+
+
+def resolve_online_file_hashes():
+    wrapper_path = inspect.getsourcefile(OnlineIBPRMejorado) or inspect.getfile(OnlineIBPRMejorado)
+    core_path = inspect.getsourcefile(_online_core_contract_check) or inspect.getfile(_online_core_contract_check)
+
+    if not wrapper_path or not os.path.isfile(wrapper_path):
+        raise RuntimeError("No se pudo resolver el fuente del wrapper OnlineIBPRMejorado.")
+    if not core_path or not os.path.isfile(core_path):
+        raise RuntimeError("No se pudo resolver el fuente core de OnlineIBPRMejorado.")
+
+    return {
+        "online_wrapper_path": os.path.abspath(wrapper_path),
+        "online_wrapper_file_sha256": sha256_file(wrapper_path),
+        "online_core_path": os.path.abspath(core_path),
+        "online_core_file_sha256": sha256_file(core_path),
+    }
+
+
+def load_parent_ibpr_refinement(parent_timestamp):
+    best_path = os.path.join(
+        RESULTS_DIR,
+        f"hyperparameter_refinement_ibpr_v2_1_best_{parent_timestamp}.csv",
+    )
+    manifest_path = os.path.join(
+        RESULTS_DIR,
+        f"hyperparameter_refinement_ibpr_v2_1_manifest_{parent_timestamp}.json",
+    )
+
+    best = load_one_csv_row(best_path)
+    if not os.path.exists(manifest_path):
+        raise FileNotFoundError(manifest_path)
+    with open(manifest_path, "r", encoding="utf-8") as file:
+        manifest = json.load(file)
+
+    if manifest.get("protocol_version") != REQUIRED_PARENT_REFINEMENT_PROTOCOL_VERSION:
+        raise ValueError(
+            "El refinamiento IBPR padre no usa el protocolo V2.1 requerido: "
+            f"{manifest.get('protocol_version')!r}."
+        )
+
+    checks = [
+        ("refinement_protocol_version", "protocol_version"),
+        ("refinement_protocol_hash", "protocol_hash"),
+        ("dataset_sha256", "dataset_sha256"),
+        ("script_sha256", "script_sha256"),
+        ("ibpr_wrapper_sha256", "ibpr_wrapper_sha256"),
+        ("ibpr_core_sha256", "ibpr_core_sha256"),
+    ]
+    for best_field, manifest_field in checks:
+        expected = str(manifest.get(manifest_field, ""))
+        observed = str(best.get(best_field, ""))
+        if not expected:
+            raise ValueError(f"El manifest IBPR padre no contiene {manifest_field}.")
+        if observed != expected:
+            raise ValueError(
+                "Best CSV y manifest IBPR padre no coinciden en "
+                f"{best_field}/{manifest_field}: best={observed!r}, "
+                f"manifest={expected!r}."
+            )
+
+    if str(best.get("selection_metric")) != f"NDCG@{TOP_K}":
+        raise ValueError(
+            f"El refinamiento IBPR padre seleccionó por {best.get('selection_metric')}, "
+            f"no por NDCG@{TOP_K}."
+        )
+    if str(best.get("stage")) != "refinement_r3_multiseed_confirmation":
+        raise ValueError(
+            "El best IBPR padre no proviene de la confirmación multi-seed R3."
+        )
+    if int(best.get("rank", 0)) != 1:
+        raise ValueError("El best IBPR padre no tiene rank=1.")
+
+    frozen = {
+        "k": int(best["k"]),
+        "max_iter": int(best["max_iter"]),
+        "learning_rate": float(best["learning_rate"]),
+        "lamda": float(best["lamda"]),
+        "batch_size": int(best["batch_size"]),
+    }
+
+    return {
+        "timestamp": str(parent_timestamp),
+        "best_path": os.path.abspath(best_path),
+        "manifest_path": os.path.abspath(manifest_path),
+        "best": best,
+        "manifest": manifest,
+        "best_file_sha256": sha256_file(best_path),
+        "manifest_file_sha256": sha256_file(manifest_path),
+        "frozen_config": frozen,
+    }
+
+
+def bind_frozen_ibpr_config(parent):
+    FROZEN_IBPR_CONFIG.clear()
+    FROZEN_IBPR_CONFIG.update(parent["frozen_config"])
+
+
+def parent_compatible_dataset_sha256(rows):
+    """Hash MovieLens positives exactly as C1 did, ignoring original_position."""
+    digest = hashlib.sha256()
+    for u, i, value, timestamp, _ in rows:
+        payload = f"{u}\t{i}\t{float(value):.1f}\t{int(timestamp)}\n"
+        digest.update(payload.encode("utf-8"))
+    return digest.hexdigest()
+
+
+def validate_parent_against_current_environment(parent, all_rows):
+    current_parent_data_hash = parent_compatible_dataset_sha256(all_rows)
+    expected_data_hash = str(parent["manifest"]["dataset_sha256"])
+    if current_parent_data_hash != expected_data_hash:
+        raise ValueError(
+            "El dataset procesado actual no coincide con el dataset congelado en C1. "
+            f"actual={current_parent_data_hash}, padre={expected_data_hash}."
+        )
+
+    source_hashes = resolve_ibpr_file_hashes()
+    for field in ["ibpr_wrapper_sha256", "ibpr_core_sha256"]:
+        expected = str(parent["manifest"][field])
+        if source_hashes[field] != expected:
+            raise ValueError(
+                f"La fuente actual {field} no coincide con el freeze C1: "
+                f"actual={source_hashes[field]}, padre={expected}."
+            )
+
+    return current_parent_data_hash, source_hashes
+
+
+def json_normalized(payload):
+    return json.loads(json.dumps(payload, sort_keys=True, default=list))
 
 
 # ============================================================
@@ -866,7 +1045,7 @@ def build_stream_scenario(hpo_pool, scenario):
     }
 
 
-def protocol_payload(data_hash, configs):
+def protocol_payload(data_hash, parent_data_hash, configs, parent):
     return {
         "protocol_version": PROTOCOL_VERSION,
         "dataset": "MovieLens 1M",
@@ -879,7 +1058,19 @@ def protocol_payload(data_hash, configs):
         "chunk_rule": "four global chronological warm chunks; move boundaries forward through timestamp ties",
         "primary_eval_rule": "evaluate next chunk only for users exposed to an earlier update chunk",
         "prequential_sequence": [[1, 2], [2, 3], [3, 4]],
-        "frozen_ibpr_config": FROZEN_IBPR_CONFIG,
+        "frozen_ibpr_config": dict(FROZEN_IBPR_CONFIG),
+        "parent_ibpr_refinement": {
+            "timestamp": parent["timestamp"],
+            "protocol_version": parent["manifest"]["protocol_version"],
+            "protocol_hash": parent["manifest"]["protocol_hash"],
+            "dataset_sha256": parent["manifest"]["dataset_sha256"],
+            "script_sha256": parent["manifest"]["script_sha256"],
+            "best_config_id": parent["best"]["config_id"],
+            "selection_metric": parent["best"]["selection_metric"],
+            "best_file_sha256": parent["best_file_sha256"],
+            "manifest_file_sha256": parent["manifest_file_sha256"],
+            "c1_compatible_dataset_sha256": parent_data_hash,
+        },
         "fixed_online_constraints": {
             "update_V": FIXED_UPDATE_V,
             "neg_sampling": FIXED_NEG_SAMPLING,
@@ -921,15 +1112,103 @@ def protocol_payload(data_hash, configs):
     }
 
 
-def current_protocol_hash(data_hash, configs):
+def current_protocol_hash(data_hash, parent_data_hash, configs, parent):
     canonical = json.dumps(
-        protocol_payload(data_hash, configs),
+        protocol_payload(data_hash, parent_data_hash, configs, parent),
         sort_keys=True,
         separators=(",", ":"),
         ensure_ascii=True,
         default=list,
     )
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def build_online_manifest(
+    parent,
+    data_hash,
+    parent_data_hash,
+    configs,
+    protocol_hash,
+    ibpr_file_hashes,
+    online_file_hashes,
+):
+    payload = protocol_payload(data_hash, parent_data_hash, configs, parent)
+    return {
+        "protocol_version": PROTOCOL_VERSION,
+        "protocol_hash": protocol_hash,
+        "dataset_sha256": data_hash,
+        "c1_compatible_dataset_sha256": parent_data_hash,
+        "script_sha256": _script_sha256(),
+        "ibpr_wrapper_file_sha256": ibpr_file_hashes["ibpr_wrapper_sha256"],
+        "ibpr_core_file_sha256": ibpr_file_hashes["ibpr_core_sha256"],
+        "online_wrapper_file_sha256": online_file_hashes["online_wrapper_file_sha256"],
+        "online_core_file_sha256": online_file_hashes["online_core_file_sha256"],
+        "ibpr_wrapper_source_sha256": _source_sha256(IBPR),
+        "online_wrapper_source_sha256": _source_sha256(OnlineIBPRMejorado),
+        "online_core_source_sha256": _source_sha256(_online_core_contract_check),
+        "parent_ibpr_refinement_timestamp": parent["timestamp"],
+        "parent_ibpr_refinement_protocol_version": parent["manifest"]["protocol_version"],
+        "parent_ibpr_refinement_protocol_hash": parent["manifest"]["protocol_hash"],
+        "parent_ibpr_refinement_script_sha256": parent["manifest"]["script_sha256"],
+        "parent_ibpr_best_file_sha256": parent["best_file_sha256"],
+        "parent_ibpr_manifest_file_sha256": parent["manifest_file_sha256"],
+        "parent_ibpr_config_id": parent["best"]["config_id"],
+        "frozen_ibpr_config": dict(FROZEN_IBPR_CONFIG),
+        "protocol_payload": json_normalized(payload),
+        "ibpr_wrapper_path": ibpr_file_hashes["ibpr_wrapper_path"],
+        "ibpr_core_path": ibpr_file_hashes["ibpr_core_path"],
+        "online_wrapper_path": online_file_hashes["online_wrapper_path"],
+        "online_core_path": online_file_hashes["online_core_path"],
+        "parent_ibpr_best_path": parent["best_path"],
+        "parent_ibpr_manifest_path": parent["manifest_path"],
+    }
+
+
+def save_or_validate_online_manifest(path, current_manifest):
+    identity_fields = [
+        "protocol_version",
+        "protocol_hash",
+        "dataset_sha256",
+        "c1_compatible_dataset_sha256",
+        "script_sha256",
+        "ibpr_wrapper_file_sha256",
+        "ibpr_core_file_sha256",
+        "online_wrapper_file_sha256",
+        "online_core_file_sha256",
+        "ibpr_wrapper_source_sha256",
+        "online_wrapper_source_sha256",
+        "online_core_source_sha256",
+        "parent_ibpr_refinement_timestamp",
+        "parent_ibpr_refinement_protocol_version",
+        "parent_ibpr_refinement_protocol_hash",
+        "parent_ibpr_refinement_script_sha256",
+        "parent_ibpr_best_file_sha256",
+        "parent_ibpr_manifest_file_sha256",
+        "parent_ibpr_config_id",
+        "frozen_ibpr_config",
+        "protocol_payload",
+    ]
+
+    normalized = json_normalized(current_manifest)
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as file:
+            existing = json.load(file)
+        mismatch = [
+            field
+            for field in identity_fields
+            if json_normalized(existing.get(field))
+            != json_normalized(normalized.get(field))
+        ]
+        if mismatch:
+            raise ValueError(
+                "El manifest del Online HPO no coincide con esta ejecución. "
+                "Campos distintos: " + ", ".join(mismatch) + ". Use un timestamp nuevo."
+            )
+        return
+
+    with open(path, "w", encoding="utf-8") as file:
+        json.dump(normalized, file, indent=2, sort_keys=True)
+        file.write("\n")
 
 
 def validate_resume_protocol(rows, path, protocol_hash, data_hash):
@@ -2072,6 +2351,9 @@ def main():
 
     os.makedirs(RESULTS_DIR, exist_ok=True)
 
+    parent = load_parent_ibpr_refinement(args.parent_ibpr_refinement_timestamp)
+    bind_frozen_ibpr_config(parent)
+
     timestamp = (
         args.timestamp
         if args.timestamp
@@ -2080,23 +2362,27 @@ def main():
 
     trials_path = os.path.join(
         RESULTS_DIR,
-        f"hyperparameter_search_online_ibpr_mejorado_v2_trials_{timestamp}.csv",
+        f"hyperparameter_search_online_ibpr_mejorado_v2_1_trials_{timestamp}.csv",
     )
     chunks_path = os.path.join(
         RESULTS_DIR,
-        f"hyperparameter_search_online_ibpr_mejorado_v2_chunks_{timestamp}.csv",
+        f"hyperparameter_search_online_ibpr_mejorado_v2_1_chunks_{timestamp}.csv",
     )
     summary_path = os.path.join(
         RESULTS_DIR,
-        f"hyperparameter_search_online_ibpr_mejorado_v2_summary_{timestamp}.csv",
+        f"hyperparameter_search_online_ibpr_mejorado_v2_1_summary_{timestamp}.csv",
     )
     best_path = os.path.join(
         RESULTS_DIR,
-        f"hyperparameter_search_online_ibpr_mejorado_v2_best_{timestamp}.csv",
+        f"hyperparameter_search_online_ibpr_mejorado_v2_1_best_{timestamp}.csv",
+    )
+    manifest_path = os.path.join(
+        RESULTS_DIR,
+        f"hyperparameter_search_online_ibpr_mejorado_v2_1_manifest_{timestamp}.json",
     )
     log_path = os.path.join(
         RESULTS_DIR,
-        f"hyperparameter_search_online_ibpr_mejorado_v2_{timestamp}.txt",
+        f"hyperparameter_search_online_ibpr_mejorado_v2_1_{timestamp}.txt",
     )
 
     log_mode = "a" if os.path.exists(log_path) else "w"
@@ -2107,21 +2393,28 @@ def main():
         with redirect_stdout(tee):
             print()
             print("#" * 110)
-            print(f"ONLINE IBPR HPO V2 TIMESTAMP: {timestamp}")
+            print(f"ONLINE IBPR HPO V2.1 TIMESTAMP: {timestamp}")
             print("#" * 110)
             print(f"Trials CSV : {trials_path}")
             print(f"Chunks CSV : {chunks_path}")
             print(f"Summary CSV: {summary_path}")
             print(f"Best CSV   : {best_path}")
+            print(f"Manifest   : {manifest_path}")
+            print(f"Parent C1  : {parent['timestamp']} | config={parent['best']['config_id']}")
+            print(f"IBPR_FINAL : {FROZEN_IBPR_CONFIG}")
             print()
 
             all_rows = load_positive_chrono_movielens()
             data_hash = dataset_sha256(all_rows)
+            parent_data_hash, ibpr_file_hashes = validate_parent_against_current_environment(
+                parent, all_rows
+            )
+            online_file_hashes = resolve_online_file_hashes()
             hpo_info = build_hpo_pool(all_rows)
             hpo_pool = hpo_info["hpo_pool"]
 
             configs = build_screening_configs(args.screening_configs)
-            protocol_hash = current_protocol_hash(data_hash, configs)
+            protocol_hash = current_protocol_hash(data_hash, parent_data_hash, configs, parent)
             RUN_CONTEXT["protocol_hash"] = protocol_hash
             RUN_CONTEXT["data_sha256"] = data_hash
 
@@ -2140,8 +2433,25 @@ def main():
 
             print_candidate_plan(configs)
 
+            online_manifest = build_online_manifest(
+                parent,
+                data_hash,
+                parent_data_hash,
+                configs,
+                protocol_hash,
+                ibpr_file_hashes,
+                online_file_hashes,
+            )
+
+            if (os.path.exists(trials_path) or os.path.exists(chunks_path)) and not os.path.exists(manifest_path):
+                raise ValueError(
+                    "Existen resultados parciales sin manifest V2.1 para este timestamp. "
+                    "Use un timestamp nuevo."
+                )
+            save_or_validate_online_manifest(manifest_path, online_manifest)
+
             if args.plan_only:
-                print("PLAN ONLY: no se entrenó ningún modelo.")
+                print("PLAN ONLY: manifest congelado; no se entrenó ningún modelo.")
                 return
 
             trial_rows = load_csv(trials_path)
@@ -2224,6 +2534,11 @@ def main():
                 "fixed_normalize",
                 "fixed_max_steps",
                 "validation_protocol",
+                "parent_ibpr_refinement_timestamp",
+                "parent_ibpr_refinement_protocol_hash",
+                "parent_ibpr_refinement_script_sha256",
+                "parent_ibpr_config_id",
+                "c1_compatible_dataset_sha256",
             ]
 
             best["selection_metric"] = f"mean_delta_NDCG@{TOP_K}"
@@ -2243,6 +2558,11 @@ def main():
             best["validation_protocol"] = (
                 "first_60pct_global_holdout_then_global_prequential_development_scenarios"
             )
+            best["parent_ibpr_refinement_timestamp"] = parent["timestamp"]
+            best["parent_ibpr_refinement_protocol_hash"] = parent["manifest"]["protocol_hash"]
+            best["parent_ibpr_refinement_script_sha256"] = parent["manifest"]["script_sha256"]
+            best["parent_ibpr_config_id"] = parent["best"]["config_id"]
+            best["c1_compatible_dataset_sha256"] = parent_data_hash
 
             save_csv(
                 best_path,

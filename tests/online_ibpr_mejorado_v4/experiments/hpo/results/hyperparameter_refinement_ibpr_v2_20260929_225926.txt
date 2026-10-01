@@ -1,0 +1,74 @@
+
+##############################################################################################################
+IBPR REFINEMENT V2 TIMESTAMP: 20260929_225926
+##############################################################################################################
+Parent HPO : 20260924_1942
+Trials CSV : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado_v4\experiments\hpo\results\hyperparameter_refinement_ibpr_v2_trials_20260929_225926.csv
+Summary CSV: C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado_v4\experiments\hpo\results\hyperparameter_refinement_ibpr_v2_summary_20260929_225926.csv
+Best CSV   : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado_v4\experiments\hpo\results\hyperparameter_refinement_ibpr_v2_best_20260929_225926.csv
+Manifest   : C:\Users\alder\Desktop\TESIS\cornac\tests\online_ibpr_mejorado_v4\experiments\hpo\results\hyperparameter_refinement_ibpr_v2_manifest_20260929_225926.json
+
+==============================================================================================================
+IBPR LOCAL REFINEMENT V2 - SAME DEVELOPMENT PROTOCOL AS PARENT HPO
+==============================================================================================================
+Parent HPO timestamp             : 20260924_1942
+Parent protocol hash             : 77b8935af88542bf1b5ae3a5a8b2d73e5bef35f3e5f3d462389b714b59ed1b15
+Parent winner                    : {'config_id': 'R000', 'config_source': 'parent_hpo_winner_20260924_1942', 'refinement_group': 'baseline', 'k': 20, 'learning_rate': 0.005, 'lamda': 0.0001, 'batch_size': 512, 'max_iter': 20}
+Dataset                          : MovieLens 1M
+Positive threshold               : rating >= 3.0
+Primary metric                   : NDCG@20
+Total implicit-positive rows     : 836,478
+Target development rows          : 501,886
+Effective development rows       : 501,887
+Tie rows added at boundary       : 1
+Boundary timestamp               : 974678223
+Users inside development horizon : 4,037
+Refinement protocol version      : ibpr_local_refinement_v2_20260925
+Refinement protocol hash         : e3d5512c34d2017fe2561f930ca7c32335467db2ede75064dafc86d6914a41df
+Processed dataset SHA256         : 3112900cf5f4966e117bbc0ccfb33cb2e0128ac8b36c2b79a154019651d1ba42
+Refinement script SHA256         : 4f769a1ad3646e9ba75cdda3ead794b10cfdad9fa747474de39b2f8bb5850753
+IBPR wrapper SHA256              : ec525d4dfc21dfc9d0389033cddbfdd600aed25122ff0e78630e9c08fab6fb1e
+IBPR core SHA256                 : e33e61a20862e8dc3d6bb3270998ba75557b8eefd48a52dcaac63271b6b38059
+
+Per-user temporal folds:
+  fold_1: train=249,941 | val_candidate=74,338 | val_known=74,261 (99.90%) | eval_users=4,000
+  fold_2: train=324,290 | val_candidate=75,578 | val_known=75,525 (99.93%) | eval_users=4,000
+  fold_3: train=399,899 | val_candidate=101,945 | val_known=101,879 (99.94%) | eval_users=4,000
+
+==============================================================================================================
+IBPR TARGETED LOCAL REFINEMENT PLAN
+==============================================================================================================
+Parent winner:
+{'config_id': 'R000', 'config_source': 'parent_hpo_winner_20260924_1942', 'refinement_group': 'baseline', 'k': 20, 'learning_rate': 0.005, 'lamda': 0.0001, 'batch_size': 512, 'max_iter': 20}
+Original-search boundary hits:
+  k=LOW(20), learning_rate=LOW(0.005), lamda=LOW(0.0001), batch_size=HIGH(512), max_iter=LOW(20)
+
+Stage R1 candidates:
+  R000 | group=baseline         | k=20  lr=0.005   lamda=0.0001   batch=512  iter=20
+  R001 | group=k_probe          | k=5   lr=0.005   lamda=0.0001   batch=512  iter=20
+  R002 | group=k_probe          | k=10  lr=0.005   lamda=0.0001   batch=512  iter=20
+  R003 | group=k_probe          | k=30  lr=0.005   lamda=0.0001   batch=512  iter=20
+  R004 | group=lamda_probe      | k=20  lr=0.005   lamda=1e-05    batch=512  iter=20
+  R005 | group=lamda_probe      | k=20  lr=0.005   lamda=5e-05    batch=512  iter=20
+  R006 | group=lamda_probe      | k=20  lr=0.005   lamda=0.0005   batch=512  iter=20
+  R007 | group=batch_probe      | k=20  lr=0.005   lamda=0.0001   batch=256  iter=20
+  R008 | group=batch_probe      | k=20  lr=0.005   lamda=0.0001   batch=1024 iter=20
+  R009 | group=batch_probe      | k=20  lr=0.005   lamda=0.0001   batch=2048 iter=20
+  R010 | group=lr_x_iter_probe  | k=20  lr=0.001   lamda=0.0001   batch=512  iter=10
+  R011 | group=lr_x_iter_probe  | k=20  lr=0.001   lamda=0.0001   batch=512  iter=20
+  R012 | group=lr_x_iter_probe  | k=20  lr=0.001   lamda=0.0001   batch=512  iter=50
+  R013 | group=lr_x_iter_probe  | k=20  lr=0.0025  lamda=0.0001   batch=512  iter=10
+  R014 | group=lr_x_iter_probe  | k=20  lr=0.0025  lamda=0.0001   batch=512  iter=20
+  R015 | group=lr_x_iter_probe  | k=20  lr=0.0025  lamda=0.0001   batch=512  iter=50
+  R016 | group=lr_x_iter_probe  | k=20  lr=0.005   lamda=0.0001   batch=512  iter=10
+  R017 | group=lr_x_iter_probe  | k=20  lr=0.005   lamda=0.0001   batch=512  iter=50
+  R018 | group=lr_x_iter_probe  | k=20  lr=0.01    lamda=0.0001   batch=512  iter=10
+  R019 | group=lr_x_iter_probe  | k=20  lr=0.01    lamda=0.0001   batch=512  iter=20
+  R020 | group=lr_x_iter_probe  | k=20  lr=0.01    lamda=0.0001   batch=512  iter=50
+
+Budget:
+  R1: 21 configs × folds 1-2 × seed 42
+  R2: top 5 + group winners + parent + combined candidate → fold 3
+  R3: best + best structurally different + parent × 3 folds × seeds=[42, 123, 2024]
+
+PLAN ONLY: no se entrenó ningún modelo.
