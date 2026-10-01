@@ -1,0 +1,406 @@
+{
+  "c1_compatible_dataset_sha256": "3112900cf5f4966e117bbc0ccfb33cb2e0128ac8b36c2b79a154019651d1ba42",
+  "dataset_sha256": "29da5346c5bcf37dc927771d8ffd7ec3323dc7857ed4b0f6a45278b666954d3e",
+  "final_seed_freeze_rationale": "five final seeds fixed a priori in Phase D; values were not selected from final outcomes and are distinct from C2 confirmation seeds [42,123,2024]",
+  "final_seeds": [
+    777,
+    999,
+    2026,
+    31415,
+    271828
+  ],
+  "frozen_ibpr_config": {
+    "batch_size": 512,
+    "k": 20,
+    "lamda": 1e-05,
+    "learning_rate": 0.0025,
+    "max_iter": 50
+  },
+  "frozen_online_config": {
+    "batch_size": 256,
+    "lamda": 1e-06,
+    "learning_rate": 0.0025,
+    "loss_mode": "angular",
+    "max_steps": null,
+    "n_epochs": 3,
+    "neg_sampling": "uniform",
+    "normalize": true,
+    "update_V": false
+  },
+  "hardware_fingerprint": {
+    "logical_cpu_count": 12,
+    "machine": "AMD64",
+    "native_threadpools": [
+      {
+        "filepath": "C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-63c857e738469261263c764a36be9436.dll",
+        "internal_api": "openblas",
+        "num_threads": 1,
+        "prefix": "libscipy_openblas",
+        "user_api": "blas",
+        "version": "0.3.31.188.0"
+      },
+      {
+        "filepath": "C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\.venv\\Lib\\site-packages\\torch\\lib\\libiomp5md.dll",
+        "internal_api": "openmp",
+        "num_threads": 1,
+        "prefix": "libiomp",
+        "user_api": "openmp",
+        "version": null
+      },
+      {
+        "filepath": "C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\.venv\\Lib\\site-packages\\torch\\lib\\libiompstubs5md.dll",
+        "internal_api": "openmp",
+        "num_threads": 1,
+        "prefix": "libiomp",
+        "user_api": "openmp",
+        "version": null
+      },
+      {
+        "filepath": "C:\\Windows\\System32\\vcomp140.dll",
+        "internal_api": "openmp",
+        "num_threads": 1,
+        "prefix": "vcomp",
+        "user_api": "openmp",
+        "version": null
+      },
+      {
+        "filepath": "C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-64eda39e79589aedb16f58e5547eb599.dll",
+        "internal_api": "openblas",
+        "num_threads": 1,
+        "prefix": "libscipy_openblas",
+        "user_api": "blas",
+        "version": "0.3.30"
+      }
+    ],
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 151 Stepping 5, GenuineIntel"
+  },
+  "ibpr_core_file_sha256": "e33e61a20862e8dc3d6bb3270998ba75557b8eefd48a52dcaac63271b6b38059",
+  "ibpr_core_path": "C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\cornac\\models\\ibpr\\ibpr.py",
+  "ibpr_wrapper_file_sha256": "ec525d4dfc21dfc9d0389033cddbfdd600aed25122ff0e78630e9c08fab6fb1e",
+  "ibpr_wrapper_path": "C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\cornac\\models\\ibpr\\recom_ibpr.py",
+  "online_core_file_sha256": "e27630a4b7fc4b819a8a4ef1757eea7d1cb21f8bc25efc028a0954964b16b801",
+  "online_core_path": "C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\cornac\\models\\online_ibpr_mejorado\\online_ibpr_mejorado.py",
+  "online_wrapper_file_sha256": "3650a9a035e5baac492263af71c4572198375d97a7bb178a453281d3e01e8450",
+  "online_wrapper_path": "C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\cornac\\models\\online_ibpr_mejorado\\recom_online_ibpr_mejorado.py",
+  "parent_c1_best_file_sha256": "c38547e811a6931fdd04b9bd17eff49e36f89eecb8ef604542f0bd160f4b56d1",
+  "parent_c1_best_path": "C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\tests\\online_ibpr_mejorado_v4\\experiments\\hpo\\results\\hyperparameter_refinement_ibpr_v2_1_best_20260929_231439.csv",
+  "parent_c1_config_id": "R900",
+  "parent_c1_manifest_file_sha256": "5c8c598014024a5a9f5c2f25bbb952a7d6ff7d037ff291fcf15bb407d99f4d1e",
+  "parent_c1_manifest_path": "C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\tests\\online_ibpr_mejorado_v4\\experiments\\hpo\\results\\hyperparameter_refinement_ibpr_v2_1_manifest_20260929_231439.json",
+  "parent_c1_protocol_hash": "7adec0037dba1cd31c9100942d5fa9dfb0aa00dbb9a5bf8dc7b8ff4b51154112",
+  "parent_c1_script_sha256": "3f4b0d21676216fbf135a9a8d2d8ee73ef9f0795bdfb10bcc1d2fb509e5bd6e9",
+  "parent_c1_timestamp": "20260929_231439",
+  "parent_c2_best_file_sha256": "1c419d0153377f84a5a61274747a7d9a37339d61e982b2a03fec2df3ba3f1922",
+  "parent_c2_best_path": "C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\tests\\online_ibpr_mejorado_v4\\experiments\\hpo\\results\\hyperparameter_search_online_ibpr_mejorado_v2_1_best_20260930_225103.csv",
+  "parent_c2_config_id": "O019",
+  "parent_c2_manifest_file_sha256": "20a2f64a22ddbbdea9550230083ce84bf89f304025bfc463d865f58d45e33824",
+  "parent_c2_manifest_path": "C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\tests\\online_ibpr_mejorado_v4\\experiments\\hpo\\results\\hyperparameter_search_online_ibpr_mejorado_v2_1_manifest_20260930_225103.json",
+  "parent_c2_protocol_hash": "61215894da0d3cadf5966b3cc503558884955ee6314b01e6f95a914e6f0b9621",
+  "parent_c2_script_sha256": "06f7324609bc001a784599b0e15b997f8c7bf002bd8549434f20515e3f47a57b",
+  "parent_c2_timestamp": "20260930_225103",
+  "protocol_hash": "47a0f4bc499097669647316a455abe81563d7c09fccf26cc916ef1cfc8f58e7b",
+  "protocol_payload": {
+    "base_split_rule": "target floor(N*0.60); if the last included row shares its timestamp with following rows, move the effective boundary forward to the end of that timestamp group",
+    "c1_compatible_dataset_sha256": "3112900cf5f4966e117bbc0ccfb33cb2e0128ac8b36c2b79a154019651d1ba42",
+    "chunk_split_rule": "filter the raw future stream to the fixed warm-start universe first; then create 4 approximately equal chronological WARM chunks by cumulative row targets, moving each internal boundary forward to the end of its timestamp group",
+    "cornac_version": "2.3.5",
+    "data_sha256": "29da5346c5bcf37dc927771d8ffd7ec3323dc7857ed4b0f6a45278b666954d3e",
+    "dataset": "MovieLens 1M",
+    "dataset_build_sha256": "0df279bd1715c89286d9663f8c48bf8b14a56eee59a5cfdea904978cd6d2dd7c",
+    "feedback": "rating>=3 -> 1.0; lower ratings absent",
+    "final_seed_freeze_rationale": "five final seeds fixed a priori in Phase D; values were not selected from final outcomes and are distinct from C2 confirmation seeds [42,123,2024]",
+    "final_seeds": [
+      777,
+      999,
+      2026,
+      31415,
+      271828
+    ],
+    "full_retrain": "fresh IBPR R900 from scratch on accumulated warm history",
+    "full_retrain_seed_policy": "same trial seed reset before each full fit",
+    "h1_estimand": "seed-level mean of Online-Stale across 3 repeated temporal points",
+    "h2_estimand": "seed-level cumulative Full/Online speedup across 3 repeated temporal points",
+    "h3_estimand": "seed-level mean of Online-Full across 3 repeated temporal points",
+    "hardware_fingerprint": {
+      "logical_cpu_count": 12,
+      "machine": "AMD64",
+      "native_threadpools": [
+        {
+          "filepath": "C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-63c857e738469261263c764a36be9436.dll",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "user_api": "blas",
+          "version": "0.3.31.188.0"
+        },
+        {
+          "filepath": "C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\.venv\\Lib\\site-packages\\torch\\lib\\libiomp5md.dll",
+          "internal_api": "openmp",
+          "num_threads": 1,
+          "prefix": "libiomp",
+          "user_api": "openmp",
+          "version": null
+        },
+        {
+          "filepath": "C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\.venv\\Lib\\site-packages\\torch\\lib\\libiompstubs5md.dll",
+          "internal_api": "openmp",
+          "num_threads": 1,
+          "prefix": "libiomp",
+          "user_api": "openmp",
+          "version": null
+        },
+        {
+          "filepath": "C:\\Windows\\System32\\vcomp140.dll",
+          "internal_api": "openmp",
+          "num_threads": 1,
+          "prefix": "vcomp",
+          "user_api": "openmp",
+          "version": null
+        },
+        {
+          "filepath": "C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-64eda39e79589aedb16f58e5547eb599.dll",
+          "internal_api": "openblas",
+          "num_threads": 1,
+          "prefix": "libscipy_openblas",
+          "user_api": "blas",
+          "version": "0.3.30"
+        }
+      ],
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 151 Stepping 5, GenuineIntel"
+    },
+    "ibpr_config": {
+      "batch_size": 512,
+      "k": 20,
+      "lamda": 1e-05,
+      "learning_rate": 0.0025,
+      "max_iter": 50
+    },
+    "ibpr_core_sha256": "10e07672f092ec4995ebadd81975c87a6e3a82cb89e8e25b8ae31bf386a5151c",
+    "ibpr_wrapper_sha256": "8ea5c0cbf8442912ac8c935b86838b4c8680201998fb5c3fc39d0d65b62d5d78",
+    "n_stream_chunks": 4,
+    "numpy_version": "2.4.4",
+    "online_config": {
+      "batch_size": 256,
+      "lamda": 1e-06,
+      "learning_rate": 0.0025,
+      "loss_mode": "angular",
+      "max_steps": null,
+      "n_epochs": 3,
+      "neg_sampling": "uniform",
+      "normalize": true,
+      "update_V": false
+    },
+    "online_core_sha256": "867e31e364159f77ddde84e0fbfc46b5799be21467c5fda3de103b8dccd5891f",
+    "online_seed_policy": "seed + partial_update_count",
+    "online_wrapper_sha256": "080588efe040791f5ba783cdd5c98d16c7e42a503ea4ed132652e6dd73897c77",
+    "parent_c1_best_file_sha256": "c38547e811a6931fdd04b9bd17eff49e36f89eecb8ef604542f0bd160f4b56d1",
+    "parent_c1_config_id": "R900",
+    "parent_c1_manifest_file_sha256": "5c8c598014024a5a9f5c2f25bbb952a7d6ff7d037ff291fcf15bb407d99f4d1e",
+    "parent_c1_protocol_hash": "7adec0037dba1cd31c9100942d5fa9dfb0aa00dbb9a5bf8dc7b8ff4b51154112",
+    "parent_c1_script_sha256": "3f4b0d21676216fbf135a9a8d2d8ee73ef9f0795bdfb10bcc1d2fb509e5bd6e9",
+    "parent_c1_timestamp": "20260929_231439",
+    "parent_c2_best_file_sha256": "1c419d0153377f84a5a61274747a7d9a37339d61e982b2a03fec2df3ba3f1922",
+    "parent_c2_config_id": "O019",
+    "parent_c2_manifest_file_sha256": "20a2f64a22ddbbdea9550230083ce84bf89f304025bfc463d865f58d45e33824",
+    "parent_c2_protocol_hash": "61215894da0d3cadf5966b3cc503558884955ee6314b01e6f95a914e6f0b9621",
+    "parent_c2_script_sha256": "06f7324609bc001a784599b0e15b997f8c7bf002bd8549434f20515e3f47a57b",
+    "parent_c2_timestamp": "20260930_225103",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "prequential_sequence": [
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        4
+      ]
+    ],
+    "primary_eval_rule": "at eval chunk t, primary H1-H3 population contains only rows whose user received at least one warm update in chunks < t; all warm rows in the eval chunk are retained as a supplementary diagnostic population",
+    "primary_metric": "NDCG@20",
+    "protocol_version": "final_h1_h3_v3_3_freeze_20261001",
+    "python_version": "3.14.2 (tags/v3.14.2:df79316, Dec  5 2025, 17:18:21) [MSC v.1944 64 bit (AMD64)]",
+    "quality_metrics": [
+      "AUC",
+      "MAP",
+      "NDCG@20",
+      "Precision@20",
+      "Recall@20"
+    ],
+    "ranking_eval_sha256": "3411ee5a77ea694d642a972beaab0c0d92eed6fc93e4adc64c44911992e97497",
+    "ranking_exclude_unknowns": true,
+    "ranking_rating_threshold": 1.0,
+    "rating_threshold": 3.0,
+    "realized_plan_sha256": "cbf76393b6241771c9d91c18418b444abd7f4c8a977f7f8b1864dabba4131ec2",
+    "recovery_freeze_rationale": "Recovery is supplementary only; require Full-Stale >= 1e-4 to avoid unstable ratios near a zero denominator; this threshold does not decide H3",
+    "recovery_min_positive_denominator_ndcg20": 0.0001,
+    "recovery_role": "supplementary diagnostic only",
+    "scipy_version": "1.17.1",
+    "script_sha256": "0684e5d5f91e494dd497d9a243f4de2aac5f6b267b5c1120869c51815c3fdd5b",
+    "target_base_fraction": 0.6,
+    "thread_fingerprint": {
+      "BLIS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "fixed_threads": 1,
+      "torch_num_interop_threads": 1,
+      "torch_num_threads": 1
+    },
+    "thread_freeze_rationale": "single-thread paired wall-clock timing fixed a priori for H2 reproducibility; same process/environment for Online and Full branches",
+    "torch_version": "2.11.0+cpu",
+    "variant": "1M",
+    "warm_start_rule": "future row eligible iff user and item exist in effective base"
+  },
+  "protocol_version": "final_h1_h3_v3_3_freeze_20261001",
+  "realized_plan": {
+    "base_items": 3505,
+    "base_max_timestamp": 974678223,
+    "base_min_timestamp": 956703932,
+    "base_users": 4037,
+    "boundary_tie_rows_added_to_base": 1,
+    "effective_base_rows": 501887,
+    "future_max_timestamp": 1046454590,
+    "future_min_timestamp": 974678227,
+    "n_excluded_unknown_both": 244,
+    "n_excluded_unknown_item": 132,
+    "n_excluded_unknown_user": 281748,
+    "n_future_raw": 334591,
+    "n_future_warm": 52467,
+    "primary_eval_plan": [
+      {
+        "eval_chunk": 2,
+        "eval_point": 1,
+        "n_allwarm_items": 2408,
+        "n_allwarm_rows": 13118,
+        "n_allwarm_unadapted_users": 251,
+        "n_allwarm_users": 463,
+        "n_primary_items": 1957,
+        "n_primary_rows": 5300,
+        "n_primary_users": 212,
+        "n_users_exposed_to_update": 363,
+        "primary_fraction_of_allwarm_rows": 0.40402500381155665,
+        "update_chunk": 1
+      },
+      {
+        "eval_chunk": 3,
+        "eval_point": 2,
+        "n_allwarm_items": 2372,
+        "n_allwarm_rows": 13114,
+        "n_allwarm_unadapted_users": 123,
+        "n_allwarm_users": 438,
+        "n_primary_items": 2161,
+        "n_primary_rows": 8546,
+        "n_primary_users": 315,
+        "n_users_exposed_to_update": 614,
+        "primary_fraction_of_allwarm_rows": 0.6516699710233338,
+        "update_chunk": 2
+      },
+      {
+        "eval_chunk": 4,
+        "eval_point": 3,
+        "n_allwarm_items": 2424,
+        "n_allwarm_rows": 13117,
+        "n_allwarm_unadapted_users": 70,
+        "n_allwarm_users": 376,
+        "n_primary_items": 2193,
+        "n_primary_rows": 9143,
+        "n_primary_users": 306,
+        "n_users_exposed_to_update": 737,
+        "primary_fraction_of_allwarm_rows": 0.6970343828619349,
+        "update_chunk": 3
+      }
+    ],
+    "target_base_rows": 501886,
+    "total_positive_rows": 836478,
+    "warm_chunk_adjustments": [
+      {
+        "boundary": 1,
+        "effective": 13118,
+        "rows_shifted": 2,
+        "target": 13116,
+        "timestamp": 977183160
+      },
+      {
+        "boundary": 2,
+        "effective": 26236,
+        "rows_shifted": 3,
+        "target": 26233,
+        "timestamp": 986263783
+      },
+      {
+        "boundary": 3,
+        "effective": 39350,
+        "rows_shifted": 0,
+        "target": 39350,
+        "timestamp": 1007365896
+      }
+    ],
+    "warm_chunk_boundaries": [
+      0,
+      13118,
+      26236,
+      39350,
+      52467
+    ],
+    "warm_chunks": [
+      {
+        "chunk": 1,
+        "items": 2458,
+        "max_timestamp": 977183160,
+        "min_timestamp": 974678227,
+        "rows": 13118,
+        "users": 363
+      },
+      {
+        "chunk": 2,
+        "items": 2408,
+        "max_timestamp": 986263783,
+        "min_timestamp": 977183184,
+        "rows": 13118,
+        "users": 463
+      },
+      {
+        "chunk": 3,
+        "items": 2372,
+        "max_timestamp": 1007365896,
+        "min_timestamp": 986263809,
+        "rows": 13114,
+        "users": 438
+      },
+      {
+        "chunk": 4,
+        "items": 2424,
+        "max_timestamp": 1046454590,
+        "min_timestamp": 1007365934,
+        "rows": 13117,
+        "users": 376
+      }
+    ],
+    "warm_start_fraction": 0.15680935829116743
+  },
+  "realized_plan_sha256": "cbf76393b6241771c9d91c18418b444abd7f4c8a977f7f8b1864dabba4131ec2",
+  "recovery_freeze_rationale": "Recovery is supplementary only; require Full-Stale >= 1e-4 to avoid unstable ratios near a zero denominator; this threshold does not decide H3",
+  "recovery_min_positive_denominator_ndcg20": 0.0001,
+  "script_sha256": "0684e5d5f91e494dd497d9a243f4de2aac5f6b267b5c1120869c51815c3fdd5b",
+  "thread_fingerprint": {
+    "BLIS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "fixed_threads": 1,
+    "torch_num_interop_threads": 1,
+    "torch_num_threads": 1
+  },
+  "thread_freeze_rationale": "single-thread paired wall-clock timing fixed a priori for H2 reproducibility; same process/environment for Online and Full branches"
+}

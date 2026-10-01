@@ -1,0 +1,288 @@
+
+######################################################################################################################
+FINAL H1-H3 V3.3 TIMESTAMP: 20261001_145409
+######################################################################################################################
+Log      : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado_v4\experiments\results\final_h1_h3_online_ibpr_mejorado_v3_3_20261001_145409.txt
+Steps    : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado_v4\experiments\results\final_h1_h3_online_ibpr_mejorado_v3_3_steps_20261001_145409.csv
+Trials   : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado_v4\experiments\results\final_h1_h3_online_ibpr_mejorado_v3_3_trials_20261001_145409.csv
+Summary  : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado_v4\experiments\results\final_h1_h3_online_ibpr_mejorado_v3_3_summary_20261001_145409.csv
+Manifest : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado_v4\experiments\results\final_h1_h3_online_ibpr_mejorado_v3_3_manifest_20261001_145409.json
+C1 parent: 20260929_231439 | R900
+C2 parent: 20260930_225103 | O019
+Protocol : 47a0f4bc499097669647316a455abe81563d7c09fccf26cc916ef1cfc8f58e7b
+
+======================================================================================================================
+FINAL H1-H3 - ONLINEIBPRMEJORADO
+======================================================================================================================
+Dataset                         : MovieLens 1M
+Positive threshold              : rating >= 3.0
+Feedback                        : implicit positive = 1.0
+Total implicit-positive rows    : 836,478
+Data SHA256                     : 29da5346c5bcf37dc927771d8ffd7ec3323dc7857ed4b0f6a45278b666954d3e
+C1-compatible data SHA256       : 3112900cf5f4966e117bbc0ccfb33cb2e0128ac8b36c2b79a154019651d1ba42
+Protocol version                : final_h1_h3_v3_3_freeze_20261001
+Protocol hash                   : 47a0f4bc499097669647316a455abe81563d7c09fccf26cc916ef1cfc8f58e7b
+
+Environment fingerprint:
+  Python                        : 3.14.2
+  Platform                      : Windows-11-10.0.26200-SP0
+  Cornac                        : 2.3.5
+  NumPy                         : 2.4.4
+  PyTorch                       : 2.11.0+cpu
+  SciPy                         : 1.17.1
+
+Frozen parent chain:
+  C1: 20260929_231439 | R900
+  C2: 20260930_225103 | O019
+Frozen configurations:
+  R900: {'k': 20, 'max_iter': 50, 'learning_rate': 0.0025, 'lamda': 1e-05, 'batch_size': 512}
+  O019: {'learning_rate': 0.0025, 'lamda': 1e-06, 'batch_size': 256, 'n_epochs': 3, 'loss_mode': 'angular', 'update_V': False, 'neg_sampling': 'uniform', 'normalize': True, 'max_steps': None}
+  Final seeds: [777, 999, 2026, 31415, 271828]
+  Seed freeze rationale: five final seeds fixed a priori in Phase D; values were not selected from final outcomes and are distinct from C2 confirmation seeds [42,123,2024]
+  Recovery min denom NDCG@20: 0.0001
+  Recovery freeze rationale: Recovery is supplementary only; require Full-Stale >= 1e-4 to avoid unstable ratios near a zero denominator; this threshold does not decide H3
+  Thread fingerprint: {'fixed_threads': 1, 'OMP_NUM_THREADS': '1', 'MKL_NUM_THREADS': '1', 'OPENBLAS_NUM_THREADS': '1', 'NUMEXPR_NUM_THREADS': '1', 'VECLIB_MAXIMUM_THREADS': '1', 'BLIS_NUM_THREADS': '1', 'torch_num_threads': 1, 'torch_num_interop_threads': 1}
+  Thread freeze rationale: single-thread paired wall-clock timing fixed a priori for H2 reproducibility; same process/environment for Online and Full branches
+  Hardware fingerprint: {'platform': 'Windows-11-10.0.26200-SP0', 'machine': 'AMD64', 'processor': 'Intel64 Family 6 Model 151 Stepping 5, GenuineIntel', 'logical_cpu_count': 12, 'native_threadpools': [{'user_api': 'blas', 'internal_api': 'openblas', 'num_threads': 1, 'prefix': 'libscipy_openblas', 'version': '0.3.31.188.0', 'filepath': 'C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-63c857e738469261263c764a36be9436.dll'}, {'user_api': 'openmp', 'internal_api': 'openmp', 'num_threads': 1, 'prefix': 'libiomp', 'version': None, 'filepath': 'C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\.venv\\Lib\\site-packages\\torch\\lib\\libiomp5md.dll'}, {'user_api': 'openmp', 'internal_api': 'openmp', 'num_threads': 1, 'prefix': 'libiomp', 'version': None, 'filepath': 'C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\.venv\\Lib\\site-packages\\torch\\lib\\libiompstubs5md.dll'}, {'user_api': 'openmp', 'internal_api': 'openmp', 'num_threads': 1, 'prefix': 'vcomp', 'version': None, 'filepath': 'C:\\Windows\\System32\\vcomp140.dll'}, {'user_api': 'blas', 'internal_api': 'openblas', 'num_threads': 1, 'prefix': 'libscipy_openblas', 'version': '0.3.30', 'filepath': 'C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-64eda39e79589aedb16f58e5547eb599.dll'}]}
+
+Base/future split:
+  Target base fraction          : 60.00%
+  Target base rows              : 501,886
+  Effective base rows           : 501,887
+  Effective base fraction       : 60.000024%
+  Tie rows moved into base      : 1
+  Base timestamp range          : 956703932 .. 974678223
+  Future timestamp range        : 974678227 .. 1046454590
+  Strict base < future          : True
+  Base users/items              : 4,037 / 3,505
+
+Warm-start future universe:
+  Future raw rows               : 334,591
+  Future warm rows              : 52,467
+  Warm-start fraction           : 15.6809%
+  Excluded unknown user only    : 281,748
+  Excluded unknown item only    : 132
+  Excluded unknown both         : 244
+
+Global chronological WARM chunks (filter first, split second):
+  chunk_1: warm=13,118 | users=363 | items=2,458 | ts=974678227..977183160
+  chunk_2: warm=13,118 | users=463 | items=2,408 | ts=977183184..986263783
+  chunk_3: warm=13,114 | users=438 | items=2,372 | ts=986263809..1007365896
+  chunk_4: warm=13,117 | users=376 | items=2,424 | ts=1007365934..1046454590
+  Internal WARM boundary adjustments:
+    boundary 1: target=13,116 -> effective=13,118 | shifted=2 | timestamp=977183160
+    boundary 2: target=26,233 -> effective=26,236 | shifted=3 | timestamp=986263783
+    boundary 3: target=39,350 -> effective=39,350 | shifted=0 | timestamp=1007365896
+
+Prequential sequence and primary adaptation population:
+  update chunk1 -> eval chunk2 | users_exposed_to_update=363 | PRIMARY rows=5,300, users=212, items=1,957 (40.40% of all-warm eval rows) | ALL-WARM rows=13,118, users=463 | unadapted_eval_users=251
+  update chunk2 -> eval chunk3 | users_exposed_to_update=614 | PRIMARY rows=8,546, users=315, items=2,161 (65.17% of all-warm eval rows) | ALL-WARM rows=13,114, users=438 | unadapted_eval_users=123
+  update chunk3 -> eval chunk4 | users_exposed_to_update=737 | PRIMARY rows=9,143, users=306, items=2,193 (69.70% of all-warm eval rows) | ALL-WARM rows=13,117, users=376 | unadapted_eval_users=70
+  PRIMARY metrics drive H1/H3; ALL-WARM metrics are supplementary diagnostics.
+
+Branches:
+  IBPR_STALE
+  OnlineIBPRMejorado O019
+  IBPR_FULL_RETRAIN R900 from scratch on accumulated history
+
+Primary metric                  : NDCG@20
+All metrics                     : ['AUC', 'MAP', 'NDCG@20', 'Precision@20', 'Recall@20']
+H2 primary timing               : partial_fit_recent vs IBPR.fit only
+H2 supplementary timing         : history-build+partial vs full-build+fit
+Expected paired points          : 5 seeds x 3 eval points = 15
+Retuning after this point       : PROHIBITED
+
+PLAN ONLY: manifest final congelado. El holdout final fue leído y procesado estructuralmente para congelar split, chunks y poblaciones, pero no se entrenó ni evaluó ninguna rama Stale/Online/Full sobre él. Solo se ejecutaron además smoke tests sintéticos de implementación.
+
+######################################################################################################################
+FINAL H1-H3 V3.3 TIMESTAMP: 20261001_145409
+######################################################################################################################
+Log      : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado_v4\experiments\results\final_h1_h3_online_ibpr_mejorado_v3_3_20261001_145409.txt
+Steps    : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado_v4\experiments\results\final_h1_h3_online_ibpr_mejorado_v3_3_steps_20261001_145409.csv
+Trials   : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado_v4\experiments\results\final_h1_h3_online_ibpr_mejorado_v3_3_trials_20261001_145409.csv
+Summary  : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado_v4\experiments\results\final_h1_h3_online_ibpr_mejorado_v3_3_summary_20261001_145409.csv
+Manifest : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado_v4\experiments\results\final_h1_h3_online_ibpr_mejorado_v3_3_manifest_20261001_145409.json
+C1 parent: 20260929_231439 | R900
+C2 parent: 20260930_225103 | O019
+Protocol : 47a0f4bc499097669647316a455abe81563d7c09fccf26cc916ef1cfc8f58e7b
+
+======================================================================================================================
+FINAL H1-H3 - ONLINEIBPRMEJORADO
+======================================================================================================================
+Dataset                         : MovieLens 1M
+Positive threshold              : rating >= 3.0
+Feedback                        : implicit positive = 1.0
+Total implicit-positive rows    : 836,478
+Data SHA256                     : 29da5346c5bcf37dc927771d8ffd7ec3323dc7857ed4b0f6a45278b666954d3e
+C1-compatible data SHA256       : 3112900cf5f4966e117bbc0ccfb33cb2e0128ac8b36c2b79a154019651d1ba42
+Protocol version                : final_h1_h3_v3_3_freeze_20261001
+Protocol hash                   : 47a0f4bc499097669647316a455abe81563d7c09fccf26cc916ef1cfc8f58e7b
+
+Environment fingerprint:
+  Python                        : 3.14.2
+  Platform                      : Windows-11-10.0.26200-SP0
+  Cornac                        : 2.3.5
+  NumPy                         : 2.4.4
+  PyTorch                       : 2.11.0+cpu
+  SciPy                         : 1.17.1
+
+Frozen parent chain:
+  C1: 20260929_231439 | R900
+  C2: 20260930_225103 | O019
+Frozen configurations:
+  R900: {'k': 20, 'max_iter': 50, 'learning_rate': 0.0025, 'lamda': 1e-05, 'batch_size': 512}
+  O019: {'learning_rate': 0.0025, 'lamda': 1e-06, 'batch_size': 256, 'n_epochs': 3, 'loss_mode': 'angular', 'update_V': False, 'neg_sampling': 'uniform', 'normalize': True, 'max_steps': None}
+  Final seeds: [777, 999, 2026, 31415, 271828]
+  Seed freeze rationale: five final seeds fixed a priori in Phase D; values were not selected from final outcomes and are distinct from C2 confirmation seeds [42,123,2024]
+  Recovery min denom NDCG@20: 0.0001
+  Recovery freeze rationale: Recovery is supplementary only; require Full-Stale >= 1e-4 to avoid unstable ratios near a zero denominator; this threshold does not decide H3
+  Thread fingerprint: {'fixed_threads': 1, 'OMP_NUM_THREADS': '1', 'MKL_NUM_THREADS': '1', 'OPENBLAS_NUM_THREADS': '1', 'NUMEXPR_NUM_THREADS': '1', 'VECLIB_MAXIMUM_THREADS': '1', 'BLIS_NUM_THREADS': '1', 'torch_num_threads': 1, 'torch_num_interop_threads': 1}
+  Thread freeze rationale: single-thread paired wall-clock timing fixed a priori for H2 reproducibility; same process/environment for Online and Full branches
+  Hardware fingerprint: {'platform': 'Windows-11-10.0.26200-SP0', 'machine': 'AMD64', 'processor': 'Intel64 Family 6 Model 151 Stepping 5, GenuineIntel', 'logical_cpu_count': 12, 'native_threadpools': [{'user_api': 'blas', 'internal_api': 'openblas', 'num_threads': 1, 'prefix': 'libscipy_openblas', 'version': '0.3.31.188.0', 'filepath': 'C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-63c857e738469261263c764a36be9436.dll'}, {'user_api': 'openmp', 'internal_api': 'openmp', 'num_threads': 1, 'prefix': 'libiomp', 'version': None, 'filepath': 'C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\.venv\\Lib\\site-packages\\torch\\lib\\libiomp5md.dll'}, {'user_api': 'openmp', 'internal_api': 'openmp', 'num_threads': 1, 'prefix': 'libiomp', 'version': None, 'filepath': 'C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\.venv\\Lib\\site-packages\\torch\\lib\\libiompstubs5md.dll'}, {'user_api': 'openmp', 'internal_api': 'openmp', 'num_threads': 1, 'prefix': 'vcomp', 'version': None, 'filepath': 'C:\\Windows\\System32\\vcomp140.dll'}, {'user_api': 'blas', 'internal_api': 'openblas', 'num_threads': 1, 'prefix': 'libscipy_openblas', 'version': '0.3.30', 'filepath': 'C:\\Users\\cmalderete\\Documents\\personal\\tesis\\cornac\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-64eda39e79589aedb16f58e5547eb599.dll'}]}
+
+Base/future split:
+  Target base fraction          : 60.00%
+  Target base rows              : 501,886
+  Effective base rows           : 501,887
+  Effective base fraction       : 60.000024%
+  Tie rows moved into base      : 1
+  Base timestamp range          : 956703932 .. 974678223
+  Future timestamp range        : 974678227 .. 1046454590
+  Strict base < future          : True
+  Base users/items              : 4,037 / 3,505
+
+Warm-start future universe:
+  Future raw rows               : 334,591
+  Future warm rows              : 52,467
+  Warm-start fraction           : 15.6809%
+  Excluded unknown user only    : 281,748
+  Excluded unknown item only    : 132
+  Excluded unknown both         : 244
+
+Global chronological WARM chunks (filter first, split second):
+  chunk_1: warm=13,118 | users=363 | items=2,458 | ts=974678227..977183160
+  chunk_2: warm=13,118 | users=463 | items=2,408 | ts=977183184..986263783
+  chunk_3: warm=13,114 | users=438 | items=2,372 | ts=986263809..1007365896
+  chunk_4: warm=13,117 | users=376 | items=2,424 | ts=1007365934..1046454590
+  Internal WARM boundary adjustments:
+    boundary 1: target=13,116 -> effective=13,118 | shifted=2 | timestamp=977183160
+    boundary 2: target=26,233 -> effective=26,236 | shifted=3 | timestamp=986263783
+    boundary 3: target=39,350 -> effective=39,350 | shifted=0 | timestamp=1007365896
+
+Prequential sequence and primary adaptation population:
+  update chunk1 -> eval chunk2 | users_exposed_to_update=363 | PRIMARY rows=5,300, users=212, items=1,957 (40.40% of all-warm eval rows) | ALL-WARM rows=13,118, users=463 | unadapted_eval_users=251
+  update chunk2 -> eval chunk3 | users_exposed_to_update=614 | PRIMARY rows=8,546, users=315, items=2,161 (65.17% of all-warm eval rows) | ALL-WARM rows=13,114, users=438 | unadapted_eval_users=123
+  update chunk3 -> eval chunk4 | users_exposed_to_update=737 | PRIMARY rows=9,143, users=306, items=2,193 (69.70% of all-warm eval rows) | ALL-WARM rows=13,117, users=376 | unadapted_eval_users=70
+  PRIMARY metrics drive H1/H3; ALL-WARM metrics are supplementary diagnostics.
+
+Branches:
+  IBPR_STALE
+  OnlineIBPRMejorado O019
+  IBPR_FULL_RETRAIN R900 from scratch on accumulated history
+
+Primary metric                  : NDCG@20
+All metrics                     : ['AUC', 'MAP', 'NDCG@20', 'Precision@20', 'Recall@20']
+H2 primary timing               : partial_fit_recent vs IBPR.fit only
+H2 supplementary timing         : history-build+partial vs full-build+fit
+Expected paired points          : 5 seeds x 3 eval points = 15
+Retuning after this point       : PROHIBITED
+
+
+======================================================================================================================
+RUN FINAL H1-H3 | seed=777
+======================================================================================================================
+BASE trained: rows=501,887 | users=4,037 | items=3,505 | time=291.84s
+  update 1 -> eval 2 | PRIMARY rows=5,300/13,118 | NDCG stale=0.072993 | online=0.074781 | full=0.079544 | ΔH1=+0.001788 | ΔH3=-0.004764 | online=0.2278s | full=292.59s | speedup=1284.66x | ALL-WARM ΔH1=+0.000819
+  update 2 -> eval 3 | PRIMARY rows=8,546/13,114 | NDCG stale=0.074617 | online=0.078241 | full=0.078522 | ΔH1=+0.003624 | ΔH3=-0.000281 | online=0.2298s | full=368.86s | speedup=1605.42x | ALL-WARM ΔH1=+0.002606
+  update 3 -> eval 4 | PRIMARY rows=9,143/13,117 | NDCG stale=0.092057 | online=0.081250 | full=0.098138 | ΔH1=-0.010807 | ΔH3=-0.016888 | online=0.3987s | full=372.95s | speedup=935.29x | ALL-WARM ΔH1=-0.008795
+DONE seed=777: mean ΔH1 NDCG=-0.001798 | mean ΔH3 NDCG=-0.007311 | total speedup=1208.03x | construction-inclusive=327.03x
+
+======================================================================================================================
+RUN FINAL H1-H3 | seed=999
+======================================================================================================================
+BASE trained: rows=501,887 | users=4,037 | items=3,505 | time=327.91s
+  update 1 -> eval 2 | PRIMARY rows=5,300/13,118 | NDCG stale=0.071732 | online=0.081097 | full=0.074696 | ΔH1=+0.009366 | ΔH3=+0.006401 | online=0.3193s | full=366.63s | speedup=1148.23x | ALL-WARM ΔH1=+0.004288
+  update 2 -> eval 3 | PRIMARY rows=8,546/13,114 | NDCG stale=0.069137 | online=0.076554 | full=0.076598 | ΔH1=+0.007418 | ΔH3=-0.000044 | online=0.3185s | full=363.55s | speedup=1141.35x | ALL-WARM ΔH1=+0.005335
+  update 3 -> eval 4 | PRIMARY rows=9,143/13,117 | NDCG stale=0.096292 | online=0.078211 | full=0.092208 | ΔH1=-0.018080 | ΔH3=-0.013997 | online=0.2448s | full=360.88s | speedup=1474.23x | ALL-WARM ΔH1=-0.014714
+DONE seed=999: mean ΔH1 NDCG=-0.000432 | mean ΔH3 NDCG=-0.002547 | total speedup=1236.17x | construction-inclusive=369.02x
+
+======================================================================================================================
+RUN FINAL H1-H3 | seed=2026
+======================================================================================================================
+BASE trained: rows=501,887 | users=4,037 | items=3,505 | time=362.37s
+  update 1 -> eval 2 | PRIMARY rows=5,300/13,118 | NDCG stale=0.073107 | online=0.076841 | full=0.077657 | ΔH1=+0.003734 | ΔH3=-0.000816 | online=0.2996s | full=328.06s | speedup=1094.92x | ALL-WARM ΔH1=+0.001710
+  update 2 -> eval 3 | PRIMARY rows=8,546/13,114 | NDCG stale=0.071979 | online=0.082199 | full=0.074463 | ΔH1=+0.010220 | ΔH3=+0.007736 | online=0.2697s | full=316.29s | speedup=1172.58x | ALL-WARM ΔH1=+0.007350
+  update 3 -> eval 4 | PRIMARY rows=9,143/13,117 | NDCG stale=0.097541 | online=0.079452 | full=0.094411 | ΔH1=-0.018089 | ΔH3=-0.014959 | online=0.2202s | full=326.37s | speedup=1482.36x | ALL-WARM ΔH1=-0.014721
+DONE seed=2026: mean ΔH1 NDCG=-0.001378 | mean ΔH3 NDCG=-0.002680 | total speedup=1229.50x | construction-inclusive=369.03x
+
+======================================================================================================================
+RUN FINAL H1-H3 | seed=31415
+======================================================================================================================
+BASE trained: rows=501,887 | users=4,037 | items=3,505 | time=315.64s
+  update 1 -> eval 2 | PRIMARY rows=5,300/13,118 | NDCG stale=0.069029 | online=0.075632 | full=0.079456 | ΔH1=+0.006603 | ΔH3=-0.003824 | online=0.2359s | full=307.83s | speedup=1304.72x | ALL-WARM ΔH1=+0.003023
+  update 2 -> eval 3 | PRIMARY rows=8,546/13,114 | NDCG stale=0.071224 | online=0.071348 | full=0.076751 | ΔH1=+0.000124 | ΔH3=-0.005403 | online=0.2368s | full=317.00s | speedup=1338.87x | ALL-WARM ΔH1=+0.000089
+  update 3 -> eval 4 | PRIMARY rows=9,143/13,117 | NDCG stale=0.093255 | online=0.079113 | full=0.097029 | ΔH1=-0.014142 | ΔH3=-0.017916 | online=0.2343s | full=329.35s | speedup=1405.83x | ALL-WARM ΔH1=-0.011509
+DONE seed=31415: mean ΔH1 NDCG=-0.002472 | mean ΔH3 NDCG=-0.009047 | total speedup=1349.66x | construction-inclusive=379.26x
+
+======================================================================================================================
+RUN FINAL H1-H3 | seed=271828
+======================================================================================================================
+BASE trained: rows=501,887 | users=4,037 | items=3,505 | time=321.04s
+  update 1 -> eval 2 | PRIMARY rows=5,300/13,118 | NDCG stale=0.071036 | online=0.075269 | full=0.074969 | ΔH1=+0.004233 | ΔH3=+0.000301 | online=2.9432s | full=376.97s | speedup=128.08x | ALL-WARM ΔH1=+0.001938
+  update 2 -> eval 3 | PRIMARY rows=8,546/13,114 | NDCG stale=0.073374 | online=0.082983 | full=0.075977 | ΔH1=+0.009609 | ΔH3=+0.007006 | online=0.3177s | full=369.20s | speedup=1162.13x | ALL-WARM ΔH1=+0.006911
+  update 3 -> eval 4 | PRIMARY rows=9,143/13,117 | NDCG stale=0.095486 | online=0.079742 | full=0.097255 | ΔH1=-0.015744 | ΔH3=-0.017513 | online=0.3314s | full=367.74s | speedup=1109.73x | ALL-WARM ΔH1=-0.012813
+DONE seed=271828: mean ΔH1 NDCG=-0.000634 | mean ΔH3 NDCG=-0.003402 | total speedup=310.08x | construction-inclusive=172.35x
+
+======================================================================================================================
+FINAL H1-H3 SUMMARY
+======================================================================================================================
+Trials                         : 5
+Paired evaluation points       : 15
+
+Stale mean NDCG@20             : 0.079524
+Online mean NDCG@20            : 0.078181
+Full mean NDCG@20              : 0.083178
+
+Online - Stale NDCG@20        : -0.001343 ± 0.000839 | positive seeds=0/5
+Online - Full NDCG@20         : -0.004997 ± 0.002987 | positive seeds=0/5
+Full - Stale NDCG@20          : +0.003655 ± 0.002274 | positive seeds=5/5
+
+Supplementary ALL-WARM diagnostic:
+  Online - Stale NDCG@20      : -0.001899 ± 0.000547 | positive seeds=0/5
+  Online - Full NDCG@20       : -0.004777 ± 0.002128
+
+H1/H2 interpretation            : DESCRIPTIVE ONLY; no automatic support label
+Mean total online update time  : 1.3655s
+Mean total full retrain time   : 1032.8534s
+Mean full/online speedup        : 1066.69x
+Median full/online speedup      : 1229.50x | speedup>1 in 5/5 seeds
+Mean online/full cost fraction  : 0.0013
+Supplementary construction-inclusive speedup: 323.34x
+Supplementary construction-inclusive median: 369.02x | speedup>1 in 5/5 seeds
+Supplementary construction-inclusive cost fraction: 0.0034
+Mean adaptation recovery       : 0.3889 (valid seeds=5/5, valid points=13/15)
+
+seed=777 | ΔH1=-0.001798 | ΔH3=-0.007311 | speedup=1208.03x | cost_fraction=0.0008
+seed=999 | ΔH1=-0.000432 | ΔH3=-0.002547 | speedup=1236.17x | cost_fraction=0.0008
+seed=2026 | ΔH1=-0.001378 | ΔH3=-0.002680 | speedup=1229.50x | cost_fraction=0.0008
+seed=31415 | ΔH1=-0.002472 | ΔH3=-0.009047 | speedup=1349.66x | cost_fraction=0.0007
+seed=271828 | ΔH1=-0.000634 | ΔH3=-0.003402 | speedup=310.08x | cost_fraction=0.0032
+Temporal paired means (across final seeds):
+  eval_point=1 | ΔH1=+0.005145 | ΔH3=-0.000540 | Full-Stale=+0.005685
+  eval_point=2 | ΔH1=+0.006199 | ΔH3=+0.001803 | Full-Stale=+0.004396
+  eval_point=3 | ΔH1=-0.015372 | ΔH3=-0.016255 | Full-Stale=+0.000882
+
+Interpretation guard:
+  - no retuning after these results
+  - H1/H2/H3 summaries are descriptive; no automatic inferential support label
+  - H2 primary timing is model-update compute only (partial_fit_recent vs IBPR.fit)
+  - construction-inclusive H2 is supplementary and excludes evaluation-test builds
+  - H3 is descriptive; no equivalence/non-inferiority claim
+  - H4 index reuse remains a separate experiment
+
+Files:
+  log      : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado_v4\experiments\results\final_h1_h3_online_ibpr_mejorado_v3_3_20261001_145409.txt
+  steps    : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado_v4\experiments\results\final_h1_h3_online_ibpr_mejorado_v3_3_steps_20261001_145409.csv
+  trials   : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado_v4\experiments\results\final_h1_h3_online_ibpr_mejorado_v3_3_trials_20261001_145409.csv
+  summary  : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado_v4\experiments\results\final_h1_h3_online_ibpr_mejorado_v3_3_summary_20261001_145409.csv
+  manifest : C:\Users\cmalderete\Documents\personal\tesis\cornac\tests\online_ibpr_mejorado_v4\experiments\results\final_h1_h3_online_ibpr_mejorado_v3_3_manifest_20261001_145409.json
