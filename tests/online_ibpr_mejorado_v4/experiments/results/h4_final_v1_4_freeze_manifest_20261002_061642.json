@@ -1,0 +1,509 @@
+{
+  "execution_guard": {
+    "h4_final_base_training_executed": false,
+    "h4_final_full_training_executed": false,
+    "h4_final_indices_built": false,
+    "h4_final_metrics_evaluated": false,
+    "h4_final_online_update_executed": false,
+    "plan_only": true,
+    "retuning_after_freeze": "PROHIBITED"
+  },
+  "freeze_script": {
+    "path": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\tests\\online_ibpr_mejorado_v4\\experiments\\freeze_h4_final_online_ibpr_mejorado_v1_4.py",
+    "sha256": "c490a91ac59cb6465aacc99eeb6c9d75316c6c75e8f5bf798bb875dfca659b71"
+  },
+  "parent_h1h3_manifest": {
+    "parent_source_hashes": {
+      "ibpr_core": "e33e61a20862e8dc3d6bb3270998ba75557b8eefd48a52dcaac63271b6b38059",
+      "ibpr_wrapper": "ec525d4dfc21dfc9d0389033cddbfdd600aed25122ff0e78630e9c08fab6fb1e",
+      "online_core": "e27630a4b7fc4b819a8a4ef1757eea7d1cb21f8bc25efc028a0954964b16b801",
+      "online_wrapper": "3650a9a035e5baac492263af71c4572198375d97a7bb178a453281d3e01e8450"
+    },
+    "path": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\tests\\online_ibpr_mejorado_v4\\experiments\\results\\final_h1_h3_online_ibpr_mejorado_v3_3_manifest_20261001_145409.json",
+    "protocol_hash": "47a0f4bc499097669647316a455abe81563d7c09fccf26cc916ef1cfc8f58e7b",
+    "protocol_version": "final_h1_h3_v3_3_freeze_20261001",
+    "realized_plan_sha256": "cbf76393b6241771c9d91c18418b444abd7f4c8a977f7f8b1864dabba4131ec2",
+    "recomputed_protocol_hash": "47a0f4bc499097669647316a455abe81563d7c09fccf26cc916ef1cfc8f58e7b",
+    "recomputed_realized_plan_sha256": "cbf76393b6241771c9d91c18418b444abd7f4c8a977f7f8b1864dabba4131ec2",
+    "script_sha256": "0684e5d5f91e494dd497d9a243f4de2aac5f6b267b5c1120869c51815c3fdd5b",
+    "sha256": "e8a99fcd2db5055c5f2aae3bdfb2c1e30c05485f411894b6b54760ee30f04879"
+  },
+  "preflight_log": {
+    "detected_encoding": "utf-16-le-bom",
+    "path": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\tests\\online_ibpr_mejorado_v4\\experiments\\results\\preflight_h4_ann_reuse_online_ibpr_mejorado_v1_5_PASS.txt",
+    "required_markers_confirmed": true,
+    "sha256": "e19d7bcb73e1132b663ab498b0856534610733b477c0af9afa751b4a03028fa4",
+    "size_bytes": 15724
+  },
+  "preflight_script": {
+    "path": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\tests\\online_ibpr_mejorado_v4\\experiments\\preflight_h4_ann_reuse_online_ibpr_mejorado_v1_5.py",
+    "sha256": "38b8da0d5e9a53e0c10933b4b7af1de503a163b01cd557f90824d15bdad9f866"
+  },
+  "protocol": {
+    "aggregation_plan": {
+      "across_seed_summary": "The principal aggregate descriptive summary uses the five seed-level replicates: report mean and sample standard deviation across the 5 seeds. Median may be reported additionally, but cannot replace the frozen mean/std.",
+      "experimental_unit": "The final trial seed is the independent replication unit. The three temporal H4 points within a seed are repeated measures, not independent replicates.",
+      "latency": "Latency remains descriptive at seed x point and temporal summaries; no cross-H2 pooling or formal significance test is introduced.",
+      "no_pseudoreplication": "The 15 seed x point observations MUST NOT be treated as 15 independent replicates for inferential or uncertainty summaries.",
+      "point_level": "For every seed x point, compute retrieval metrics by first computing the user-level quantity on that point's PRIMARY users and then taking the unweighted mean across those PRIMARY users, except shortfall counts which are additionally reported as counts/fractions.",
+      "seed_level": "For each seed, compute the unweighted arithmetic mean of its three point-level values for each continuous retrieval diagnostic. Do not weight points by number of PRIMARY rows/users.",
+      "structural_h4": "The pre-specified H4 structural criterion is evaluated directly over all 15 seed x point checks because it is an invariant requirement, not a statistical replication count.",
+      "temporal_summary": "Also report p1, p2, and p3 separately by summarizing the five seed-specific values at that point. This preserves temporal structure."
+    },
+    "ann_contract": {
+      "IBPR_is_ANNMixin": true,
+      "OnlineIBPRMejorado_is_ANNMixin": true,
+      "measure": "MEASURE_DOT",
+      "score_contract": "V @ U[user]"
+    },
+    "build_accounting": {
+      "claim_boundary": "The claim is zero Online rebuilds in the instrumented H4 retrieval pipeline, not interception of unrelated FAISS objects elsewhere in the process.",
+      "scope": "Build counts refer to all IVF builds in the H4 retrieval pipeline: one base build per seed, zero Online rebuilds, zero full_stale rebuilds, and one full_rebuilt build at each of three points per seed.",
+      "single_builder_rule": "The final H4 executor must route every IVF construction used by the three H4 retrieval scenarios through one instrumented H4 index-builder helper. Direct scenario-level FAISS IVF construction outside that helper is prohibited."
+    },
+    "dataset_plan": {
+      "base_items": 3505,
+      "base_timestamp_range": [
+        956703932,
+        974678223
+      ],
+      "base_users": 4037,
+      "chunks": [
+        {
+          "chunk": 1,
+          "items": 2458,
+          "ts_max": 977183160,
+          "ts_min": 974678227,
+          "users": 363,
+          "warm_rows": 13118
+        },
+        {
+          "chunk": 2,
+          "items": 2408,
+          "ts_max": 986263783,
+          "ts_min": 977183184,
+          "users": 463,
+          "warm_rows": 13118
+        },
+        {
+          "chunk": 3,
+          "items": 2372,
+          "ts_max": 1007365896,
+          "ts_min": 986263809,
+          "users": 438,
+          "warm_rows": 13114
+        },
+        {
+          "chunk": 4,
+          "items": 2424,
+          "ts_max": 1046454590,
+          "ts_min": 1007365934,
+          "users": 376,
+          "warm_rows": 13117
+        }
+      ],
+      "dataset": "MovieLens 1M",
+      "effective_base_rows": 501887,
+      "effective_future_rows": 334591,
+      "eval_points": [
+        {
+          "all_warm_rows": 13118,
+          "all_warm_users": 463,
+          "eval_chunk": 2,
+          "point": 1,
+          "primary_items": 1957,
+          "primary_rows": 5300,
+          "primary_users": 212,
+          "unadapted_eval_users": 251,
+          "update_chunk": 1,
+          "users_exposed_to_update": 363
+        },
+        {
+          "all_warm_rows": 13114,
+          "all_warm_users": 438,
+          "eval_chunk": 3,
+          "point": 2,
+          "primary_items": 2161,
+          "primary_rows": 8546,
+          "primary_users": 315,
+          "unadapted_eval_users": 123,
+          "update_chunk": 2,
+          "users_exposed_to_update": 614
+        },
+        {
+          "all_warm_rows": 13117,
+          "all_warm_users": 376,
+          "eval_chunk": 4,
+          "point": 3,
+          "primary_items": 2193,
+          "primary_rows": 9143,
+          "primary_users": 306,
+          "unadapted_eval_users": 70,
+          "update_chunk": 3,
+          "users_exposed_to_update": 737
+        }
+      ],
+      "future_timestamp_range": [
+        974678227,
+        1046454590
+      ],
+      "future_warm_fraction": 0.15680935829116743,
+      "future_warm_rows": 52467,
+      "implicit_positive": 1.0,
+      "positive_threshold": 3.0,
+      "target_base_fraction": 0.6,
+      "target_base_rows": 501886,
+      "total_implicit_positive_rows": 836478,
+      "variant": "1M",
+      "warm_chunk_boundaries": [
+        0,
+        13118,
+        26236,
+        39350,
+        52467
+      ]
+    },
+    "expected_build_counts": {
+      "all_5_seeds": {
+        "base": 5,
+        "full_rebuilt": 15,
+        "full_stale": 0,
+        "online": 0,
+        "total": 20
+      },
+      "per_seed": {
+        "base": 1,
+        "full_rebuilt": 3,
+        "full_stale": 0,
+        "online": 0,
+        "total": 4
+      }
+    },
+    "final_seeds": [
+      777,
+      999,
+      2026,
+      31415,
+      271828
+    ],
+    "h4_ann": {
+      "adaptive_growth": "double search_k until K valid items or ntotal",
+      "ann_clustering_seed": 42,
+      "backend": "faiss",
+      "index_class": "IndexIVFFlat",
+      "initial_search_k": 80,
+      "latency_repeats": 50,
+      "latency_warmups": 10,
+      "metric": "inner_product",
+      "nlist": 16,
+      "nprobe": 8,
+      "raw_faiss_k": 80,
+      "threads": 1,
+      "top_k": 20
+    },
+    "h4_branches": {
+      "full_rebuilt": "U_full(t) + a newly built IVF index over V_full(t).",
+      "full_stale": "U_full(t) + the unreconstructed base IVF index over V_base.",
+      "online_reused": "U_online(t) + the SAME IVF index built once over V_base before the first online update; no online rebuild is allowed."
+    },
+    "h4_criteria": {
+      "allowed_interpretation": "Functional reuse of the item ANN index in the evaluated MovieLens 1M scenario.",
+      "ann_quality": "ANN retrieval fidelity is reported descriptively. No post-hoc recall threshold is introduced as an H4 success criterion.",
+      "base_index_object_identity_role": "Object identity is recorded as within-process forensic evidence only. Serialized hash and structural metadata provide the mandatory integrity guard.",
+      "forbidden_interpretation": "No general industrial-scale ANN scalability claim.",
+      "online_update_nontriviality_guard": "A valid execution must show at least one current-update user with ||U_after-U_before||_2 > 0 at every one of the 15 seed/point observations. This demonstrates the Online update was not a no-op; it is not an effectiveness criterion and does not replace H1.",
+      "operational_integrity_guard": "Independently of the H4 descriptive criterion, a valid execution must keep the reused base-index fingerprint unchanged at every Online point: serialized SHA256, ntotal, d, metric_type, nlist, and nprobe must equal their pre-update base values. Failure invalidates the H4 execution and requires investigation; it does not create a new H4 success criterion.",
+      "pre_specified_descriptive_criterion": "H4 is consistent only when V_base == V_online bit-for-bit at all 5 seeds x 3 points (15/15) AND the Online branch performs zero rebuilds of the base index. This is the original frozen criterion from the roadmap; V1.3 does not redefine it.",
+      "retuning": "R900, O019, temporal split, populations, ANN parameters, retrieval policy, and success criterion are frozen. No retuning after this manifest.",
+      "shortfall_role": "Report descriptively and investigate any non-zero value."
+    },
+    "h4_metrics": {
+      "additional_retrieval": [
+        "mean positional agreement",
+        "fraction of exact ordered-list matches",
+        "candidate shortfall total"
+      ],
+      "latency": {
+        "build": "Report IVF build time separately from query latency.",
+        "cross_hypothesis_restriction": "H4 latency belongs to the H4 runtime environment and MUST NOT be numerically merged with or interpreted as H2 timing.",
+        "derived": "Also report median batch-ms / number of queried PRIMARY users as descriptive ms-per-user normalization.",
+        "filtered": "Same PRIMARY query batch through adaptive retrieval + filtering; 10 warmups + 50 repetitions; report median and p95 batch ms.",
+        "raw": "Same PRIMARY query batch and raw_faiss_k=80 within each point/branch; 10 warmups + 50 repetitions; report median and p95 batch ms."
+      },
+      "primary_retrieval": "mean set recall@20 ANN vs exhaustive on PRIMARY users",
+      "structural": [
+        "V_online == V_base by np.array_equal",
+        "max_abs_diff(V_online,V_base) == 0",
+        "SHA256(V_online) == SHA256(V_base)",
+        "base index object identity recorded within process",
+        "serialized SHA256(index_base_after) == SHA256(index_base_before)",
+        "base index ntotal unchanged",
+        "base index dimension d unchanged",
+        "base index metric_type unchanged",
+        "base index nlist unchanged",
+        "base index nprobe unchanged",
+        "actual online build delta == 0",
+        "base/item mapping equality across branches",
+        "non-trivial U-update evidence on current-update users"
+      ]
+    },
+    "h4_references": {
+      "exact_geometry_shift": "exact(U_full,V_base) vs exact(U_full,V_full)",
+      "full_rebuilt": "ANN(U_full,index[V_full]) vs exact(U_full,V_full)",
+      "full_stale_index_consistency": "ANN(U_full,index[V_base]) vs exact(U_full,V_base)",
+      "full_stale_model_fidelity": "ANN(U_full,index[V_base]) vs exact(U_full,V_full)",
+      "online_reused": "ANN(U_online,index[V_base]) vs exact(U_online,V_base)"
+    },
+    "model_chronology": {
+      "base": {
+        "definition": "For each final trial seed, fit a fresh IBPR R900 on the effective 60% base only.",
+        "seed_policy": "Reset NumPy/Torch/model seed to the final trial seed before base fit."
+      },
+      "full": {
+        "definition": "At each point t, fit a FRESH IBPR R900 from scratch on base plus accumulated WARM chunks 1..t.",
+        "seed_policy": "Reset to the SAME final trial seed before each Full fit, exactly as frozen in H1-H3."
+      },
+      "item_mapping": "The base user/item mapping is fixed for all branches. Only future rows whose user AND item exist in the effective base enter the WARM universe. All U/V comparisons and ANN item ids must use that exact internal item order.",
+      "online": {
+        "history_policy": "At point t, partial_fit_recent receives history_csr equal to base positives plus accumulated WARM chunks 1..t, including the current update chunk and excluding the future evaluation chunk.",
+        "initialization": "Warm-start OnlineIBPRMejorado from exact copies of that seed's U_base and V_base.",
+        "online_seed_policy": "trial_seed + partial_update_count",
+        "partial_update_count": "0 before point1, then 1,2,3 after non-empty updates",
+        "sequence": [
+          "update warm chunk 1 -> H4 point 1",
+          "update warm chunk 2 -> H4 point 2",
+          "update warm chunk 3 -> H4 point 3"
+        ]
+      }
+    },
+    "o019": {
+      "batch_size": 256,
+      "lamda": 1e-06,
+      "learning_rate": 0.0025,
+      "loss_mode": "angular",
+      "max_steps": null,
+      "n_epochs": 3,
+      "neg_sampling": "uniform",
+      "normalize": true,
+      "update_V": false
+    },
+    "parent": {
+      "c1_data_sha256": "3112900cf5f4966e117bbc0ccfb33cb2e0128ac8b36c2b79a154019651d1ba42",
+      "c1_parent": {
+        "candidate": "R900",
+        "protocol_hash": "7adec0037dba1cd31c9100942d5fa9dfb0aa00dbb9a5bf8dc7b8ff4b51154112",
+        "timestamp": "20260929_231439"
+      },
+      "c2_parent": {
+        "candidate": "O019",
+        "protocol_hash": "61215894da0d3cadf5966b3cc503558884955ee6314b01e6f95a914e6f0b9621",
+        "timestamp": "20260930_225103"
+      },
+      "data_sha256": "29da5346c5bcf37dc927771d8ffd7ec3323dc7857ed4b0f6a45278b666954d3e",
+      "h1h3_manifest_sha256": "e8a99fcd2db5055c5f2aae3bdfb2c1e30c05485f411894b6b54760ee30f04879",
+      "h1h3_protocol_hash": "47a0f4bc499097669647316a455abe81563d7c09fccf26cc916ef1cfc8f58e7b",
+      "h1h3_protocol_version": "final_h1_h3_v3_3_freeze_20261001",
+      "h1h3_realized_plan_sha256": "cbf76393b6241771c9d91c18418b444abd7f4c8a977f7f8b1864dabba4131ec2",
+      "h1h3_script_sha256": "0684e5d5f91e494dd497d9a243f4de2aac5f6b267b5c1120869c51815c3fdd5b",
+      "h1h3_timestamp": "20261001_145409"
+    },
+    "preflight": {
+      "evidence_role": "synthetic preflight only; not final H4 evidence",
+      "execution_log_sha256": "e19d7bcb73e1132b663ab498b0856534610733b477c0af9afa751b4a03028fa4",
+      "script_filename": "preflight_h4_ann_reuse_online_ibpr_mejorado_v1_5.py",
+      "script_sha256": "38b8da0d5e9a53e0c10933b4b7af1de503a163b01cd557f90824d15bdad9f866",
+      "status": "PASS"
+    },
+    "protocol_version": "h4_final_v1_4_freeze_20261002",
+    "r900": {
+      "batch_size": 512,
+      "k": 20,
+      "lamda": 1e-05,
+      "learning_rate": 0.0025,
+      "max_iter": 50
+    },
+    "retrieval_metric_definitions": {
+      "candidate_shortfall": "Per user max(0, |E|-|A|) after adaptive ANN retrieval up to ntotal. Report both total shortfall and number/fraction of affected PRIMARY users.",
+      "exact_geometry_shift": "For each PRIMARY user compare exhaustive top-20 from exact(U_full,V_base) against exhaustive top-20 from exact(U_full,V_full). Primary geometry diagnostic is symmetric set_overlap@20 = |A intersection B| / 20. Also report positional agreement and exact ordered-list match fraction. This is descriptive and is not an additive decomposition.",
+      "exact_ordered_list_match": "Per user binary indicator equal to 1 only when ANN returns the same number of items as E and the complete ordered ANN list equals E exactly. Report the fraction of users equal to 1 within seed x point.",
+      "full_stale_model_fidelity": "For full_stale, compare ANN(U_full,index[V_base]) directly against the model-faithful exhaustive exact(U_full,V_full) using the same set_recall@20, positional-agreement, exact-list, and shortfall definitions.",
+      "positional_agreement": "For each PRIMARY user, compare aligned ranks j=1..|E|. Agreement is the fraction of ranks where ANN[j] exists and ANN[j] == E[j]. Missing ANN positions caused by shortfall count as disagreement. Average within point.",
+      "set_recall_at_20": "For each PRIMARY user, let E be the filtered exhaustive top-20 list and A the filtered ANN output truncated to at most 20 valid unique items. Compute |set(A) intersection set(E)| / |E|. Do not pad ANN shortfalls. Average this user-level value within each seed x point."
+    },
+    "retrieval_policy": {
+      "ann_candidate_policy": "Start with search_k=min(ntotal,80). Remove negative ids, duplicates, and observed items. If fewer than K=20 valid items remain, double search_k and query again, capped at ntotal.",
+      "exact_reference": "Exhaustively score every base-known item and sort descending by score; break exact-score ties deterministically by ascending internal item id.",
+      "observed_exclusion": "At H4 point t, both exact and ANN exclude exactly the user's observed positive items in base plus accumulated WARM update chunks 1..t. Items from evaluation chunk t+1 are NOT excluded unless they were already present in that prior accumulated history.",
+      "population_primary": "At each point use exactly the PRIMARY H1-H3 evaluation users: eval users with prior warm-update opportunity. PRIMARY rows define membership; ALL-WARM is supplementary only.",
+      "population_supplementary": "ALL-WARM retrieval may be reported separately but cannot replace PRIMARY.",
+      "score": "Use the model factors exactly as stored; score is dot product U @ V.T. No extra query-time normalization is applied.",
+      "shortfall": "shortfall=max(0,K-number_of_valid_items_after_searching_up_to_ntotal). Report it; do not silently pad it with observed or invalid items."
+    },
+    "retuning_after_freeze": "PROHIBITED",
+    "runtime_environment_signature": {
+      "cornac": "2.3.5",
+      "faiss": "1.15.0",
+      "faiss_threads": 1,
+      "logical_cpu_count": 16,
+      "machine": "AMD64",
+      "numpy": "2.4.2",
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel",
+      "python": "3.12.0",
+      "scipy": "1.17.1",
+      "thread_env": {
+        "BLIS_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1"
+      },
+      "torch": "2.10.0+cpu",
+      "torch_num_interop_threads": 1,
+      "torch_num_threads": 1
+    },
+    "source_continuity": {
+      "all_four_source_files_byte_identical_to_h1h3": true,
+      "observed_hashes": {
+        "ibpr_core": "e33e61a20862e8dc3d6bb3270998ba75557b8eefd48a52dcaac63271b6b38059",
+        "ibpr_wrapper": "ec525d4dfc21dfc9d0389033cddbfdd600aed25122ff0e78630e9c08fab6fb1e",
+        "online_core": "e27630a4b7fc4b819a8a4ef1757eea7d1cb21f8bc25efc028a0954964b16b801",
+        "online_wrapper": "3650a9a035e5baac492263af71c4572198375d97a7bb178a453281d3e01e8450"
+      },
+      "source_continuity_policy": "IBPR core, Online core, IBPR wrapper, and Online wrapper must all be byte-identical to the FINAL H1-H3 source hashes. ANNMixin/vector/score behavior is validated separately by semantic and ANN contract checks.",
+      "wrapper_status": {
+        "ibpr_wrapper": {
+          "byte_identical_to_h1h3": true,
+          "current_h4_sha256": "ec525d4dfc21dfc9d0389033cddbfdd600aed25122ff0e78630e9c08fab6fb1e",
+          "parent_h1h3_sha256": "ec525d4dfc21dfc9d0389033cddbfdd600aed25122ff0e78630e9c08fab6fb1e"
+        },
+        "online_wrapper": {
+          "byte_identical_to_h1h3": true,
+          "current_h4_sha256": "3650a9a035e5baac492263af71c4572198375d97a7bb178a453281d3e01e8450",
+          "parent_h1h3_sha256": "3650a9a035e5baac492263af71c4572198375d97a7bb178a453281d3e01e8450"
+        }
+      }
+    },
+    "u_update_evidence": {
+      "interpretation": "This guard only establishes that the Online update was non-trivial. It is not an effectiveness criterion and does not replace H1.",
+      "nontriviality_guard": "At every one of the 15 seed/point observations, at least one user in the current update chunk must have delta_l2 > 0. No arbitrary positive magnitude threshold beyond strict > 0 is introduced.",
+      "reported": [
+        "n_current_update_users",
+        "n_current_update_users_with_delta_gt_0",
+        "fraction_current_update_users_with_delta_gt_0",
+        "median_current_update_user_delta_l2",
+        "max_current_update_user_delta_l2"
+      ],
+      "row_delta": "For each current-update user u, compute L2 norm ||U_after[u]-U_before[u]||_2.",
+      "scope": "At each H4 point, compare U immediately before vs immediately after partial_fit_recent for users present in the CURRENT warm update chunk."
+    },
+    "wrapper_semantics": {
+      "ibpr_fit_method_sha256": "bd6d40b12eabaf0a54b765dff7f1518d0296efd350240f243e42541de6c492f7",
+      "online_partial_fit_recent_method_sha256": "5ddd20ed635bea867dc80ab16d377a113cdbf87e65597495670c86c16ae75e85",
+      "semantic_contract_pass": true
+    }
+  },
+  "protocol_hash": "2578f488951af341d2f96b240300f0818e05323ba546a7aeb5e0f89b9bf28886",
+  "protocol_version": "h4_final_v1_4_freeze_20261002",
+  "runtime_environment_full": {
+    "cornac": "2.3.5",
+    "faiss": "1.15.0",
+    "faiss_threads": 1,
+    "logical_cpu_count": 16,
+    "machine": "AMD64",
+    "native_threadpools": [
+      {
+        "architecture": "Haswell",
+        "filepath": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\.venv\\Lib\\site-packages\\numpy.libs\\libscipy_openblas64_-74a408729250596b0973e69fdd954eea.dll",
+        "internal_api": "openblas",
+        "num_threads": 1,
+        "prefix": "libscipy_openblas",
+        "threading_layer": "pthreads",
+        "user_api": "blas",
+        "version": "0.3.31.dev"
+      },
+      {
+        "filepath": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\.venv\\Lib\\site-packages\\torch\\lib\\libiomp5md.dll",
+        "internal_api": "openmp",
+        "num_threads": 1,
+        "prefix": "libiomp",
+        "user_api": "openmp",
+        "version": null
+      },
+      {
+        "filepath": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\.venv\\Lib\\site-packages\\torch\\lib\\libiompstubs5md.dll",
+        "internal_api": "openmp",
+        "num_threads": 1,
+        "prefix": "libiomp",
+        "user_api": "openmp",
+        "version": null
+      },
+      {
+        "filepath": "C:\\Windows\\System32\\vcomp140.dll",
+        "internal_api": "openmp",
+        "num_threads": 1,
+        "prefix": "vcomp",
+        "user_api": "openmp",
+        "version": null
+      },
+      {
+        "architecture": "Haswell",
+        "filepath": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\.venv\\Lib\\site-packages\\scipy.libs\\libscipy_openblas-64eda39e79589aedb16f58e5547eb599.dll",
+        "internal_api": "openblas",
+        "num_threads": 1,
+        "prefix": "libscipy_openblas",
+        "threading_layer": "pthreads",
+        "user_api": "blas",
+        "version": "0.3.30"
+      },
+      {
+        "architecture": "Haswell",
+        "filepath": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\.venv\\Lib\\site-packages\\faiss_cpu.libs\\libopenblas.dll",
+        "internal_api": "openblas",
+        "num_threads": 1,
+        "prefix": "libopenblas",
+        "threading_layer": "pthreads",
+        "user_api": "blas",
+        "version": "0.3.30"
+      }
+    ],
+    "numpy": "2.4.2",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel",
+    "python": "3.12.0",
+    "python_full": "3.12.0 (tags/v3.12.0:0fb18b0, Oct  2 2023, 13:03:39) [MSC v.1935 64 bit (AMD64)]",
+    "scipy": "1.17.1",
+    "thread_env": {
+      "BLIS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1"
+    },
+    "torch": "2.10.0+cpu",
+    "torch_num_interop_threads": 1,
+    "torch_num_threads": 1
+  },
+  "source_files": {
+    "ibpr_core": {
+      "path": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\cornac\\models\\ibpr\\ibpr.py",
+      "sha256": "e33e61a20862e8dc3d6bb3270998ba75557b8eefd48a52dcaac63271b6b38059"
+    },
+    "ibpr_wrapper": {
+      "path": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\cornac\\models\\ibpr\\recom_ibpr.py",
+      "sha256": "ec525d4dfc21dfc9d0389033cddbfdd600aed25122ff0e78630e9c08fab6fb1e"
+    },
+    "online_core": {
+      "path": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\cornac\\models\\online_ibpr_mejorado\\online_ibpr_mejorado.py",
+      "sha256": "e27630a4b7fc4b819a8a4ef1757eea7d1cb21f8bc25efc028a0954964b16b801"
+    },
+    "online_wrapper": {
+      "path": "C:\\Users\\alder\\Desktop\\TESIS\\cornac\\cornac\\models\\online_ibpr_mejorado\\recom_online_ibpr_mejorado.py",
+      "sha256": "3650a9a035e5baac492263af71c4572198375d97a7bb178a453281d3e01e8450"
+    }
+  },
+  "status": "FROZEN_PLAN_ONLY",
+  "timestamp": "20261002_061642"
+}

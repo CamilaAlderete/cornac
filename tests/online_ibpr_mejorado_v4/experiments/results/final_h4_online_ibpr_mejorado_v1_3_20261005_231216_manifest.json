@@ -1,0 +1,148 @@
+{
+  "completed_at": "2026-10-06T06:47:37",
+  "completed_seed_checkpoints": {
+    "2026": {
+      "filename": "final_h4_online_ibpr_mejorado_v1_3_20261005_231216_seed2026.json",
+      "sha256": "201803ef708085a9a5bbfe4057734fc93bd2529bb53d5adf2590ae77f6b16be8"
+    },
+    "271828": {
+      "filename": "final_h4_online_ibpr_mejorado_v1_3_20261005_231216_seed271828.json",
+      "sha256": "728526af4f4f628c8af8f67cabcb77599d6f36a517c889f774bcf796c04789c1"
+    },
+    "31415": {
+      "filename": "final_h4_online_ibpr_mejorado_v1_3_20261005_231216_seed31415.json",
+      "sha256": "8e49f96e5eda04dc8f6b1bbc95487beb6661edd05c2a92e788360ecae9daae5f"
+    },
+    "777": {
+      "filename": "final_h4_online_ibpr_mejorado_v1_3_20261005_231216_seed777.json",
+      "sha256": "962198937e9be82798b9433f26ee748a8a5b249c3cbefcf613e01bb8d5764e95"
+    },
+    "999": {
+      "filename": "final_h4_online_ibpr_mejorado_v1_3_20261005_231216_seed999.json",
+      "sha256": "664b573ae3fbfa9bf7129d468abf72295766314f6c09c389eec583456755a9d2"
+    }
+  },
+  "criteria": {
+    "actual_build_counts": {
+      "base": 5,
+      "full_rebuilt": 15,
+      "full_stale": 0,
+      "online": 0,
+      "total": 20
+    },
+    "build_counts_exact": true,
+    "expected_build_counts": {
+      "base": 5,
+      "full_rebuilt": 15,
+      "full_stale": 0,
+      "online": 0,
+      "total": 20
+    },
+    "h4_pre_specified_descriptive_criterion_met": true,
+    "online_update_nontriviality_guard_passes": 15,
+    "online_update_nontriviality_guard_total": 15,
+    "operational_integrity_guard_passes": 15,
+    "operational_integrity_guard_total": 15,
+    "structural_seed_point_passes": 15,
+    "structural_seed_point_total": 15
+  },
+  "dataset_sha256": "29da5346c5bcf37dc927771d8ffd7ec3323dc7857ed4b0f6a45278b666954d3e",
+  "executor_sha256": "4933bc77c80db5e39f64055b748de51a0bf7d8347fe80b2383385adb27ee465b",
+  "executor_validation_self_test": {
+    "reason": "F2 isolation: no synthetic ANN build before the first real H4 base-index build. Synthetic executor self-test is exercised only by --validate-only.",
+    "status": "SKIPPED_IN_RUN_FINAL"
+  },
+  "executor_version": "final_h4_executor_v1_3_20261005",
+  "final_checkpoint_verification": {
+    "2026": {
+      "filename": "final_h4_online_ibpr_mejorado_v1_3_20261005_231216_seed2026.json",
+      "semantic_validation": "PASS",
+      "sha256": "201803ef708085a9a5bbfe4057734fc93bd2529bb53d5adf2590ae77f6b16be8"
+    },
+    "271828": {
+      "filename": "final_h4_online_ibpr_mejorado_v1_3_20261005_231216_seed271828.json",
+      "semantic_validation": "PASS",
+      "sha256": "728526af4f4f628c8af8f67cabcb77599d6f36a517c889f774bcf796c04789c1"
+    },
+    "31415": {
+      "filename": "final_h4_online_ibpr_mejorado_v1_3_20261005_231216_seed31415.json",
+      "semantic_validation": "PASS",
+      "sha256": "8e49f96e5eda04dc8f6b1bbc95487beb6661edd05c2a92e788360ecae9daae5f"
+    },
+    "777": {
+      "filename": "final_h4_online_ibpr_mejorado_v1_3_20261005_231216_seed777.json",
+      "semantic_validation": "PASS",
+      "sha256": "962198937e9be82798b9433f26ee748a8a5b249c3cbefcf613e01bb8d5764e95"
+    },
+    "999": {
+      "filename": "final_h4_online_ibpr_mejorado_v1_3_20261005_231216_seed999.json",
+      "semantic_validation": "PASS",
+      "sha256": "664b573ae3fbfa9bf7129d468abf72295766314f6c09c389eec583456755a9d2"
+    }
+  },
+  "final_provenance_unchanged": {
+    "executor_sha256": "4933bc77c80db5e39f64055b748de51a0bf7d8347fe80b2383385adb27ee465b",
+    "freeze_manifest_sha256": "56fd0521e91dc52ab2141b97d0edece28efdc368df66befdd8db18a6e83d13fe",
+    "source_hashes": {
+      "ibpr_core": "e33e61a20862e8dc3d6bb3270998ba75557b8eefd48a52dcaac63271b6b38059",
+      "ibpr_wrapper": "ec525d4dfc21dfc9d0389033cddbfdd600aed25122ff0e78630e9c08fab6fb1e",
+      "online_core": "e27630a4b7fc4b819a8a4ef1757eea7d1cb21f8bc25efc028a0954964b16b801",
+      "online_wrapper": "3650a9a035e5baac492263af71c4572198375d97a7bb178a453281d3e01e8450"
+    }
+  },
+  "final_seeds": [
+    777,
+    999,
+    2026,
+    31415,
+    271828
+  ],
+  "freeze_manifest_filename": "h4_final_v1_4_freeze_manifest_20261002_061642.json",
+  "freeze_manifest_sha256": "56fd0521e91dc52ab2141b97d0edece28efdc368df66befdd8db18a6e83d13fe",
+  "frozen_protocol_hash": "2578f488951af341d2f96b240300f0818e05323ba546a7aeb5e0f89b9bf28886",
+  "frozen_protocol_version": "h4_final_v1_4_freeze_20261002",
+  "h4_conclusion": "H4_CRITERION_MET",
+  "output_files_sha256": {
+    "final_h4_online_ibpr_mejorado_v1_3_20261005_231216_queries.csv": "868f04f10833891d39653eb359f6715554c9043c4876787f5c340d9a1cda4ac7",
+    "final_h4_online_ibpr_mejorado_v1_3_20261005_231216_seed2026.json": "201803ef708085a9a5bbfe4057734fc93bd2529bb53d5adf2590ae77f6b16be8",
+    "final_h4_online_ibpr_mejorado_v1_3_20261005_231216_seed271828.json": "728526af4f4f628c8af8f67cabcb77599d6f36a517c889f774bcf796c04789c1",
+    "final_h4_online_ibpr_mejorado_v1_3_20261005_231216_seed31415.json": "8e49f96e5eda04dc8f6b1bbc95487beb6661edd05c2a92e788360ecae9daae5f",
+    "final_h4_online_ibpr_mejorado_v1_3_20261005_231216_seed777.json": "962198937e9be82798b9433f26ee748a8a5b249c3cbefcf613e01bb8d5764e95",
+    "final_h4_online_ibpr_mejorado_v1_3_20261005_231216_seed999.json": "664b573ae3fbfa9bf7129d468abf72295766314f6c09c389eec583456755a9d2",
+    "final_h4_online_ibpr_mejorado_v1_3_20261005_231216_steps.csv": "8378fcd90ddcf1bf46a89cd18eef8f8e200f42f167994e63caee84d2c459f3df",
+    "final_h4_online_ibpr_mejorado_v1_3_20261005_231216_summary.json": "81687b4c0139cc1bdc6fd21832a2233a613273e8c567a2ae73c4af1ff4e26f45",
+    "final_h4_online_ibpr_mejorado_v1_3_20261005_231216_trials.csv": "4baec3c51e8c420a15bacadcdca3ed92da954415f051a27acd6c2c55eae1e743"
+  },
+  "retuning_after_freeze": "PROHIBITED",
+  "runtime_environment_signature": {
+    "cornac": "2.3.5",
+    "faiss": "1.15.0",
+    "faiss_threads": 1,
+    "logical_cpu_count": 16,
+    "machine": "AMD64",
+    "numpy": "2.4.2",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel",
+    "python": "3.12.0",
+    "scipy": "1.17.1",
+    "thread_env": {
+      "BLIS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1"
+    },
+    "torch": "2.10.0+cpu",
+    "torch_num_interop_threads": 1,
+    "torch_num_threads": 1
+  },
+  "source_hashes": {
+    "ibpr_core": "e33e61a20862e8dc3d6bb3270998ba75557b8eefd48a52dcaac63271b6b38059",
+    "ibpr_wrapper": "ec525d4dfc21dfc9d0389033cddbfdd600aed25122ff0e78630e9c08fab6fb1e",
+    "online_core": "e27630a4b7fc4b819a8a4ef1757eea7d1cb21f8bc25efc028a0954964b16b801",
+    "online_wrapper": "3650a9a035e5baac492263af71c4572198375d97a7bb178a453281d3e01e8450"
+  },
+  "status": "COMPLETE",
+  "timestamp": "20261005_231216"
+}
